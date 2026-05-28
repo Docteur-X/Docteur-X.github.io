@@ -3,6 +3,6 @@ body {
   background-image: url(paper_background.png);
   background-size: cover;
   background-repeat: no-repeat;
-  min-height: 100vh; 
+  height: 100vh; 
   margin: 0;
 }
