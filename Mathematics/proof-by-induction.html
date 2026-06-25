@@ -21,20 +21,33 @@
     <p>Someone made a bold claim. For any value of n, they say that the below statement is correct.</p>
     <p> \[ \sum_{r=1}^n r^3 = \frac{1}{4}n^2(n+1)^2 \] </p>
     <p>(In a clickable dropdown for the sum) \[ \sum_{r=1}^n r^3 \] means \[ 1^3 + 2^3 + 3^3 + \dots + n^3 \]. Add ref link to topic on summation. </p>
-    <p>Is the statement correct for \( \textcolor{orange}{n=1} \)? Let's check.</p>
-    <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{orange}{n}} r^3 = \sum_{r=1}^\textcolor{orange}{1} r^3 = 1^3 = 1 \) </p>
-    <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{orange}{1}^2 \cdot (\textcolor{orange}{1}+1)^2 = \frac{1}{4} \cdot 1 \cdot 2^2 = \frac{1}{4} \cdot 4 = 1 \) </p>
-    <p>The statement is correct for n=1. Is it correct for n=2? Let's check. </p>
-    <p></p>
-    <p>So the statement is correct for n=2.</p>
-    <p>We can also check that the statement is correct for n=3. And to check if the statement is correct for n=4, we again have to substitute n=4 into the equation and see if the left-hand side equals the right-hand side. We might enlist some slaves to help us tediously check if the statement is true for n=5, n=6, n=7, ... or we can use some clever method.</p>
+    <p>Is the statement correct for \( \textcolor{blue}{n=1} \)? Let's check.</p>
+    <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{blue}{n}} r^3 = \sum_{r=1}^\textcolor{blue}{1} r^3 = 1^3 = 1 \) </p>
+    <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{blue}{n}^2(\textcolor{blue}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{blue}{1}^2 \cdot (\textcolor{blue}{1}+1)^2 = \frac{1}{4} \cdot 1 \cdot 2^2 = \frac{1}{4} \cdot 4 = 1 \) </p>
+    <p>The statement is correct for \( \textcolor{blue}{n=1} \). Is it correct for \( \textcolor{n=2} \)? Let's check. </p>
+    <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{orange}{n}} r^3 = \sum_{r=2}^\textcolor{orange}{1} r^3 = 1^3 + 2^3 = 1 + 8 = 9 \) </p>
+    <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{orange}{2}^2 \cdot (\textcolor{orange}{2}+1)^2 = \frac{1}{4} \cdot 2^2 \cdot 3^2 = \frac{1}{4} \cdot 4 \cdot 9 = 9 \) </p>
+    <p>So the statement is correct for \( \textcolor{orange}{n=2} \).</p>
+    <p>We can also check that the statement is correct for n=3. And to check if the statement is correct for n=4, we again substitute n=4 into the equation and see if the left-hand side equals the right-hand side. We might enlist some slaves to help us tediously check if the statement is true for n=5, n=6, n=7, ... or we can use some cleverer method.</p>
     
     <h2>A Better Way</h2>
 
-    <p>I've shown that the statement is true for n=2. Let's suppose I don't yet know if the statement is correct for n=3. Can I use the statement at n=2 to show that it is true at n=3?</p>
+    <p>I've shown that the statement is true for \( \textcolor{orange}{n=2} \). I don't yet know if the statement is correct for \( \textcolor{green}{n=3} = \textcolor{2} + 1 \). Can I use the statement at \( \textcolor{orange}{n=2} \) to show that the statement is true at \( \textcolor{green}{n=3} \)?</p>
     <p> \[ \sum_{r=1}^\textcolor{green}{3} r^3 \overset{?}{=} \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 \] </p>
-    <p> LHS: \[ \sum_{r=1}^\textcolor{green}{3} r^3 = \sum_{r=1}^\textcolor{orange}{2} r^3 + \textcolor{green}{3}^3 = \frac{1}{4}\textcolor{orange}{2}^2(\textcolor{orange}{2}+1)^2 + \textcolor{green}{3}^3 \]</p>
-    <p> RHS: \[ \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 = \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 ( \textcolor{orange}{2} + 2 )^2 = \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 ( \textcolor{orange}{2}^2 + 2 \cdot 2 \cdot \textcolor{orange}{2} + 2^2 ) = \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \textcolor{orange}{2}^2 + \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \cdot (2 \cdot 2 \cdot \textcolor{orange}{2} + 2^2) = \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \textcolor{orange}{2}^2 + \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \cdot (2 \cdot 2 \cdot \textcolor{orange}{2} + 2^2) =  \frac{1}{4} \textcolor{orange}{2}^2 ( \textcolor{orange}{2} + 1 )^2 + \textcolor{green}{3}^3 \] </p>
+    <p> LHS: \[ \begin{aligned}
+                  \sum_{r=1}^\textcolor{green}{3} r^3 &= \sum_{r=1}^\textcolor{orange}{2} r^3 + \textcolor{green}{3}^3 \\ 
+                                                      &= \frac{1}{4}\textcolor{orange}{2}^2(\textcolor{orange}{2}+1)^2 + \textcolor{green}{3}^3 
+                \end{aligned} \] 
+    </p>
+    <p> RHS: \[ \begin{aligned}
+                  \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 ( (\textcolor{orange}{2} + 1) + 1 )^2 \\ 
+                                                                                            &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 ( \textcolor{orange}{2} + 2 )^2 \\ 
+                                                                                            &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 ( \textcolor{orange}{2}^2 + 2 \cdot 2 \cdot \textcolor{orange}{2} + 2^2 ) \\
+                                                                                            &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 ( \textcolor{orange}{2}^2 + 4 \cdot \textcolor{orange}{2} + 4 ) \\
+                                                                                            &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \textcolor{orange}{2}^2 + \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \cdot (4 \cdot \textcolor{orange}{2} + 4) \\ 
+                                                                                            &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \textcolor{orange}{2}^2 + ( \textcolor{orange}{2} + 1 )^2 \cdot (\textcolor{orange}{2}) \\ 
+                                                                                            &= \frac{1}{4} ( \textcolor{orange}{2} + 1 )^2 \textcolor{orange}{2}^2 + ( \textcolor{orange}{2} + 1 )^3 \\ 
+                                                                                            &= \frac{1}{4} \textcolor{orange}{2}^2 ( \textcolor{orange}{2} + 1 )^2 + \textcolor{green}{3}^3 \] </p>
 
     <p>Thus, the statement is correct for n=3. We've used the fact that the statement is true for n=2.</p>
     <p>So, is the statement correct for n=4? </p>
