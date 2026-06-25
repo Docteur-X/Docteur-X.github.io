@@ -81,18 +81,28 @@
     <p>Someone else made another bold claim. They claim that the following statement is true for every positive integer n:</p>
     <p> \[ \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \] </p>
     <p> Let's apply the above procedure. </p>
-    <p><b>1. Check the statement is true for \textcolor{blue}{n=1}.</b></p>
+    <p><b> Step 1. Check the statement is true for \textcolor{blue}{n=1}.</b></p>
     <p>LHS: \( \displaystyle \sum_{r=1}^\textcolor{blue}{n} r(r+1) = \sum_{r=1}^\textcolor{blue}{1} r(r+1) = \textcolor{blue}{1} \cdot (\textcolor{blue}{1} + 1) = 1 \cdot 2 = 2\) </p>
     <p>RHS: \( \displaystyle \frac{\textcolor{blue}{n}(\textcolor{blue}{n}+1)(\textcolor{blue}{n}+2)}{3} = \frac{\textcolor{blue}{1}(\textcolor{blue}{1}+1)(\textcolor{blue}{1}+2)}{3} = \frac{1\cdot 2\cdot \cancel{3}}{\cancel{3}} = 2 \)</p>
     <p>Thus the statement is true for \( \textcolor{blue}{n=1}\).</p>
 
-    <p>Next, assume that \( \displaystyle \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \) for some n. We know it is true for n=1; it might be true for other values of n as well. We'd like to show that \( \displaystyle \sum_{r=1}^{n+1} r(r+1) = \frac{(n+1)(n+2)(n+3)}{3} \). </p>
+    <p><b>Step 2, assume that \( \displaystyle \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \) for some n. We know it is true for n=1; it might be true for other values of n as well. We'd like to show that \( \displaystyle \sum_{r=1}^{n+1} r(r+1) = \frac{(n+1)(n+2)(n+3)}{3} \)</b>. </p>
     <p>\[ \begin{aligned} \sum_{r=1}^{n+1} r(r+1) &= \sum_{r=1}^n r(r+1) + (n+1)((n+1)+1)\\
                                                   &= \frac{n(n+1)(n+2)}{3} + (n+1)(n+2) \\
                                                   &= \frac{(n+1)(n+2)}{3} \cdot (n + 3) \\
                                                   &= \frac{(n+1)(n+2)(n+3)}{3} 
           \end{aligned} \]</p>
     
-    <p>Thus, </p>
+    <p>Thus, the statement is true for n=1, and is true for n+1=2, and true for n=3, and 4, and ...</p>
+
+    <h1>Proof of a statement related to Divisibility using Induction</h1>
+    <p> Another person made another bold claim: </p>
+    <p> The value of \( \displaystyle 3^{2n} + 11 \) calculated at any (positive integer) n is a whole number that is divisible by 4.</p>
+    <p> (Dropdown: If you have learned modular arithmetic, there is an easy proof. \[ 3^{2n} + 11 \pmod{4} = (-1)^{2n} + 11 - 12 \pmod{4} = 1 + 11 - 12 \pmod{4} = 0 \pmod{4} \] ) </p>
+    
+    <p><b> Step 1. Check the statement is true for \textcolor{blue}{n=1}.</b></p>
+    <p> \[ \displaystyle 3^{2\textcolor{blue}{n}} + 11 = 3^{2 \textcolor{blue}{1}} + 11 = 3^2 + 11 = 9 + 11 = 20 = 4 \cdot 5\] </p>
+    <p>Thus, \( \displaystyle 3^{2n} + 11\) is divisible by 4 when \textcolor{blue}{n=1}. So the statement is true for \textcolor{blue}{n=1}</p>
+    <p></p>
   </body>
 </html>
