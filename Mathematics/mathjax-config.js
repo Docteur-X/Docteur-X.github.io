@@ -1,5 +1,5 @@
 window.MathJax = {
   tex: {
-    packages: { '[+]': ['physics'] }
+    packages: { '[+]': ['cancel', 'physics'] }
   }
 };
