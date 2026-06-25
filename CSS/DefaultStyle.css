@@ -2,7 +2,6 @@ body {
   background-image: url(/CSS/paper_background.png);
   background-size: cover;
   background-repeat: repeat-y;
-  background-attachment: fixed;
   min-height: 100vh; 
   margin: 0;
 }
