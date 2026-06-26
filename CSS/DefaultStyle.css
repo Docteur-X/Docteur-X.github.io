@@ -3,6 +3,25 @@ body {
   background-size: auto;
   background-repeat: repeat-y;
   background-attachment: fixed;
-  width: 100vh; 
-  margin: 0;
+  width: 100vw;
+  text-align: center;
+}
+
+.headers{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+p{ 
+  font-family: 'Lora', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+/* Page-specific paragraph styles for proof-by-induction.html */
+.proof-induction p {
+  max-width: 90ch;
+  margin: 0.6em auto;
+  text-align: left;
+  line-height: 1.65;
+  font-size: 1.05rem;
+  color: #222;
+  padding: 0.35em 0.6em;
+  border-radius: 4px;
 }

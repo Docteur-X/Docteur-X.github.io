@@ -3,7 +3,7 @@
   
   <head>
     <title>Proof by Induction</title>
-    <link rel="stylesheet" href="/CSS/DefaultStyle.css">
+    <link rel="stylesheet" href="../CSS/DefaultStyle.css">
 
     <script src="/JS/mathjax-config.js"></script>
     <script 
@@ -15,9 +15,9 @@
     
   </head>
   
-  <body>
+  <body class="proof-induction">
   
-    <h1>Proof by Induction</h1>
+    <h1 class="headers">Proof by Induction</h1>
     <p>Someone made a bold claim. For any value of n, they say that the below statement is correct.</p>
     <p> \[ \sum_{r=1}^n r^3 = \frac{1}{4}n^2(n+1)^2 \] </p>
     <p>(In a clickable dropdown for the sum) \[ \sum_{r=1}^n r^3 \] means \[ 1^3 + 2^3 + 3^3 + \dots + n^3 \]. Add ref link to topic on summation. </p>
@@ -30,7 +30,7 @@
     <p>So the statement is correct for \( \textcolor{orange}{n=2} \).</p>
     <p>We can also check that the statement is correct for n=3. And to check if the statement is correct for n=4, we again substitute n=4 into the equation and see if the left-hand side equals the right-hand side. We might enlist some slaves to help us tediously check if the statement is true for n=5, n=6, n=7, ... or we can use some cleverer method.</p>
     
-    <h2>A Better Way</h2>
+    <h2 class="headers">A Better Way</h2>
 
     <p>I've shown that the statement is true for \( \textcolor{orange}{n=2} \). I don't yet know if the statement is correct for \( \textcolor{green}{n=3} = \textcolor{2} + 1 \). Can I use the statement at \( \textcolor{orange}{n=2} \) to show that the statement is true at \( \textcolor{green}{n=3} \)?</p>
     <p> \[ \sum_{r=1}^\textcolor{green}{3} r^3 \overset{?}{=} \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 \] </p>
@@ -77,11 +77,11 @@
     <p>So, because the statement is correct for n=4, it is correct for n=4+1=5, and correct for n=5+1=6, and correct for n=6+1=7, and correct for n=8, and n=9, and ...</p>
     <p>So the statement is correct for every positive integer.</p>
     <p>To recap, we need to check that the statement is correct for \( \textcolor{blue}{n=1}\). Then the statement is correct if n=1. Use algebra to show that if the statement is true for n=1, the statement is also true for n+1=2. The same algebra says that if the statement is true for n=2, the statement is also true for n+1=3. And if the statement is true for n=3, it's true for n=4, and then n=5, and n=6, and ... This means that the statement is true for n=1,2,3,4,... which is what we want to show.  </p>
-    <h2>Another Summation Example</h2>
+    <h2 class="headers">Another Summation Example</h2>
     <p>Someone else made another bold claim. They claim that the following statement is true for every positive integer n:</p>
     <p> \[ \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \] </p>
     <p> Let's apply the above procedure. </p>
-    <p><b> Step 1. Check the statement is true for \textcolor{blue}{n=1}.</b></p>
+    <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1} \).</b></p>
     <p>LHS: \( \displaystyle \sum_{r=1}^\textcolor{blue}{n} r(r+1) = \sum_{r=1}^\textcolor{blue}{1} r(r+1) = \textcolor{blue}{1} \cdot (\textcolor{blue}{1} + 1) = 1 \cdot 2 = 2\) </p>
     <p>RHS: \( \displaystyle \frac{\textcolor{blue}{n}(\textcolor{blue}{n}+1)(\textcolor{blue}{n}+2)}{3} = \frac{\textcolor{blue}{1}(\textcolor{blue}{1}+1)(\textcolor{blue}{1}+2)}{3} = \frac{1\cdot 2\cdot \cancel{3}}{\cancel{3}} = 2 \)</p>
     <p>Thus the statement is true for \( \textcolor{blue}{n=1}\).</p>
@@ -95,14 +95,14 @@
     
     <p>Thus, the statement is true for n=1, and is true for n+1=2, and true for n=3, and 4, and ...</p>
 
-    <h1>Proof of a statement related to Divisibility using Induction</h1>
+    <h1 class="headers">Proof of a statement related to Divisibility using Induction</h1>
     <p> Another person made another bold claim: </p>
     <p> The value of \( \displaystyle 3^{2n} + 11 \) calculated at any (positive integer) n is a whole number that is divisible by 4.</p>
-    <p> (Dropdown: If you have learned modular arithmetic, there is an easy proof. \[ 3^{2n} + 11 \pmod{4} = (-1)^{2n} + 11 - 12 \pmod{4} = 1 + 11 - 12 \pmod{4} = 0 \pmod{4} \] ) </p>
+    <p> (Dropdown: If you have learned modular arithmetic, there is an easy proof.) \[ 3^{2n} + 11 \pmod{4} = (-1)^{2n} + 11 - 12 \pmod{4} = 1 + 11 - 12 \pmod{4} = 0 \pmod{4} \] </p>
     
-    <p><b> Step 1. Check the statement is true for \textcolor{blue}{n=1}.</b></p>
+    <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\).</b></p>
     <p> \[ \displaystyle 3^{2\textcolor{blue}{n}} + 11 = 3^{2 \textcolor{blue}{1}} + 11 = 3^2 + 11 = 9 + 11 = 20 = 4 \cdot 5\] </p>
-    <p>Thus, \( \displaystyle 3^{2n} + 11\) is divisible by 4 when \textcolor{blue}{n=1}. So the statement is true for \textcolor{blue}{n=1}</p>
+    <p>Thus, \( \displaystyle 3^{2n} + 11\) is divisible by 4 when \( \textcolor{blue}{n=1}\). So the statement is true for \( \textcolor{blue}{n=1}\)</p>
     <p></p>
   </body>
 </html>
