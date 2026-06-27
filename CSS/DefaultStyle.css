@@ -11,7 +11,19 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 p{ 
-  font-family: 'Lora', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: 
+  "Century Schoolbook",
+  "Libre Baskerville",
+  "New Century Schoolbook",
+  "Bookman Old Style",
+  Bookman,
+  Georgia, 
+  'Lora', 
+  'Lucida Sans Unicode', 
+  'Lucida Grande',
+  'Lucida Sans', 
+  Arial, 
+  sans-serif;
 }
 
 /* Page-specific paragraph styles for proof-by-induction.html */
