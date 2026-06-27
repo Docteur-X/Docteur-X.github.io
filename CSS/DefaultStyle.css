@@ -24,10 +24,7 @@ p{
   'Lucida Sans', 
   Arial, 
   sans-serif;
-}
 
-/* Page-specific paragraph styles for proof-by-induction.html */
-.proof-induction p {
   max-width: 90ch;
   margin: 0.6em auto;
   text-align: left;
