@@ -1,7 +1,7 @@
 body {
   background-image: url(/CSS/paper_background.png);
   background-size: auto;
-  background-repeat: repeat-y;
+  background-repeat: repeat;
   background-attachment: fixed;
   width: 100vw;
   text-align: center;
