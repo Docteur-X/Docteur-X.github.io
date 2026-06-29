@@ -1,5 +1,7 @@
 window.MathJax = {
   tex: {
-    packages: { '[+]': ['cancel', 'physics'] }
+    packages: { '[+]': ['cancel', 'physics', 'ams'] },
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
   }
 };
