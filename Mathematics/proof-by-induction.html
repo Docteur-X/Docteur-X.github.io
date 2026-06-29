@@ -19,12 +19,13 @@
   
     <h1 class="headers">Proof by Induction</h1>
     <h3>Method</h3>
-    <p>A statement is a sentence that can be true or false. Some examples of statements are :</p>
-    <p>Some statements allow you to input  depends on P(n)</p>
-    
-    <p>One has a statement \( \textcolor{purple}{P}(n) \) that is to be checked if it is true at \(n=\textcolor{blue}{1},\textcolor{orange}{2},\textcolor{green}{3},\dots\) </p> 
+    <p>A statement is basically a sentence that can be true or false. It need not be a sentence, it might be an equation or a theorem or a fact, but most importantly it is something objective that must be true or false.</p>
+    <p>Some examples of statements are: "My house is blue", "It is raining right now", "I have 10 dollars in my pocket". "3 plus 2 is 5" is a true statement, while "3 plus 2 is 6" is a false statement.</p>
+    <p>Here are some statements that depend on n. "n is an even number" depends on what is n. The statement is true for some n such as n=2 and n=6, and false for some n such as n=1 and n=3. We sometimes abbreviate this statement into P(n). Also, another notation, P(n=3) (or P(3)) represents the statement when n=1; it might be true, it might be false.</p>
+
+    <p>In this website, one starts with a statement \( \textcolor{purple}{P}(n) \). We want to check if it is true at \(n=\textcolor{blue}{1},\textcolor{orange}{2},\textcolor{green}{3},\dots\) </p> 
     <p>To do this, first check that \(\textcolor{purple}{P}(\textcolor{blue}{1})\) is true. </p>
-    <p>Then, by using a placeholder letter/variable \( k \) that can stand for any positive whole number, show that if \( \textcolor{purple}{P}(k) \) is true, then \( \textcolor{purple}{P}(k+1) \) is true for all \( k \in \mathcal{Z} \). </p>
+    <p>Then, by using a placeholder letter/variable \( k \) that can stand for any positive whole number, show that if \( \textcolor{purple}{P}(k) \) is true, then \( \textcolor{purple}{P}(k+1) \) is true for all \( k \in \mathbb{Z} \). </p>
     <p>So let \( k=1 \), and if \( P(1) \) is true (which it is), then \( P(2) \) is true. Let k=2, so if \( P(2) \) is true, then \( P(3) \) is true. Let k=3, and if \( P(3) \) is true, so is \( P(4) \). If we kept on going, we get that \( P(n) \) is true for n=1,2,3,4... which is what we want to check for.</p>
     
     <h3>Examples to Convince You that it Works</h3>
