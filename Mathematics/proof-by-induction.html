@@ -125,9 +125,14 @@
     <p>Then you can argue that because \( P(1) \) is true, then \( P(2) \) is true. If \( P(2) \) is true, then \( P(3) \) is true. If \( P(3) \) is true, then \( P(4) \) is true. And so on.</p>
 
     <h1>Proof of a Statement related to Matrices using Induction</h1>
-    <p> <strong> \[ \begin{matrix} 3 & -4 \\ 1 & -1 \\ \end{matrix}^n = \begin{matrix} 2n+1 & -4n \\ n & 1-2n \\ \end{matrix} \] is true for all positive integers n. </strong> </p>
+    <p> <strong> \[ \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \] is true for all positive integers n. </strong> </p>
 
-    <p> <b> Step 1. </b> </p>
+    <p> <b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\). </b> </p>
+    <p> LHS = \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} ^ \textcolor{blue}{1} \) </p>
+    <p> RHS = \( \displaystyle \begin{pmatrix} 2 \textcolor{blue}{n} + 1 & - 4 \textcolor{blue}{n} \\ \textcolor{blue}{n} & 1-2 \textcolor{blue}{n} \\ \end{pmatrix} = \begin{pmatrix} 2 \cdot \textcolor{blue}{1} + 1 & - 4 \cdot \textcolor{blue}{1} \\ \textcolor{blue}{1} & 1-2 \cdot \textcolor{blue}{1} \\ \end{pmatrix} = \begin{pmatrix} 3 & - 4 \\ 1 & -1 \\ \end{pmatrix} \) </p>
+
+    <p> <b> Step 2. Show that if \( P(n) \) is true, then \( P(n+1) \) is true. </b> </p>
+    <p></p>
 
     
   </body>
