@@ -23,14 +23,18 @@
   <h1>What are Complex Numbers?</h1>
   <p>We pretend that there is a number called \( i \) so that \( i^2 = i \cdot i = -1 \). </p> 
   <p>No real number has such a property, because if \( x \) is a real number, \( x \cdot x \geq 0 \). For example, if \( i = -1 \), then \( i^2 = -1 \cdot -1 = 1 \), which is just wrong, so \( i \neq -1 \). If \( i=-2 \), \( i^2 = -2 \cdot -2 = 4 \) is also wrong. So \( i \neq -1 \), \( i\ \neq -2 \), and hopefully you can see that \( i \neq 2, i \neq 0, i \neq -4.5, i \neq \pi , \) and \( i \neq \) any real number. </p>
-  <p>If \(i\) couldn't be any real number, you may insist that it doesn't exist. Let's pretend it does exist and see if we break things or we get a new, noncontradictory number system.</p>
+  <p>If \(i\) couldn't be any real number, you may insist that it doesn't exist. Let's pretend it does exist as a different kind of 'imaginary' number. Somehow by doing this, we don't break any old maths, but we get a new, self-consistent number system of real numbers and imaginary numbers and a mix of them called complex numbers.</p>
   <p>There are 4 things you can do with numbers: you can add 2 numbers together, you can subtract one number from another, you can multiply numbers together, and you can divide a number by another number that isn't 0. \( i \neq 0 \) so we can divide numbers by \(i\). </p>
-  <p>The rules are exactly the same as the real numbers you're familiar with. Any complex number can be written like this: (real number)+(real number)\( \cdot i\). The only extra rule in complex numbers is \( i^2 = i \cdot i = -1 \). </p>
-  <p> If you want the rules to be written out explicitly, here they are.</p>
-    <p> \[ (a+ib) + (c+id) = a + ib + c + id = a+c + ib + id = (a + c) + i(b+d) \] </p>
-    <p> \[ (a+ib) - (c+id) = \] </p>
-    <p> \[ (a+ib)(c+id) = \] </p>
-    <p> \[ (a+ib) / (c+id) = \] </p>
+  <p>The rules are exactly the same as the real numbers you're familiar with. Look through the algebra rules in "algebra-summary.html", and the rules for complex numbers are exactly the same.</p>
+  <p>Any complex number can be written like this: (real number) + (real number)\( \cdot i\). The only extra rule in complex numbers is that \( i^2 = i \cdot i = -1 \). </p>
+  <p> If you want the rules to be written out explicitly, here they are:</p>
+    <p> \[ (a+ib) + (c+id) = a + i \cdot b + c + i \cdot d = a+c + i \cdot b + i \cdot d = (a + c) + i \cdot (b+d) \] </p>
+    <p> \[ (a+ib) - (c+id) = (a+i \cdot b) + (-1) \cdot (c + i \cdot d) = ( a+ib ) + ( - c - i d ) = a + i b - c - i d = a - c + i b - i d = (a-c) + i (b-d) \] </p>
+    <p> \[ (a+ib)(c+id) = a \cdot (c+id) + i\cdot b \cdot (c+id) = a \cdot c + a \cdot i d + i \cdot b \cdot c + ib \cdot id = ac + iad + i bc + \cancel{i^2}{-1} \cdot bd = ac - bd + i(ad + bc) \] </p>
+    <p>Dividing by complex numbers is a little trickier. Use difference of two squares to help change the denominator into a real number. </p>
+    <p> \[ \frac{a+ib}{c+id} = (a+ib) \cdot \frac{ 1 }{c + id} = (a+ib) \cdot \frac{c - id}{ (c+id) (c-id) } = (a+ib) \cdot \frac{ c - id }{c^2 + } \] </p>
+
+    <p>  </p>
   
   </body>
 </html>
