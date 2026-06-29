@@ -96,20 +96,28 @@
     <p>\[ \begin{aligned} \sum_{r=1}^{\textcolor{purple}{n+1}} r(r+1) &= \sum_{r=1}^\textcolor{brown}{n} r(r+1) + (\textcolor{purple}{n+1})((\textcolor{purple}{n+1})+1)                  & \textcolor{gray}{ \text{Split off the last term from the summation} } \\
                                                   &= \frac{\textcolor{brown}{n}(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)}{3} + (\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)    & \textcolor{gray}{ \text{Use statement at } } \textcolor{brown}{n} \\
                                                   &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)}{3} \cdot (\textcolor{brown}{n} + 3)                                          & \textcolor{gray}{ \text{Factor out } \frac{(n+1)(n+2)}{3} } \\
-                                                  &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)(\textcolor{brown}{n}+3)}{3}                                                   & \textcolor{gray}{ Rearrange the factors that're multiplied together } \\
+                                                  &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)(\textcolor{brown}{n}+3)}{3}                                                   & \textcolor{gray}{ \text{Rearrange the factors that're multiplied together} } \\
                                                   &= \frac{(\textcolor{purple}{n+1})(\textcolor{purple}{n+1}+1)(\textcolor{purple}{n+1}+2)}{3}                                            & \textcolor{gray}{  } \\
           \end{aligned} \]</p>
     
-    <p>Thus, the statement is true for \textcolor{blue}{n=1}, and is true for \textcolor{orange}{n=2}, and true for \textcolor{green}{n=3}, and \textcolor{red}{n=4}, and ...</p>
+    <p>Thus, the statement is true for \( \textcolor{blue}{n=1} \), and is true for \( \textcolor{orange}{n=2} \), and true for \( \textcolor{green}{n=3} \), and \( \textcolor{red}{n=4} \), and ...</p>
 
     <h1 class="headers">Proof of a statement related to Divisibility using Induction</h1>
     <p> Another person made another bold claim: </p>
-    <p> The value of \( \displaystyle 3^{2n} + 11 \) calculated at any (positive integer) n is a whole number that is divisible by 4.</p>
+    <p> <strong> "The value of \( \displaystyle 3^{2n} + 11 \) calculated at any (positive integer) \(n\) is a whole number that is divisible by 4." </strong> </p>
     <p> (Dropdown: If you have learned modular arithmetic, there is an easy proof.) \[ 3^{2n} + 11 \pmod{4} = (-1)^{2n} + 11 - 12 \pmod{4} = 1 + 11 - 12 \pmod{4} = 0 \pmod{4} \] </p>
     
     <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\).</b></p>
     <p> \[ \displaystyle 3^{2\textcolor{blue}{n}} + 11 = 3^{2 \textcolor{blue}{1}} + 11 = 3^2 + 11 = 9 + 11 = 20 = 4 \cdot 5\] </p>
     <p>Thus, \( \displaystyle 3^{2n} + 11\) is divisible by 4 when \( \textcolor{blue}{n=1}\). So the statement is true for \( \textcolor{blue}{n=1}\)</p>
-    <p></p>
+    
+    <p><b> Step 2. Show that if the statement is true at \(n\) (i.e. \( P(n) \) is true), then the statement is true at \( n+1 \) (i.e. \( P(n+1) \) is true).</b></p>
+    <p> \[ \begin{align} 3^{2(n+1)} + 11 &= 3^{2n+2} + 11 \\
+                                         &= 3^{2n} \cdot 3^2 + 11 \\
+                                         &= 3^{2n} \cdot 9 + 11 \\
+                                         &= 3^{2n} \cdot (8 + 1) + 11 \\
+                                         &= 3^{2n} \cdot 8 + 3^{2n} + 11 \\
+                                         &= \underbrace{ (3^{2n} \cdot 2) cdot 4 }_\text{Multiple of 4} + \underbrace{(3^{2n} + 11)}_\text{Multiple of 4} \\
+           \end{align} \] </p>
   </body>
 </html>
