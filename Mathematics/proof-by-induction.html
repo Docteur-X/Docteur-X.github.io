@@ -126,17 +126,20 @@
 
     <h1>Proof of a Statement related to Matrices using Induction</h1>
     <p> <strong> \[ \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \] is true for all positive integers n. </strong> </p>
+    <p> \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \underbrace{\begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \dots \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}}_{n \text{ times}} \) in case you're wondering.</p>
 
     <p> <b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\). </b> </p>
     <p> LHS = \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} ^ \textcolor{blue}{1} \) </p>
     <p> RHS = \( \displaystyle \begin{pmatrix} 2 \textcolor{blue}{n} + 1 & - 4 \textcolor{blue}{n} \\ \textcolor{blue}{n} & 1-2 \textcolor{blue}{n} \\ \end{pmatrix} = \begin{pmatrix} 2 \cdot \textcolor{blue}{1} + 1 & - 4 \cdot \textcolor{blue}{1} \\ \textcolor{blue}{1} & 1-2 \cdot \textcolor{blue}{1} \\ \end{pmatrix} = \begin{pmatrix} 3 & - 4 \\ 1 & -1 \\ \end{pmatrix} \) </p>
 
     <p> <b> Step 2. Show that if \( P(n) \) is true, then \( P(n+1) \) is true. </b> </p>
-    <p> \[ \begin{align} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n+1} &= \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}  \\
+    <p> \[ \begin{align} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n+1} &= \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \\
+                                                                                 &= \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}  \\
                                                                                  &= \begin{pmatrix} (2n+1) \cdot 3 + (-4n) \cdot 1 & (2n+1) \cdot -4 + (-4n) \cdot -1 \\ n \cdot 3 + (1-2n) \cdot 1 & n \cdot -4 + (1-2n) \cdot -1 \end{pmatrix} \\
-                                                                                 &= \begin{pmatrix} 6n + 1- 4n & -8n - 4 + 4 \\ 3n + 1 - 2n & -4n - 1 + 2n \end{pmatrix} \\
-                                                                                 &= \begin{pmatrix}  \end{pmatrix} \\
+                                                                                 &= \begin{pmatrix} 6n + 1 - 4n & -8n - 4 + 4n \\ 3n + 1 - 2n & -4n - 1 + 2n \end{pmatrix} \\
+                                                                                 &= \begin{pmatrix} 2n+1 & -4n - 4 \\ n + 1 & - 2n - 1 \end{pmatrix} \\
            \end{align} \] </p>
+    <p> Is this equal to \( \displaystyle \) ? </p>
     
   </body>
 </html>
