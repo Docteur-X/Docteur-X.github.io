@@ -40,16 +40,21 @@
     <p>Now, if this is all you need, you can go your merry way.</p>
 
     <h2> How do I remember this Doctor X? The formula is too insane to memorise. </h2>
-    <p> This is how I do it to minimise brainpower, improve readability, and increase robustness to algebraic errors. Very sigma moves.</p>
+    <p> This is how I do it to minimise brainpower, improve readability, and increase robustness to algebraic errors. </p>
     <p> We start with a quadratic expression \( a x^2 + b x + \textcolor{gray}{c} \). We'd like to turn it into something like \( p (x + q)^2 + k \). </p>
-    <p> <b>1.</b> [[This paragraph may be too distracting. Include or not?]] The \( + \textcolor{gray}{c} \) bit can just go directly to the \( + k \). It won't change during the process of completing the square. This bulletpoint is just meta to tell you that you don't need to keep checking whether something is happening to \(+ \textcolor{gray}{c} \). Now you have more mental capacity to pay attention to the terms that will actually change, which is the \( x \) term and the \( x^2 \) term. But anyways. </p>
-    <p> <b>2.</b> Factor out \( a \) from the first two terms. \[ \textcolor{orange}{a} ( x^2 + \frac{\textcolor{green}{b}}{\textcolor{orange}{a}} x ) + \textcolor{gray}{c} \] </p>
-    <p> <b>3.</b> Now pay attention to the insides \( \displaystyle x^2 + \frac{\textcolor{green}{b}}{\textcolor{orange}{a}} x \). This is where I pull an equation out of my ass and obtain the \( (x+q)^2 \). </p>
+    <p> <b>1.</b> Factor out \( a \) from the first two terms. \[ \textcolor{orange}{a} ( x^2 + \frac{\textcolor{green}{b}}{\textcolor{orange}{a}} x ) + \textcolor{gray}{c} \] </p>
+    <p> <b>2.</b> Now pay attention to the insides \( \displaystyle x^2 + \frac{\textcolor{green}{b}}{\textcolor{orange}{a}} x \). This is where I pull an equation out of my ass and obtain the \( (x+q)^2 \). </p>
     <p> \[ \begin{align} (x + \frac{b}{2a})^2 &= x^2 + \frac{b}{a}x + \frac{b^2}{4a^2} \\ 
             (x + \frac{b}{2a})^2 - \frac{b^2}{4a^2} &= x^2 + \frac{b}{a}x \\ 
            \end{align} \] </p>
     <p> If you're familiar with \( (x+y)^2 = x^2 + 2 x y + y^2 \), that's basically what I used. On the right hand side, I have the \( x^2 \) already, while \( 2 y x \) should equal \( \frac{b}{a} x \), which means I made a choice for \( 2 y = \frac{b}{a} \). </p>
-    <p> <b>4. </b> Finally, substitute the \( (x+q)^2 \) form. </p>
+    <p> <b>4. </b> Finally, substitute the \( (x+q)^2 \) form. 
+      \[ \begin{align} \textcolor{orange}{a} ( x^2 + \frac{\textcolor{green}{b}}{\textcolor{orange}{a}} x ) + \textcolor{gray}{c} &= \textcolor{orange}{a} \right( (x + \frac{\textcolor{green}{b}}{2 \textcolor{orange}{a}} )^2 - \frac{\textcolor{green}{b^2}}{4 \textcolor{orange}{a^2}} \left) + \textcolor{gray}{c} \\ 
+                                                                                                                                  &= \textcolor{orange}{a} \right( x + \frac{\textcolor{green}{b}}{2 \textcolor{orange}{a}} \left)^2 - \textcolor{orange}{a} \cdot \frac{\textcolor{green}{b^2}}{4 \textcolor{orange}{a^2}} + \textcolor{gray}{c} \\
+         \end{align} \] 
+    </p>
+
+    <p> (Add example here.) </p>
   </body>
   
 </html>
