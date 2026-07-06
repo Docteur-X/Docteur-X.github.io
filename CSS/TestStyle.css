@@ -1,0 +1,9 @@
+.hover-box{
+    border:2px solid transparent;
+    transition:.3s;
+}
+
+.hover-box:hover{
+    border-color:#3fa9ff;
+    box-shadow:0 0 12px rgba(63,169,255,.7);
+}
