@@ -10,6 +10,7 @@ body {
 .headers{
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 p{ 
   font-family: 
   "Century Schoolbook",
@@ -35,5 +36,13 @@ p{
   padding: 0.35em 0.6em;
   border-radius: 4px;
   letter-spacing: 0;
+}
 
+.hover-box{
+    border:2px solid transparent;
+    transition:.3s;
+}
+.hover-box:hover{
+    border-color:#3fa9ff;
+    box-shadow:0 0 12px rgba(63,169,255,.7);
 }
