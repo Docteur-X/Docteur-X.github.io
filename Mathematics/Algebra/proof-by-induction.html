@@ -67,7 +67,7 @@
     <p> Thus, \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true, i.e. the statement is correct for \( \textcolor{green}{n+1=3} \). We've used the fact that the statement is true for \( \textcolor{orange}{n=2} \) in line 2.</p>
     <p> \[ \sum_{r=1}^\textcolor{green}{n+1} r^3 = \sum_{r=1}^\textcolor{green}{3} r^3 = \frac{1}{4} \cdot \textcolor{green}{n+1}^2 \cdot (\textcolor{green}{n+1}+1)^2 = \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 \] </p>
     
-    <detail>
+    <details>
       <summary class="hover-box"><p>(If you'd like to see the algebra in numbers, click on this collapsible!)</p></summary>
       <p> \[ \begin{aligned} \text{LHS} = \sum_{r=1}^\textcolor{green}{3} r^3 &= \sum_{r=1}^\textcolor{orange}{2} r^3 + \textcolor{green}{3}^3                                                       & \textcolor{gray}{\text{Split off the last term from the summation}} \\
                                                                   &= \frac{1}{4} \cdot \textcolor{orange}{2}^2 \cdot (\textcolor{orange}{2}+1)^2 + (\textcolor{orange}{2}+1)^3             & \textcolor{gray}{\text{Use statement at } n=2; \text{3 = 2+1}} \\
@@ -78,9 +78,10 @@
                                                                   &= \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3} + 1)^2                                         & \textcolor{gray}{3 = 2+1} \\
                                                                   &= \text{RHS} & \\
            \end{aligned} \] </p>
-    </detail>
+    </details>
 
-    <p>I'm going to spoil the story here a little bit. We now know that \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true. What if you start from the beginning of this subsection, but instead of using \( \textcolor{orange}{n=2} \), we use \( \textcolor{green}{n=3} \)?  </p>
+    <p>To recap, if we know that \( \textcolor{purple}{P}(\textcolor{brown}{n}) \) is true, (i.e. \( \sum_{r=1}^\textcolor{brown}{n} r^3 = \frac{1}{4}\textcolor{brown}{n}^2(\textcolor{brown}{n}+1)^2 \) is true), do the above algebra and you get that \( \textcolor{purple}{P}(\textcolor{maroon}{n+1}) \) is also true (i.e. \( \sum_{r=1}^\textcolor{brown}{n+1} r^3 = \frac{1}{4}\textcolor{brown}{n+1}^2(\textcolor{brown}{n+1}+1)^2 \)). </p>
+    <p>We now know that \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true. What if you start from the beginning of this subsection, but instead of using \( \textcolor{orange}{n=2} \), we use \( \textcolor{green}{n=3} \)? The same argument applies. </p>
     
     <p> Is the statement correct for \( \textcolor{red}{n=4} \)? </p>
     <p> \[ \sum_{r=1}^\textcolor{red}{4} r^3 \overset{?}{=} \frac{1}{4} \cdot \textcolor{red}{4}^2 \cdot (\textcolor{red}{4}+1)^2 \] </p>
