@@ -1,176 +1,263 @@
 <!DOCTYPE html>
 <html>
-  
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Proof by Induction</title>
-    <link rel="stylesheet" href="/CSS/DefaultStyle.css">
+    <link rel="stylesheet" href="/CSS/TerminalUITheme.css">
 
     <script src="/JS/mathjax-config.js"></script>
-    <script 
+    <script
       id="MathJax-script"
       async
       type="text/javascript"
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
     </script>
-    
   </head>
-  
+
   <body class="proof-induction">
-  
-    <h1 class="headers">Proof by Induction</h1>
-    <h3 class="headers">Method</h3>
-    <details>
-      <summary class="hover-box"><p>A statement is basically a sentence that is either <b>true</b> or <b>false</b>. It might be a sentence, or an equation or a theorem or a fact, but it must be something objective that is definitively true or false. (Click for some examples.)</p></summary>
-      <p>Some examples of statements are: "My house is blue", "It is raining right now", "I have 10 dollars in my pocket". They are objectively either true or false. "3 plus 2 is 5" is a true statement, while "3 plus 2 is 6" is a false statement. [See the website on logic for more explanations of statements.]</p>
-    </details>
-    <p>Here are some statements that depend on a variable \(n\). "\(n\) is an even number" depends on what \(n\) is. This statement is true when \(n=2\) or \(n=4\) or \( n=6 \), and false when \(n=1\) or \(n=3\). We might abbreviate "\(n\) is an even number" into \( \textcolor{purple}{P}(n) \), so we don't have to keep on copying a long sentence again and again. Also, another notation, \( \textcolor{purple}{P}(n=3) \) or \( \textcolor{purple}{P}(3) \) represents the statement when \(n=3\), which is "\(n=3\) is an even number", which is a false statement. So, \( \textcolor{purple}{P}(3) \) is false. </p>
-    <p>In this website, one starts with a statement \( \textcolor{purple}{P}(n) \). Maybe we do a maths check and found out that \( \textcolor{purple}{P}(n) \) is true at \(n=\textcolor{blue}{1},\textcolor{orange}{2},\text{ and } \textcolor{green}{3}\), and we suspect that \( \textcolor{purple}{P}(n) \) is true for any whole number \( n \).</p> 
-    <p>There's a slick way to do this. First check that \(\textcolor{purple}{P}(\textcolor{blue}{1})\) is true. </p>
-    <p>We then do a separate calculation. Use a placeholder letter \( k \) that can stand for any positive whole number. We then hope to show that if \( \textcolor{purple}{P}(k) \) is true, then \( \textcolor{purple}{P}(k+1) \) is true for all \( k = 1,2,3,\dots \). This part is the main trick. Let's pretend we've done it. </p>
-    <p>So, if \( \textcolor{purple}{P}(k=1) \) is true (which it is), then \( \textcolor{purple}{P}(k+1=2) \) is true. If \( \textcolor{purple}{P}(k=2) \) is true (which is also true because of the previous explanation), then \( \textcolor{purple}{P}(k+1=3) \) is true. If \( \textcolor{purple}{P}(k=3) \) is true, so is \( \textcolor{purple}{P}(k+1=4) \). If we keep on going, we get that \( \textcolor{purple}{P}(n) \) is true for \(n=1,2,3,\dots\) which is what we want to check for.</p>
-    
-    <h3>Examples to Convince You that it Works</h3>
-    <p>Someone made a bold claim. For any number n, they say that the below statement is correct.</p>
-    <details>
-      <summary><p class="hover-box"> \[ \sum_{r=1}^n r^3 = \frac{1}{4}n^2(n+1)^2 \] </p></summary>
-      <p >(In a clickable dropdown for the sum) \[ \sum_{r=1}^n r^3 \] means \[ 1^3 + 2^3 + 3^3 + \dots + n^3 \]. Add ref link to topic on summation. </p>
-    </details>
-    <p>We don't know if the equation is correct or not for different values of \(n\). I'll use \( \textcolor{purple}{P}(n) \) as a shorthand to refer to whether the above equation is true or false at that particular value of \(n\). For example, if the equation is correct for \( \textcolor{green}{n=3} \), \( \textcolor{purple}{P}(\textcolor{green}{3})\) will output "TRUE", while if the equation is incorrect for \( \textcolor{green}{n=3} \), \( \textcolor{purple}{P}(\textcolor{green}{3}) \) will output "FALSE". </p>
-    <details>
-      <summary><p class="hover-box">Is the statement correct for \( \textcolor{blue}{n=1} \)? If you calculate the left-hand side and the right-hand side for \( \textcolor{blue}{n=1} \), you'll get that LHS=1=RHS, so the statement is correct for \( \textcolor{blue}{n=1} \). </p></summary>
-      <p>The skills needed to evaluate the left-hand side are just knowing what summation means and some arithmetics. The right-hand side is even easier, just plug in \( \textcolor{blue}{n=1} \) and calculate.</p>
-      <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{blue}{n}} r^3 = \sum_{r=1}^\textcolor{blue}{1} r^3 = 1^3 = 1 \) </p>
-      <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{blue}{n}^2(\textcolor{blue}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{blue}{1}^2 \cdot (\textcolor{blue}{1}+1)^2 = \frac{1}{4} \cdot 1 \cdot 2^2 = \frac{1}{4} \cdot 4 = 1 \) </p>
-    </details>
+    <div class="terminal-docs-shell">
+      <aside class="terminal-docs-sidebar" aria-label="Lesson navigation sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-kicker">Topic map</span>
+          <h2>Algebra</h2>
+        </div>
 
-    <details>
-      <summary class="hover-box"><p> Is it correct for \( \textcolor{orange}{n=2} \)? If you calculate the left-hand side and the right-hand side for \( \textcolor{orange}{n=2} \), you'll get that LHS=9=RHS, so the statement is correct for \( \textcolor{orange}{n=2} \). </p></summary>
-      <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{orange}{n}} r^3 = \sum_{r=2}^\textcolor{orange}{1} r^3 = 1^3 + 2^3 = 1 + 8 = 9 \) </p>
-      <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{orange}{2}^2 \cdot (\textcolor{orange}{2}+1)^2 = \frac{1}{4} \cdot 2^2 \cdot 3^2 = \frac{1}{4} \cdot 4 \cdot 9 = 9 \) </p>
-    </details>
-    
-    <p>We can also check that the statement is correct for \( \textcolor{green}{n=3} \), and \( \textcolor{red}{n=4} \). We might enlist some slaves to help us tediously check if the statement is true for \(n=5, n=6, n=7, \dots\) but you will need to manually check the equation for each number.</p>
-    
-    <h2 class="headers">A Way to Calculate the Correctness of \( \textcolor{purple}{P}(n) \) for Every Whole Number \(n\) without Calculating for Every Number, which is why we learn Proof by Induction</h2>
-    <p>I'm going to let \( \textcolor{orange}{n=2} \) in the below discussion, until I say I'm changing it to \( \textcolor{green}{n=3} \) later. The orange and green color doesn't change the fact that \( n=2 \). The colors are there so that you associate orange with \( \textcolor{orange}{n=2} \) and green associates with \( \textcolor{green}{n+1=3} \) in this specific example. I used \( n \) instead of simply using \(2\) because I anticipate recycling the algebra below for numbers other than \( n=2 \), so instead of redoing the entire calculation for, say, n=4, I only need to replace \(n\) with 4.</p>
-    <p>We know that \( \textcolor{purple}{P}(\textcolor{orange}{n}) \) is true, i.e. the statement \( \displaystyle \sum_{r=1}^\textcolor{orange}{n} r^3 = \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2\) is true when \( \textcolor{orange}{n=2} \). I don't know yet if the statement \( \textcolor{purple}{P}(\textcolor{green}{n+1}) \) is true, i.e \( \displaystyle \sum_{r=1}^\textcolor{green}{n+1} r^3 = \frac{1}{4}(\textcolor{green}{n+1})^2(\textcolor{green}{n+1}+1)^2\) is true when \( \textcolor{green}{n+1=3} \).</p>
-    <p>Knowing \( \textcolor{purple}{P}(\textcolor{orange}{n}) \) is true, is \( \textcolor{purple}{P}(\textcolor{green}{n+1}) \) true as well?</p>
-    <p>\[ \begin{aligned} \sum_{r=1}^\textcolor{green}{n+1} r^3 &= \sum_{r=1}^\textcolor{orange}{n} r^3 + (\textcolor{green}{n+1})^3                                                       & \textcolor{gray}{\text{Split off the last term from the summation}} \\
-                                                                  &= \frac{1}{4} \cdot \textcolor{orange}{n}^2 \cdot (\textcolor{orange}{n}+1)^2 + (\textcolor{orange}{n}+1)^3                & \textcolor{gray}{\text{Use statement at }} \textcolor{orange}{n} \textcolor{gray}{\text{ , which we know is true; }} \sum_{r=1}^\textcolor{orange}{n} r^3 = \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2 \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot ( \textcolor{orange}{n}^2 + 4(\textcolor{orange}{n}+1))              & \textcolor{gray}{\text{Factor out } \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot ( \textcolor{orange}{n}^2 + 4 \cdot \textcolor{orange}{n}+4 )        & \textcolor{gray}{\text{Expand out 4 ( } \textcolor{orange}{n} \text{+1)} } \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot (\textcolor{orange}{n}+2)^2                                          & \textcolor{gray}{\text{Use the fact that }(x+2)^2=x^2+4x+4,\ x=}\textcolor{orange}{n} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot ( (\textcolor{orange}{n}+1) + 1 )^2                                  & \textcolor{gray}{\text{}} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{n+1})^2 \cdot (\textcolor{green}{n+1} + 1)^2                                              & \textcolor{gray}{} \\
-           \end{aligned} \] </p>
+        <nav class="topic-nav" aria-label="Proof by induction lesson navigation">
+          <ol class="topic-list">
+            <li><a class="topic-link is-current" href="#overview">1. Overview</a></li>
+            <li><a class="topic-link" href="#method">2. Method</a></li>
+            <li><a class="topic-link" href="#examples">3. Worked examples</a></li>
+            <li><a class="topic-link" href="#divisibility">4. Divisibility proof</a></li>
+            <li><a class="topic-link" href="#matrices">5. Matrix proof</a></li>
+            <li>
+              <button class="study-toggle" type="button" data-study-toggle="proof-by-induction" aria-pressed="false">
+                <span class="toggle-marker">✓</span>
+                <span class="toggle-label">Mark as studied</span>
+              </button>
+            </li>
+          </ol>
+        </nav>
+      </aside>
 
-    <p> Thus, \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true, i.e. the statement is correct for \( \textcolor{green}{n+1=3} \). We've used the fact that the statement is true for \( \textcolor{orange}{n=2} \) in line 2.</p>
-    <p> \[ \sum_{r=1}^\textcolor{green}{n+1} r^3 = \sum_{r=1}^\textcolor{green}{3} r^3 = \frac{1}{4} \cdot \textcolor{green}{n+1}^2 \cdot (\textcolor{green}{n+1}+1)^2 = \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 \] </p>
-    
-    <details>
-      <summary class="hover-box"><p>(If you'd like to see the algebra in numbers, click on this collapsible!)</p></summary>
-      <p> \[ \begin{aligned} \text{LHS} = \sum_{r=1}^\textcolor{green}{3} r^3 &= \sum_{r=1}^\textcolor{orange}{2} r^3 + \textcolor{green}{3}^3                                                       & \textcolor{gray}{\text{Split off the last term from the summation}} \\
-                                                                  &= \frac{1}{4} \cdot \textcolor{orange}{2}^2 \cdot (\textcolor{orange}{2}+1)^2 + (\textcolor{orange}{2}+1)^3             & \textcolor{gray}{\text{Use statement at } n=2; \text{3 = 2+1}} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot ( \textcolor{orange}{2}^2 + 4(\textcolor{orange}{2}+1))           & \textcolor{gray}{\text{Factor out } \frac{1}{4} \cdot (2+1)^2 \text{}} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot ( \textcolor{orange}{2}^2 + 4 \cdot \textcolor{orange}{2}+4 ) )   & \textcolor{gray}{\text{Expand out 4(2+1)}} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot (\textcolor{orange}{2}+2)^2                                       & \textcolor{gray}{\text{Use the fact that } (x+2)^2 = x^2 + 4x + 4, x = }\textcolor{orange}{2} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot ( (\textcolor{orange}{2}+1) + 1 )^2                               & \\
-                                                                  &= \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3} + 1)^2                                         & \textcolor{gray}{3 = 2+1} \\
-                                                                  &= \text{RHS} & \\
-           \end{aligned} \] </p>
-    </details>
+      <main class="terminal-docs-main">
+        <article class="lesson-content" data-page-id="proof-by-induction">
+          <header class="lesson-header" id="overview">
+            <span class="eyebrow">Mathematics / Algebra</span>
+            <h1>Proof by Induction</h1>
+          </header>
 
-    <p>To recap, if we know that \( \textcolor{purple}{P}(\textcolor{brown}{n}) \) is true, (i.e. \( \sum_{r=1}^\textcolor{brown}{n} r^3 = \frac{1}{4}\textcolor{brown}{n}^2(\textcolor{brown}{n}+1)^2 \) is true), do the above algebra and you get that \( \textcolor{purple}{P}(\textcolor{maroon}{n+1}) \) is also true (i.e. \( \sum_{r=1}^\textcolor{brown}{n+1} r^3 = \frac{1}{4}\textcolor{brown}{n+1}^2(\textcolor{brown}{n+1}+1)^2 \)). </p>
-    <p>We now know that \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true. What if you start from the beginning of this subsection, but instead of using \( \textcolor{orange}{n=2} \), we use \( \textcolor{green}{n=3} \)? The same argument applies. </p>
-    
-    <p> Is the statement correct for \( \textcolor{red}{n=4} \)? </p>
-    <p> \[ \sum_{r=1}^\textcolor{red}{4} r^3 \overset{?}{=} \frac{1}{4} \cdot \textcolor{red}{4}^2 \cdot (\textcolor{red}{4}+1)^2 \] </p>
-    <p> LHS: \[ \begin{aligned} \sum_{r=1}^\textcolor{red}{4} r^3 &= \sum_{r=1}^\textcolor{green}{3} r^3 + \textcolor{red}{4}^3                                                       & \textcolor{gray}{\text{Split off the last term from the summation}} \\
-                                                                  &= \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 + (\textcolor{green}{3}+1)^3             & \textcolor{gray}{\text{Use statement at } n=3; \text{4 = 3+1}} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot ( \textcolor{green}{3}^2 + 4(\textcolor{green}{3}+1))           & \textcolor{gray}{\text{Factor out } \frac{1}{4} \cdot (3+1)^2 } \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot ( \textcolor{green}{3}^2 + 4 \cdot \textcolor{green}{3}+4 ) )   & \textcolor{gray}{\text{Expand out 4(3+1)}} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot (\textcolor{green}{3}+2)^2                                       & \textcolor{gray}{\text{Use the fact that } (x+2)^2 = x^2 + 4x + 4, x = }\textcolor{green}{3} \\
-                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot ( (\textcolor{green}{3}+1) + 1 )^2                               & \textcolor{gray}{\text{}} \\
-                                                                  &= \frac{1}{4} \cdot \textcolor{red}{4}^2 \cdot (\textcolor{red}{4} + 1)^2                                         & \textcolor{gray}{4 = 3+1} \\
-                                                                  &= \text{RHS} & \\
+          <h3 class="headers">Method</h3>
+          <details>
+            <summary class="hover-box"><p>A statement is basically a sentence that is either <b>true</b> or <b>false</b>. It might be a sentence, or an equation or a theorem or a fact, but it must be something that can be tested as true or false.</p></summary>
+            <p>Some examples of statements are: "My house is blue", "It is raining right now", "I have 10 dollars in my pocket". They are objectively either true or false. "3 plus 2 is 5" is a true statement, while "3 plus 2 is 7" is a false statement.</p>
+          </details>
+          <p>Here are some statements that depend on a variable \(n\). "\(n\) is an even number" depends on what \(n\) is. This statement is true when \(n=2\) or \(n=4\) or \( n=6 \), and false when \(n=1\) or \(n=3\) or \(n=5\). </p>
+          <p>In this website, one starts with a statement \( \textcolor{purple}{P}(n) \). Maybe we do a maths check and found out that \( \textcolor{purple}{P}(n) \) is true at \(n=\textcolor{blue}{1},\ldots\) </p>
+          <p>There's a slick way to do this. First check that \(\textcolor{purple}{P}(\textcolor{blue}{1})\) is true. </p>
+          <p>We then do a separate calculation. Use a placeholder letter \( k \) that can stand for any positive whole number. We then hope to show that if \( \textcolor{purple}{P}(k) \) is true, then \(\textcolor{purple}{P}(k+1)\) is true. </p>
+          <p>So, if \( \textcolor{purple}{P}(k=1) \) is true (which it is), then \( \textcolor{purple}{P}(k+1=2) \) is true. If \( \textcolor{purple}{P}(k=2) \) is true (which is also true because of the previous step), then \( \textcolor{purple}{P}(3) \) is true, and so on. </p>
 
-           \end{aligned} \] </p>
-    <p>Thus the statement is correct for \( \textcolor{red}{n=4} \).</p>
-    
-    <p>Hopefully you see the trick here. You know that the statement is correct for \( n = \textcolor{blue}{1},\textcolor{orange}{2},\textcolor{green}{3},\textcolor{red}{4} \). Then do the following algebra:</p>
-    <p> \[ \begin{aligned} \sum_{r=1}^\textcolor{purple}{n+1} r^3 &= \sum_{r=1}^\textcolor{brown}{n} r^3 + (\textcolor{purple}{n+1})^3 \\
+          <h3 id="examples">Examples to Convince You that it Works</h3>
+          <p>Someone made a bold claim. For any number n, they say that the below statement is correct.</p>
+          <details>
+            <summary><p class="hover-box"> \[ \sum_{r=1}^n r^3 = \frac{1}{4}n^2(n+1)^2 \] </p></summary>
+            <p >(In a clickable dropdown for the sum) \[ \sum_{r=1}^n r^3 \] means \[ 1^3 + 2^3 + 3^3 + \dots + n^3 \]. </p>
+          </details>
+          <p>We don't know if the equation is correct or not for different values of \(n\). I'll use \( \textcolor{purple}{P}(n) \) as a shorthand to refer to whether the above equation is true or false. </p>
+          <details>
+            <summary><p class="hover-box">Is the statement correct for \( \textcolor{blue}{n=1} \)? If you calculate the left-hand side and the right-hand side for \( \textcolor{blue}{n=1} \), you'll get that the formula works. </p></summary>
+            <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{blue}{n}} r^3 = \sum_{r=1}^\textcolor{blue}{1} r^3 = 1^3 = 1 \) </p>
+            <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{blue}{n}^2(\textcolor{blue}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{blue}{1}^2 \cdot (\textcolor{blue}{1}+1)^2 = \frac{1}{4} \cdot 1 \cdot 2^2 = 1 \) </p>
+          </details>
+
+          <details>
+            <summary class="hover-box"><p> Is it correct for \( \textcolor{orange}{n=2} \)? If you calculate the left-hand side and the right-hand side for \( \textcolor{orange}{n=2} \), you'll get that both are equal to 9. </p></summary>
+            <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{orange}{n}} r^3 = \sum_{r=2}^{\textcolor{orange}{1}} r^3 = 1^3 + 2^3 = 1 + 8 = 9 \) </p>
+            <p>RHS: \( \displaystyle \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2 = \frac{1}{4} \cdot \textcolor{orange}{2}^2 \cdot (\textcolor{orange}{2}+1)^2 = \frac{1}{4} \cdot 2^2 \cdot 3^2 = 9 \) </p>
+          </details>
+
+          <p>We can also check that the statement is correct for \( \textcolor{green}{n=3} \), and \( \textcolor{red}{n=4} \). We might enlist some helpers to tediously check if the statement is always true, but induction gives a smarter route. </p>
+
+          <h2 class="headers" id="method">A Way to Calculate the Correctness of \( \textcolor{purple}{P}(n) \) for Every Whole Number \(n\)</h2>
+          <p>I'm going to let \( \textcolor{orange}{n=2} \) in the below discussion, until I say I'm changing it to \( \textcolor{green}{n=3} \) later. The orange and green color doesn't change the fact that the same idea is being used. </p>
+          <p>We know that \( \textcolor{purple}{P}(\textcolor{orange}{n}) \) is true, i.e. the statement \( \displaystyle \sum_{r=1}^{\textcolor{orange}{n}} r^3 = \frac{1}{4}\textcolor{orange}{n}^2(\textcolor{orange}{n}+1)^2 \) is true. </p>
+          <p>Knowing \( \textcolor{purple}{P}(\textcolor{orange}{n}) \) is true, is \( \textcolor{purple}{P}(\textcolor{green}{n+1}) \) true as well?</p>
+          <p>\[ \begin{aligned} \sum_{r=1}^{\textcolor{green}{n+1}} r^3 &= \sum_{r=1}^{\textcolor{orange}{n}} r^3 + (\textcolor{green}{n+1})^3 \\
+                                                                  &= \frac{1}{4} \cdot \textcolor{orange}{n}^2 \cdot (\textcolor{orange}{n}+1)^2 + (\textcolor{orange}{n}+1)^3 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot ( \textcolor{orange}{n}^2 + 4(\textcolor{orange}{n}+1)) \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot ( \textcolor{orange}{n}^2 + 4 \cdot \textcolor{orange}{n}+4 ) \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot (\textcolor{orange}{n}+2)^2 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{n}+1)^2 \cdot ( (\textcolor{orange}{n}+1) + 1 )^2 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{n+1})^2 \cdot (\textcolor{green}{n+1} + 1)^2 \\
+            \end{aligned} \] </p>
+
+          <p> Thus, \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true, i.e. the statement is correct for \( \textcolor{green}{n+1=3} \). We've used the fact that the statement is true for \(n\), then shown it is true for \(n+1\). </p>
+
+          <details>
+            <summary class="hover-box"><p>(If you'd like to see the algebra in numbers, click on this collapsible!)</p></summary>
+            <p> \[ \begin{aligned} \text{LHS} = \sum_{r=1}^{\textcolor{green}{3}} r^3 &= \sum_{r=1}^{\textcolor{orange}{2}} r^3 + \textcolor{green}{3}^3 \\
+                                                                  &= \frac{1}{4} \cdot \textcolor{orange}{2}^2 \cdot (\textcolor{orange}{2}+1)^2 + (\textcolor{orange}{2}+1)^3 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot ( \textcolor{orange}{2}^2 + 4(\textcolor{orange}{2}+1)) \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot ( \textcolor{orange}{2}^2 + 4 \cdot \textcolor{orange}{2}+4 ) \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot (\textcolor{orange}{2}+2)^2 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{orange}{2}+1)^2 \cdot ( (\textcolor{orange}{2}+1) + 1 )^2 \\
+                                                                  &= \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3} + 1)^2 \\
+                                                                  &= \text{RHS} \\
+            \end{aligned} \] </p>
+          </details>
+
+          <p>To recap, if we know that \( \textcolor{purple}{P}(\textcolor{brown}{n}) \) is true, then \( \textcolor{purple}{P}(\textcolor{brown}{n+1}) \) is true. This is the key step in induction. </p>
+
+          <p>We now know that \( \textcolor{purple}{P}(\textcolor{green}{3}) \) is true. What if you start from the beginning of this subsection, but instead of using \( \textcolor{orange}{n=2} \), we use \( \textcolor{green}{n=3} \)? The same reasoning works again. </p>
+
+          <p> Is the statement correct for \( \textcolor{red}{n=4} \)? </p>
+          <p> \[ \sum_{r=1}^{\textcolor{red}{4}} r^3 \overset{?}{=} \frac{1}{4} \cdot \textcolor{red}{4}^2 \cdot (\textcolor{red}{4}+1)^2 \] </p>
+          <p> LHS: \[ \begin{aligned} \sum_{r=1}^{\textcolor{red}{4}} r^3 &= \sum_{r=1}^{\textcolor{green}{3}} r^3 + \textcolor{red}{4}^3 \\
+                                                                  &= \frac{1}{4} \cdot \textcolor{green}{3}^2 \cdot (\textcolor{green}{3}+1)^2 + (\textcolor{green}{3}+1)^3 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot ( \textcolor{green}{3}^2 + 4(\textcolor{green}{3}+1)) \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot ( \textcolor{green}{3}^2 + 4 \cdot \textcolor{green}{3}+4 ) \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot (\textcolor{green}{3}+2)^2 \\
+                                                                  &= \frac{1}{4} \cdot (\textcolor{green}{3}+1)^2 \cdot ( (\textcolor{green}{3}+1) + 1 )^2 \\
+                                                                  &= \frac{1}{4} \cdot \textcolor{red}{4}^2 \cdot (\textcolor{red}{4} + 1)^2 \\
+                                                                  &= \text{RHS} \\
+            \end{aligned} \] </p>
+          <p>Thus the statement is correct for \( \textcolor{red}{n=4} \).</p>
+
+          <p>Hopefully you see the trick here. You know that the statement is correct for \( n = \textcolor{blue}{1},\textcolor{orange}{2},\textcolor{green}{3},\textcolor{red}{4} \). Then do the following general step: if it is true for any \(n\), it is true for \(n+1\). This is enough to prove it for all positive integers. </p>
+          <p> \[ \begin{aligned} \sum_{r=1}^{\textcolor{purple}{n+1}} r^3 &= \sum_{r=1}^{\textcolor{brown}{n}} r^3 + (\textcolor{purple}{n+1})^3 \\
                                                                   &= \frac{1}{4} \textcolor{brown}{n}^2(\textcolor{brown}{n}+1)^2 + (\textcolor{brown}{n}+1)^3 \\
                                                                   &= \frac{1}{4} (\textcolor{brown}{n}+1)^2 ( \textcolor{brown}{n}^2 + 4(\textcolor{brown}{n}+1)) \\
-                                                                  &= \frac{1}{4} (\textcolor{brown}{n}+1)^2 ( \textcolor{brown}{n}^2 + 4\textcolor{brown}{n}+4)) \\
+                                                                  &= \frac{1}{4} (\textcolor{brown}{n}+1)^2 ( \textcolor{brown}{n}^2 + 4\textcolor{brown}{n}+4) \\
                                                                   &= \frac{1}{4}(\textcolor{brown}{n}+1)^2(\textcolor{brown}{n}+2)^2\\
                                                                   &= \frac{1}{4}(\textcolor{purple}{n+1})^2(\textcolor{purple}{n+1} + 1)^2
-           \end{aligned} \] </p>
-    <p>If the statement is correct for some \( \textcolor{brown}{n} \), the statement is correct for \( \textcolor{purple}{n+1} \). Try substituting \( \textcolor{orange}{n=2} \) or \( \textcolor{green}{n=3} \) and you will get the working that is shown above, and hopefully you understand why I did some weird manipulations for \(\textcolor{orange}{n=2}\) and \( \textcolor{green}{n=3} \). It's because the working is set up in a way so that it can be applied to any arbitrary \(n\)!</p>
-    <p>So, because the statement is correct for \(n=4\), it is correct for \(n=4+1=5\), and correct for \(n=5+1=6\), and correct for \(n=6+1=7\), and correct for \(n=8\), and \(n=9\), and ...</p>
-    <p>So the statement is correct for every positive integer.</p>
-    
-    <p>To recap, we need to check that the statement is correct for \( \textcolor{blue}{n=1}\). Hopefully the statement is correct when \( \textcolor{blue}{n=1} \). Then, use algebra to show that if the statement is true for \( \textcolor{blue}{n=1} \), the statement is also true for \( \textcolor{orange}{n=2} \). The same algebra says that if the statement is true for \( \textcolor{orange}{n=2} \), the statement is also true for \( \textcolor{green}{n=3} \). And if the statement is true for \( \textcolor{green}{n=3} \), it's true for \( \textcolor{red}{n=4} \), and then \( \textcolor{purple}{n=5} \), and \( \textcolor{brown}{n=6} \), and ... This means that the statement is true for n=1,2,3,4,... which is what we want to show.  </p>
-    
-    <h2 class="headers">Another Summation Example</h2>
-    <p>Someone else made another bold claim. They claim that the following statement is true for every positive integer n:</p>
-    <p> \[ \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \] </p>
-    <p> Let's apply the procedure we've seen in the previous example. </p>
-    
-    <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1} \).</b></p>
-    <p>LHS: \( \displaystyle \sum_{r=1}^\textcolor{blue}{n} r(r+1) = \sum_{r=1}^\textcolor{blue}{1} r(r+1) = \textcolor{blue}{1} \cdot (\textcolor{blue}{1} + 1) = 1 \cdot 2 = 2\) </p>
-    <p>RHS: \( \displaystyle \frac{\textcolor{blue}{n}(\textcolor{blue}{n}+1)(\textcolor{blue}{n}+2)}{3} = \frac{\textcolor{blue}{1}(\textcolor{blue}{1}+1)(\textcolor{blue}{1}+2)}{3} = \frac{1\cdot 2\cdot \cancel{3}}{\cancel{3}} = 2 \)</p>
-    <p>Thus the statement is true for \( \textcolor{blue}{n=1}\).</p>
+            \end{aligned} \] </p>
+          <p>If the statement is correct for some \( \textcolor{brown}{n} \), the statement is correct for \( \textcolor{purple}{n+1} \). Try substituting \( \textcolor{orange}{n=2} \) or \( \textcolor{green}{n=3} \) to see it in action. </p>
+          <p>So, because the statement is correct for \(n=4\), it is correct for \(n=5\), and correct for \(n=6\), and correct for \(n=7\), and so on. </p>
+          <p>So the statement is correct for every positive integer.</p>
 
-    <p><b> Step 2: Assume that \( \displaystyle \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \) for some n. We know it is true for \( \textcolor{blue}{n=1}\); it might be true for other values of n as well. We'd like to show that \( \displaystyle \sum_{r=1}^{n+1} r(r+1) = \frac{(n+1)(n+2)(n+3)}{3} \)</b>. </p>
-    <p>\[ \begin{aligned} \sum_{r=1}^{\textcolor{purple}{n+1}} r(r+1) &= \sum_{r=1}^\textcolor{brown}{n} r(r+1) + (\textcolor{purple}{n+1})((\textcolor{purple}{n+1})+1)                  & \textcolor{gray}{ \text{Split off the last term from the summation} } \\
-                                                  &= \frac{\textcolor{brown}{n}(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)}{3} + (\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)    & \textcolor{gray}{ \text{Use statement at } } \textcolor{brown}{n} \\
-                                                  &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)}{3} \cdot (\textcolor{brown}{n} + 3)                                          & \textcolor{gray}{ \text{Factor out } \frac{(n+1)(n+2)}{3} } \\
-                                                  &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)(\textcolor{brown}{n}+3)}{3}                                                   & \textcolor{gray}{ \text{Rearrange the factors that're multiplied together} } \\
-                                                  &= \frac{(\textcolor{purple}{n+1})(\textcolor{purple}{n+1}+1)(\textcolor{purple}{n+1}+2)}{3}                                            & \textcolor{gray}{  } \\
-          \end{aligned} \]</p>
-    
-    <p>Thus, the statement is true for \( \textcolor{blue}{n=1} \), and is true for \( \textcolor{orange}{n=2} \), and true for \( \textcolor{green}{n=3} \), and \( \textcolor{red}{n=4} \), and ...</p>
+          <p>To recap, we need to check that the statement is correct for \( \textcolor{blue}{n=1}\). Then, we use algebra to show that if the statement is true at \(n\), it must also be true at \(n+1\). That is the heart of induction.</p>
 
-    <h1 class="headers">Proof of a statement related to Divisibility using Induction</h1>
-    <p> Another person made another bold claim: </p>
-    <p> <strong> "The value of \( \displaystyle 3^{2n} + 11 \) calculated at any (positive integer) \(n\) is a whole number that is divisible by 4." </strong> </p>
-    <p> (Dropdown: If you have learned modular arithmetic, there is an easy proof.) \[ 3^{2n} + 11 \pmod{4} = (-1)^{2n} + 11 - 12 \pmod{4} = 1 + 11 - 12 \pmod{4} = 0 \pmod{4} \] </p>
-    
-    <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\).</b></p>
-    <p> \[ \displaystyle 3^{2\textcolor{blue}{n}} + 11 = 3^{2 \textcolor{blue}{1}} + 11 = 3^2 + 11 = 9 + 11 = 20 = 4 \cdot 5\] </p>
-    <p>Thus, \( \displaystyle 3^{2n} + 11\) is divisible by 4 when \( \textcolor{blue}{n=1}\). So the statement is true for \( \textcolor{blue}{n=1}\)</p>
-    
-    <p><b> Step 2. Show that if the statement is true at \(n\) (i.e. \( P(n) \) is true), then the statement is true at \( n+1 \) (i.e. \( P(n+1) \) is true).</b></p>
-    <p> \[ \begin{align} 3^{2(n+1)} + 11 &= 3^{2n+2} + 11 \\
-                                         &= 3^{2n} \cdot 3^2 + 11 \\
-                                         &= 3^{2n} \cdot 9 + 11 \\
-                                         &= 3^{2n} \cdot (8 + 1) + 11 \\
-                                         &= 3^{2n} \cdot 8 + 3^{2n} + 11 \\
-                                         &= \underbrace{ (3^{2n} \cdot 2) \cdot 4 }_\text{Multiple of 4} + \underbrace{(3^{2n} + 11)}_\text{Multiple of 4} \\
-                                         &= \text{Multiple of 4}
-           \end{align} \] </p>
-    <p>Thus, if \( \displaystyle P(n) = " 3^{2n} + 11 \text{ is divisible by 4} " \) is a true statement, then \( \displaystyle P(n+1) = " 3^{2(n+1)} + 11 \text{ is divisible by 4} " \) is a true statement. </p>
+          <h2 class="headers" id="divisibility">Another Summation Example</h2>
+          <p>Someone else made another bold claim. They claim that the following statement is true for every positive integer n:</p>
+          <p> \[ \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \] </p>
+          <p> Let's apply the procedure we've seen in the previous example. </p>
 
-    <p>Then you can argue that because \( P(1) \) is true, then \( P(2) \) is true. If \( P(2) \) is true, then \( P(3) \) is true. If \( P(3) \) is true, then \( P(4) \) is true. And so on.</p>
+          <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1} \).</b></p>
+          <p>LHS: \( \displaystyle \sum_{r=1}^{\textcolor{blue}{n}} r(r+1) = \sum_{r=1}^{\textcolor{blue}{1}} r(r+1) = \textcolor{blue}{1} \cdot (\textcolor{blue}{1} + 1) = 2\) </p>
+          <p>RHS: \( \displaystyle \frac{\textcolor{blue}{n}(\textcolor{blue}{n}+1)(\textcolor{blue}{n}+2)}{3} = \frac{\textcolor{blue}{1}(\textcolor{blue}{1}+1)(\textcolor{blue}{1}+2)}{3} = \frac{1\cdot 2\cdot 3}{3} = 2\) </p>
+          <p>Thus the statement is true for \( \textcolor{blue}{n=1}\).</p>
 
-    <h1>Proof of a Statement related to Matrices using Induction</h1>
-    <p> <strong> \[ \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \] is true for all positive integers n. </strong> </p>
-    <p> \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \underbrace{\begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \dots \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}}_{n \text{ times}} \) in case you're wondering.</p>
+          <p><b> Step 2: Assume that \( \displaystyle \sum_{r=1}^n r(r+1) = \frac{n(n+1)(n+2)}{3} \) for some n. We know it is true for \( \textcolor{blue}{n=1}\); it might be true for other values of n too. </b></p>
+          <p>\[ \begin{aligned} \sum_{r=1}^{\textcolor{purple}{n+1}} r(r+1) &= \sum_{r=1}^{\textcolor{brown}{n}} r(r+1) + (\textcolor{purple}{n+1})((\textcolor{purple}{n+1})+1) \\
+                                                   &= \frac{\textcolor{brown}{n}(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)}{3} + (\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2) \\
+                                                   &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)}{3} \cdot (\textcolor{brown}{n} + 3) \\
+                                                   &= \frac{(\textcolor{brown}{n}+1)(\textcolor{brown}{n}+2)(\textcolor{brown}{n}+3)}{3} \\
+                                                   &= \frac{(\textcolor{purple}{n+1})(\textcolor{purple}{n+1}+1)(\textcolor{purple}{n+1}+2)}{3} \\
+           \end{aligned} \]</p>
 
-    <p> <b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\). </b> </p>
-    <p> LHS = \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} ^ \textcolor{blue}{1} = \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \) </p>
-    <p> RHS = \( \displaystyle \begin{pmatrix} 2 \textcolor{blue}{n} + 1 & - 4 \textcolor{blue}{n} \\ \textcolor{blue}{n} & 1-2 \textcolor{blue}{n} \\ \end{pmatrix} = \begin{pmatrix} 2 \cdot \textcolor{blue}{1} + 1 & - 4 \cdot \textcolor{blue}{1} \\ \textcolor{blue}{1} & 1-2 \cdot \textcolor{blue}{1} \\ \end{pmatrix} = \begin{pmatrix} 3 & - 4 \\ 1 & -1 \\ \end{pmatrix} \) </p>
+          <p>Thus, the statement is true for \( \textcolor{blue}{n=1} \), and is true for \( \textcolor{orange}{n=2} \), and true for \( \textcolor{green}{n=3} \), and \( \textcolor{red}{n=4} \), and so on. </p>
 
-    <p> <b> Step 2. Show that if \( P(n) \) is true, then \( P(n+1) \) is true. </b> </p>
-    <p> \[ \begin{align} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n+1} &= \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \\
-                                                                                 &= \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}  \\
-                                                                                 &= \begin{pmatrix} (2n+1) \cdot 3 + (-4n) \cdot 1 & (2n+1) \cdot -4 + (-4n) \cdot -1 \\ n \cdot 3 + (1-2n) \cdot 1 & n \cdot -4 + (1-2n) \cdot -1 \end{pmatrix} \\
-                                                                                 &= \begin{pmatrix} 6n + 3 - 4n & -8n - 4 + 4n \\ 3n + 1 - 2n & -4n - 1 + 2n \end{pmatrix} \\
-                                                                                 &= \begin{pmatrix} 2n+3 & -4n - 4 \\ n + 1 & - 2n - 1 \end{pmatrix} \\
-           \end{align} \] </p>
+          <h1 class="headers" id="divisibility-2">Proof of a statement related to Divisibility using Induction</h1>
+          <p> Another person made another bold claim: </p>
+          <p> <strong> "The value of \( \displaystyle 3^{2n} + 11 \) calculated at any (positive integer) \(n\) is a whole number that is divisible by 4." </strong> </p>
+          <p> (Dropdown: If you have learned modular arithmetic, there is an easy proof.) \[ 3^{2n} + 11 \pmod{4} = (-1)^{2n} + 11 - 12 \pmod{4} = 1 + 11 - 12 \pmod{4} = 0 \pmod{4} \] </p>
 
-    <p> It's relatively straightforwards to find \( P(n+1) \) so let's do that instead of continuing with factoring the algebra above to get the right form, which isn't super obvious. \( P(n+1) \) is the statement " \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n+1} = \begin{pmatrix} 2 (n+1) +1 & -4 (n+1) \\ (n+1) & 1-2(n+1) \\ \end{pmatrix} = \begin{pmatrix} 2n+3 & -4n-4 \\ n+1 & -1-2n \\ \end{pmatrix} \) " If you like, you can add this to the end of the above working in reverse order and actually get the \( P(n+1) \) statement. </p>
-    <p> Thus, we see that if we assume \( P(n) \) is true, then \( P(n+1) \) is true! Hence, by basically the same explanation as before (which fancy mathematicians call the "principle of induction"), \( P(n) \) is true for \( n = 1,2,3,4,\dots\). </p>
-    
+          <p><b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\).</b></p>
+          <p> \[ \displaystyle 3^{2\textcolor{blue}{n}} + 11 = 3^{2 \textcolor{blue}{1}} + 11 = 3^2 + 11 = 9 + 11 = 20 = 4 \cdot 5\] </p>
+          <p>Thus, \( \displaystyle 3^{2n} + 11\) is divisible by 4 when \( \textcolor{blue}{n=1}\). So the statement is true for \( \textcolor{blue}{n=1}\)</p>
+
+          <p><b> Step 2. Show that if the statement is true at \(n\) (i.e. \( P(n) \) is true), then the statement is true at \( n+1 \) (i.e. \( P(n+1) \) is true).</b></p>
+          <p> \[ \begin{align} 3^{2(n+1)} + 11 &= 3^{2n+2} + 11 \\
+                                          &= 3^{2n} \cdot 3^2 + 11 \\
+                                          &= 3^{2n} \cdot 9 + 11 \\
+                                          &= 3^{2n} \cdot (8 + 1) + 11 \\
+                                          &= 3^{2n} \cdot 8 + 3^{2n} + 11 \\
+                                          &= \underbrace{ (3^{2n} \cdot 2) \cdot 4 }_\text{Multiple of 4} + \underbrace{(3^{2n} + 11)}_\text{Multiple of 4} \\
+                                          &= \text{Multiple of 4}
+            \end{align} \] </p>
+          <p>Thus, if \( \displaystyle P(n) = " 3^{2n} + 11 \text{ is divisible by 4} " \) is a true statement, then \( \displaystyle P(n+1) = " 3^{2(n+1)} + 11 \text{ is divisible by 4} " \) is a true statement too. </p>
+
+          <p>Then you can argue that because \( P(1) \) is true, then \( P(2) \) is true. If \( P(2) \) is true, then \( P(3) \) is true. If \( P(3) \) is true, then \( P(4) \) is true. And so on.</p>
+
+          <h1 id="matrices">Proof of a Statement related to Matrices using Induction</h1>
+          <p> <strong> \[ \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \] is true for all positive integers n. </strong> </p>
+          <p> \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^n = \underbrace{\begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \dots \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}}_{n\text{ copies}} \) </p>
+
+          <p> <b> Step 1. Check the statement is true for \( \textcolor{blue}{n=1}\). </b> </p>
+          <p> LHS = \( \displaystyle \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} ^ \textcolor{blue}{1} = \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \) </p>
+          <p> RHS = \( \displaystyle \begin{pmatrix} 2 \textcolor{blue}{n} + 1 & - 4 \textcolor{blue}{n} \\ \textcolor{blue}{n} & 1-2 \textcolor{blue}{n} \\ \end{pmatrix} = \begin{pmatrix} 2 \cdot 1 + 1 & -4 \cdot 1 \\ 1 & 1 - 2 \end{pmatrix} = \begin{pmatrix} 3 & -4 \\ 1 & -1 \end{pmatrix} \) </p>
+
+          <p> <b> Step 2. Show that if \( P(n) \) is true, then \( P(n+1) \) is true. </b> </p>
+          <p> \[ \begin{align} \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n+1} &= \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix}^{n} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \\
+                                                                                  &= \begin{pmatrix} 2n+1 & -4n \\ n & 1-2n \\ \end{pmatrix} \cdot \begin{pmatrix} 3 & -4 \\ 1 & -1 \\ \end{pmatrix} \\
+                                                                                  &= \begin{pmatrix} (2n+1) \cdot 3 + (-4n) \cdot 1 & (2n+1) \cdot -4 + (-4n) \cdot -1 \\ n \cdot 3 + (1-2n) \cdot 1 & n \cdot -4 + (1-2n) \cdot -1 \end{pmatrix} \\
+                                                                                  &= \begin{pmatrix} 6n + 3 - 4n & -8n - 4 + 4n \\ 3n + 1 - 2n & -4n - 1 + 2n \end{pmatrix} \\
+                                                                                  &= \begin{pmatrix} 2n+3 & -4n - 4 \\ n + 1 & - 2n - 1 \end{pmatrix} \\
+            \end{align} \] </p>
+
+          <p> It's relatively straightforward to find \( P(n+1) \) so let's do that instead of continuing with factoring the algebra above to get the right form, which isn't super obvious. \( P(n+1) \) is indeed the expected expression, so the whole argument closes. </p>
+          <p> Thus, we see that if we assume \( P(n) \) is true, then \( P(n+1) \) is true! Hence, by the same explanation as before (which fancy mathematicians call the "principle of induction"), the statement is true for all positive integers. </p>
+        </article>
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        const storageKey = 'docteurx_studied_pages';
+        const buttons = document.querySelectorAll('[data-study-toggle]');
+
+        function loadStudied() {
+          try {
+            return JSON.parse(localStorage.getItem(storageKey)) || [];
+          } catch (error) {
+            return [];
+          }
+        }
+
+        function saveStudied(list) {
+          localStorage.setItem(storageKey, JSON.stringify(list));
+        }
+
+        function updateButtonState(button, isActive) {
+          button.setAttribute('aria-pressed', String(isActive));
+          const label = button.querySelector('.toggle-label');
+          const marker = button.querySelector('.toggle-marker');
+
+          if (isActive) {
+            button.classList.add('is-active');
+            button.classList.add('is-complete');
+            if (label) label.textContent = 'Studied';
+            if (marker) marker.textContent = '✓';
+          } else {
+            button.classList.remove('is-active');
+            button.classList.remove('is-complete');
+            if (label) label.textContent = 'Mark as studied';
+            if (marker) marker.textContent = '✓';
+          }
+        }
+
+        buttons.forEach(function (button) {
+          const pageId = button.getAttribute('data-study-toggle');
+          const studied = loadStudied();
+          const isActive = studied.includes(pageId);
+
+          updateButtonState(button, isActive);
+
+          button.addEventListener('click', function () {
+            const current = loadStudied();
+            const index = current.indexOf(pageId);
+            const next = index === -1 ? current.concat(pageId) : current.filter(function (item) { return item !== pageId; });
+            saveStudied(next);
+            updateButtonState(button, next.includes(pageId));
+
+            const pageLink = document.querySelector('.topic-link.is-current');
+            if (pageLink) {
+              pageLink.classList.toggle('is-complete', next.includes(pageId));
+            }
+          });
+        });
+      }());
+    </script>
   </body>
 </html>
