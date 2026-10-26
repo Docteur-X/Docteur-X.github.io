@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>MathLive Algebra Prototype</title>
+
+  <script defer src="./dist/app.js"></script>
+</head>
+
+<body>
+  <h1>Algebra Interface Prototype</h1>
+
+  <p>Enter a mathematical expression:</p>
+
+  <math-field id="expression"></math-field>
+
+  <p>
+    <button id="convert">Show MathJSON</button>
+    <button id="simplify">Simplify</button>
+  </p>
+  <button id="inspect-selection">
+  Inspect Selection
+  </button>
+
+  <h2>Result</h2>
+  <pre id="output">No result yet.</pre>
+  <pre id="selection-output"></pre>
+
+<!--
+  <h1>Algebra Rule Experiment</h1>
+    <h2>Current Expression</h2>
+
+    <math-field id="expression" read-only></math-field>
+
+    <h2>Available Operations</h2>
+    <div id="operations"></div>
+    <h2>Underlying MathJSON</h2>
+    <pre id="mathjson"></pre>
+    <button id="reset">Reset Expression</button>
+-->
+</body>
+</html>
