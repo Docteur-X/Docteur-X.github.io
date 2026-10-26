@@ -1,0 +1,20 @@
+{
+  "name": "algebraprototype",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@cortex-js/compute-engine": "^0.167.0",
+    "mathlive": "^0.111.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
