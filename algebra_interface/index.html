@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive algebra workspace for rearranging and combining terms.">
+  <title>Algebra Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Application header: product identity and global appearance controls. -->
+    <header class="app-header">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">∑</div>
+        <div>
+          <h1>Algebra workspace</h1>
+          <p class="header-subtitle">Explore expressions by moving and combining terms.</p>
+        </div>
+      </div>
+
+      <button class="button button--quiet" id="themeToggle" type="button" aria-pressed="false">
+        Switch to dark mode
+      </button>
+    </header>
+
+    <!-- Document browser: independent of the active mathematical manipulator. -->
+    <section class="workspace-manager" aria-label="Mathematical documents">
+      <div class="workspace-manager__heading">
+        <h2>Documents</h2>
+        <button class="button button--primary button--small" id="workspaceNew" type="button">New document</button>
+      </div>
+      <div class="workspace-manager__list" id="workspaceList" aria-label="Saved documents"></div>
+      <div class="workspace-manager__actions" role="group" aria-label="Document actions">
+        <span id="workspaceName">No document selected</span>
+        <button class="button button--quiet button--small" id="workspaceSave" type="button">Save</button>
+        <button class="button button--quiet button--small" id="workspaceRename" type="button">Rename</button>
+        <button class="button button--quiet button--small" id="workspaceDuplicate" type="button">Duplicate</button>
+        <button class="button button--quiet button--small" id="workspaceClose" type="button">Close</button>
+        <button class="button button--quiet button--small" id="workspaceDelete" type="button">Delete</button>
+        <button class="button button--quiet button--small" id="workspaceExport" type="button">Export JSON</button>
+        <label class="button button--quiet button--small" for="workspaceImport">Import JSON</label>
+        <input type="file" id="workspaceImport" accept=".json,application/json" class="visually-hidden">
+      </div>
+      <p id="workspaceStatus" class="field-help" role="status">Loading saved documents…</p>
+    </section>
+    <div id="workspaceEmpty" class="workspace-empty">Create or open a document to begin.</div>
+    <div id="workspaceEditor" hidden>
+    <!-- Main workspace: equation editor on the left, variable panel on the right. -->
+    <main class="workspace">
+      <section class="workbench" aria-labelledby="expressionHeading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Expression editor</p>
+            <h2 id="expressionHeading">Your expression</h2>
+          </div>
+          <span class="keyboard-hint">Tip: use ← and → when a term is focused.</span>
+        </div>
+
+        <!-- The parser supports nested sums/products with (), [] and {} groups. -->
+        <form class="expression-form" id="expressionForm" novalidate>
+          <label class="visually-hidden" for="expressionInput">Enter an expression</label>
+          <input
+            id="expressionInput"
+            name="expression"
+            type="text"
+            value="a+b+c"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby="expressionHelp"
+          >
+          <button class="button button--primary" type="submit">Build expression</button>
+          <button class="button button--quiet" id="resetButton" type="button">Reset</button>
+        </form>
+        <p class="field-help" id="expressionHelp">
+          Examples: <code>a+b=c+d</code>, <code>3=3</code>, <code>2+(3*(4*5+6)*(7+8))</code>,
+          <code>[a+b]{c+d}</code>, and <code>(x)</code>.
+          Brackets <code>()</code>, <code>[]</code>, <code>{}</code> are all preserved.
+          <code>|</code>, <code>&lt;</code> and <code>&gt;</code> are reserved.
+          The name <code>ab</code> is one variable; <code>_a _b</code> is a product.
+          Subtraction and function calls are not implemented yet.
+        </p>
+
+        <!-- Multiplication display is presentation metadata, not a change to the expression. -->
+        <div class="expression-options">
+          <label for="multiplicationDisplayMode">Multiplication display</label>
+          <select id="multiplicationDisplayMode" name="multiplicationDisplayMode">
+            <option value="source">As entered</option>
+            <option value="implicit">Implicit (ab)</option>
+            <option value="dot">Centred dot (a · b)</option>
+            <option value="times">Times sign (a × b)</option>
+          </select>
+        </div>
+
+        <!-- Presentation preference only: never remove or resize hitboxes. -->
+        <div class="expression-options">
+          <label for="hitboxVisibilityMode">Hitbox outlines</label>
+          <select id="hitboxVisibilityMode" aria-label="Hitbox outline visibility">
+            <option value="visible">Always visible</option>
+            <option value="hover">On hover / selection</option>
+          </select>
+        </div>
+
+        <!--
+          Explicit grouping controls. Select a hitbox by clicking once, then
+          wrap it in the chosen bracket style or remove one existing Group.
+          Double-clicking a hitbox toggles round brackets. Alt+click selects
+          its outer hitbox when several mathematical levels are nested.
+        -->
+        <div class="group-toolbar" role="group" aria-label="Bracket selected expression">
+          <span id="selectionLabel" class="group-toolbar__selection" aria-live="polite">Select a term or factor first.</span>
+          <label for="groupStyle">Bracket style</label>
+          <select id="groupStyle" aria-label="Brackets to insert">
+            <option value="round">( )</option>
+            <option value="square">[ ]</option>
+            <option value="curly">{ }</option>
+          </select>
+          <button class="button button--quiet button--small" id="wrapGroupButton" type="button" disabled>Wrap selection</button>
+          <button class="button button--quiet button--small" id="removeGroupButton" type="button" disabled>Remove brackets</button>
+          <!-- Only shown in the lightweight modal grouping preview. Keyboard
+               users need explicit Confirm/Cancel controls as well as the
+               interactive bracket outline. -->
+          <span id="groupingPreviewActions" class="group-toolbar__preview-actions" hidden>
+            <button class="button button--small" id="confirmRangeGroupButton" type="button">Confirm grouping</button>
+            <button class="button button--quiet button--small" id="cancelRangeGroupButton" type="button">Cancel</button>
+          </span>
+        </div>
+        <!--
+          Factorisation uses the SAME Ctrl/Cmd multi-selection as range grouping.
+          The pure rule requires one matching end-factor from EVERY direct
+          Multiply child of an explicitly grouped Add. These controls are a
+          keyboard-accessible alternative to dragging into the amber zone.
+          They are shown only when a valid selection exists or during preview.
+        -->
+        <div class="factorisation-toolbar" id="factorisationToolbar" hidden role="group" aria-label="Common-factor extraction">
+          <button class="button button--quiet button--small" id="previewFactorisationButton" type="button">Preview extraction</button>
+          <span id="factorisationPreviewActions" class="group-toolbar__preview-actions" hidden>
+            <button class="button button--small" id="confirmFactorisationButton" type="button">Confirm extraction</button>
+            <button class="button button--quiet button--small" id="cancelFactorisationButton" type="button">Cancel</button>
+          </span>
+        </div>
+        <p class="field-help">Click to select; Ctrl/Cmd+click selects multiple operands. If adjacent siblings can be regrouped, click their thin blue outline to preview brackets, then click the preview to confirm (or Escape to cancel). Double-click a single term to toggle ( ). Alt+click selects a containing hitbox. For factorisation, first group the addends, then Ctrl/Cmd+click the matching leftmost or rightmost factor in each product. Drag a selected factor into the amber extraction zone outside the brackets, or choose Preview extraction. For distribution, drag a factor onto the + sign in an adjacent bracketed sum, or focus a factor and press D. Click any temporary amber factor to confirm; Escape or click elsewhere to cancel.</p>
+
+        <!-- Identity tools are transformation requests, not mathematical nodes.
+             Drag onto a hitbox edge or matching associative operator. -->
+        <div class="identity-toolbar" id="identityToolbar" role="group" aria-label="Introduce mathematical identities">
+          <span>Introduce identity</span>
+          <button class="button button--quiet button--small identity-tool" data-identity-operation="Add" type="button" aria-label="Drag to introduce additive identity">+0</button>
+          <button class="button button--quiet button--small identity-tool" data-identity-operation="Multiply" type="button" aria-label="Drag to introduce multiplicative identity">×1</button>
+          <span id="identityPreviewActions" hidden>
+            <button class="button button--small" id="confirmIdentityButton" type="button">Confirm identity</button>
+            <button class="button button--quiet button--small" id="cancelIdentityButton" type="button">Cancel</button>
+          </span>
+        </div>
+        <!-- Relation actions are distinct from arithmetic drag operations. -->
+        <div class="equality-toolbar" aria-label="Equality actions">
+          <button class="button button--quiet button--small" type="button" id="swapEqualityButton" hidden>Swap equality sides</button>
+          <span id="equalityStatus" class="equality-status" hidden aria-live="polite"></span>
+        </div>
+        <!-- The equation renderer replaces the contents of this panel as the model changes. -->
+        <section class="equation-panel" aria-label="Interactive equation area">
+          <div class="equation" id="equation" aria-label="Expression terms"></div>
+        </section>
+        <p class="status-message" id="statusMessage" role="status" aria-live="polite">
+          Drag onto a term to evaluate (green), or drag a factor onto a neighbouring sum’s + sign to preview distribution (yellow).
+        </p>
+
+        <!-- Small legend makes the two drag outcomes discoverable. -->
+        <div class="interaction-legend" aria-label="Interaction guide">
+          <span><i class="legend-swatch legend-swatch--move" aria-hidden="true"></i> Move an addend or factor into a gap</span>
+          <span><i class="legend-swatch legend-swatch--add" aria-hidden="true"></i> Green: evaluate/identity</span>
+          <span><i class="legend-swatch legend-swatch--distribution" aria-hidden="true"></i> Amber: distribute or extract a common factor</span>
+        </div>
+
+        <!--
+          This inspector makes the internal mathematical structure visible while
+          the project is being developed. It is generated from the expression
+          tree and omits editor-only IDs and display styling.
+        -->
+        <details class="mathjson-inspector">
+          <summary>Inspect expression as MathJSON</summary>
+          <pre id="mathJsonOutput" aria-live="polite"></pre>
+        </details>
+      </section>
+
+      <!--
+        Variable panel.
+        Variables are stored as symbolic terms; substitutions are stored separately
+        in a name-to-number map. This separation makes later symbolic evaluation easier.
+      -->
+      <aside class="variables-panel" aria-labelledby="variablesHeading">
+        <div class="section-heading section-heading--compact">
+          <div>
+            <p class="eyebrow">Symbol table</p>
+            <h2 id="variablesHeading">Variables</h2>
+          </div>
+          <span class="count-pill" id="variableCount">0</span>
+        </div>
+
+        <p class="panel-description">
+          Symbols anywhere in the expression tree appear here. Set a value to make a symbol numerically evaluable in addition or multiplication.
+        </p>
+
+        <div class="variables-list" id="variablesList">
+          <!-- Variable rows are generated by app.js. -->
+        </div>
+
+        <div class="panel-actions">
+          <button class="button button--primary button--full" id="applyValuesButton" type="button">Apply values</button>
+          <button class="button button--quiet button--full" id="clearValuesButton" type="button">Clear values</button>
+        </div>
+        <p class="panel-note" id="variableStatus" aria-live="polite">
+          Values are kept separately from the expression, so the original symbols remain visible.
+        </p>
+      </aside>
+    </main>
+
+    <!--
+      History drawer.
+      Each action creates a node whose parent is the currently selected history node.
+      Returning to an earlier node and editing from there therefore creates a new branch.
+    -->
+    <section class="history-drawer" aria-labelledby="historyHeading">
+      <div class="history-toolbar">
+        <button
+          class="history-toggle"
+          id="historyToggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="historyPanel"
+        >
+          <span class="history-toggle-icon" aria-hidden="true">▸</span>
+          <span id="historyHeading">History</span>
+          <span class="count-pill" id="historyCount">1</span>
+        </button>
+        <div class="history-toolbar-actions">
+          <span class="current-history-label" id="currentHistoryLabel">Current: initial expression</span>
+          <button class="button button--quiet button--small" id="openHistoryGraphButton" type="button">View graph</button>
+        </div>
+      </div>
+
+      <div class="history-panel" id="historyPanel" hidden>
+        <p class="history-help">Select any previous state to return to it. Continuing from an older state creates a new branch.</p>
+        <div class="history-tree history-tree--timeline" id="historyTree">
+          <!-- The history tree is generated by app.js. -->
+        </div>
+      </div>
+    </section>
+    </div>
+  </div>
+
+  <!--
+    History graph dialog.
+    This is an in-page modal rather than a separate browser window, avoiding popup blockers
+    while still giving the history graph a dedicated, scrollable viewing area.
+  -->
+  <dialog class="history-dialog" id="historyDialog" aria-labelledby="historyDialogTitle">
+    <div class="dialog-header">
+      <div>
+        <p class="eyebrow">Expression branches</p>
+        <h2 id="historyDialogTitle">History graph</h2>
+      </div>
+      <button class="icon-button" id="closeHistoryGraphButton" type="button" aria-label="Close history graph">×</button>
+    </div>
+    <p class="dialog-description">Each node is an expression state. Branches show edits made after returning to an earlier state.</p>
+    <div class="history-graph-scroll">
+      <div class="history-tree history-tree--graph" id="historyGraphTree">
+        <!-- A second rendering of the same history tree, styled for graph viewing. -->
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
