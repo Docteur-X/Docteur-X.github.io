@@ -1,3 +1,4 @@
+import { createWorkspaceStatusGate } from './workspace/workspaceStatusGate.js';
 import { createEqualityInteractionController } from './interaction/equalityInteractionController.js';
 import { createClipboardPanelController } from './interaction/clipboardPanelController.js';
 import { queryApplicationDom } from './ui/domBindings.js';
@@ -384,6 +385,7 @@ import { prepareRearrangementCommitCandidate } from "./manipulator/rearrangement
   const workspace = { documents: new Map(), activeId: null, controller: null,
     openIds: new Set(), dirty: new Set(), saveTimer: null, saveQueue: Promise.resolve() };
 
+  const workspaceStatusGate = createWorkspaceStatusGate();
   function workspaceMessage(message) { dom.workspaceStatus.textContent = message; }
   function activeDocument() { return workspace.controller?.document ?? null; }
   function updateWorkspaceUI() {
@@ -458,19 +460,35 @@ import { prepareRearrangementCommitCandidate } from "./manipulator/rearrangement
   }
   async function saveDocument(doc) {
     if (!doc) return;
+    // Capture the status context BEFORE awaiting the queued IndexedDB write.
+    // A save may finish after the user imports or activates another document.
+    // It must still finish writing, but must not overwrite the newer status.
+    const statusToken = workspaceStatusGate.capture(doc.id);
     try {
       await queueSave(doc);
       if (workspace.documents.get(doc.id) === doc) workspace.dirty.delete(doc.id);
       updateWorkspaceUI();
-      workspaceMessage(`Saved ${doc.title} locally.`);
+      if (workspaceStatusGate.isCurrent(statusToken, workspace.activeId)) {
+        workspaceMessage(`Saved ${doc.title} locally.`);
+      }
     } catch (error) {
-      workspaceMessage(`Save failed: ${error.message}. Export a JSON backup.`);
+      // Retain the dirty marker after a failed write. Report a failure only
+      // while the saved document is still the active workspace context.
+      if (workspaceStatusGate.isCurrent(statusToken, workspace.activeId)) {
+        workspaceMessage(`Save failed: ${error.message}. Export a JSON backup.`);
+      }
     }
   }
   function scheduleSave() {
     clearTimeout(workspace.saveTimer);
     workspaceMessage('Unsaved changes — autosave pending.');
-    workspace.saveTimer = setTimeout(() => saveDocument(activeDocument()), 350);
+    // Capture the committed document snapshot at scheduling time. Never read
+    // activeDocument() later inside a timer after the user may have switched.
+    const pendingDocument = activeDocument();
+    workspace.saveTimer = setTimeout(() => {
+      workspace.saveTimer = null;
+      void saveDocument(pendingDocument);
+    }, 350);
   }
   function cancelWorkspaceInteraction() {
     cancelIdentityTool();
@@ -487,6 +505,9 @@ import { prepareRearrangementCommitCandidate } from "./manipulator/rearrangement
     if (!workspace.documents.has(id)) return;
     if (workspace.activeId === id) return;
     clearTimeout(workspace.saveTimer);
+    workspace.saveTimer = null;
+    // Invalidate asynchronous status messages from the previous document.
+    workspaceStatusGate.invalidate();
     if (workspace.controller) {
       cancelWorkspaceInteraction();
       // Existing document is already captured after each committed change.
@@ -555,6 +576,9 @@ import { prepareRearrangementCommitCandidate } from "./manipulator/rearrangement
   }
   async function importWorkspaceDocument(file) {
     if (!file) return;
+    // An import is a new user-visible operation. Pending saves must still
+    // persist, but their completion messages may no longer supersede it.
+    workspaceStatusGate.invalidate();
     try {
       if (file.size > 10 * 1024 * 1024) throw new Error('File is too large (10 MB limit).');
       // Fully validate and hydrate before touching storage or the active workspace.

@@ -1,3 +1,5 @@
+> **Current increment (7 November 2026):** Workspace Import and Autosave Lifecycle Correction v1 is source-tested (270/270 Node tests); GitHub Actions/Playwright verification is pending. The previously user-verified mathematical baseline remains Negation v1.2.3. See [Workspace lifecycle](../03_Developer_Guides/Workspace_Import_Autosave_Lifecycle.md).
+
 > **Verification update (owner report, 7 November 2026):** Negation v1.2.3 passed the Node and Playwright suites and manual interface checks. The subsequent terminology documentation update makes no application-code changes. Earlier “browser pending” statements below describe their historical verification point.
 
 # Current status — Negation v1.2.3 (7 November 2026)

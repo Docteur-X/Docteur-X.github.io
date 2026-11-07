@@ -1,3 +1,5 @@
+> **Latest implementation:** Workspace Import and Autosave Lifecycle Correction v1. Save completion status is gated by active-document identity and operation generation; pending autosaves capture their document snapshot at scheduling time. `js/workspace/workspaceStatusGate.js` and [workspace lifecycle guide](Workspace_Import_Autosave_Lifecycle.md) explain the boundary. Node tests 270/270 passed; browser/CI verification pending. Keep v1.2.3 as user-verified rollback baseline.
+
 # Current AI/developer handover — Negation v1.2.3
 
 **Read first:** [Student agency](../01_Founding_Vision/Student_Agency.md), [Current status](../05_Roadmap/Current_Status.md), [System architecture](../02_Architecture/System_Overview.md), [Transformation framework](../02_Architecture/Transformation_Framework.md), and [Design-first workflow](Design_First_Development_Workflow.md). Source code and executable tests supersede stale narrative claims; historical records are not the current specification.

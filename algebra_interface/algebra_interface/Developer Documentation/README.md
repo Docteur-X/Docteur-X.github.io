@@ -40,3 +40,5 @@ See [Nested Mathematical Hitbox Visual Contract v1](04_Reference/Nested_Mathemat
 Windows release packaging: [Windows-Compatible Packaging](03_Developer_Guides/Windows_Compatible_Packaging.md).
 
 - [Negation and Subtraction v1](04_Reference/Negation_and_Subtraction_v1.md) — current AST, parser, first preview and known limitations.
+
+- [Workspace import and autosave lifecycle](03_Developer_Guides/Workspace_Import_Autosave_Lifecycle.md) — persistence ordering and stale status prevention.
