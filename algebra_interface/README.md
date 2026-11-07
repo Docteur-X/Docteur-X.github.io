@@ -20,13 +20,14 @@ node --test tests/*.test.js
 
 No application package installation is required. `npm test` is an alternative if npm is installed.
 
-## What works
+## What works (v3 baseline)
 
-- Expressions: addition, multiplication, explicit grouping, rearrangement, numerical evaluation, distribution, and factorisation with deliberate visual previews.
-- Equality: binary scalar `Equal` statements, symmetry, conservative truth feedback, and independent manipulation of either side.
-- Manipulator: stable drag hit-testing, range selection/grouping, hitbox-visibility modes, and draggable `+0` / `×1` identity tools.
-- Workspace: multiple named documents, independent branching histories, autosave/manual save through IndexedDB, and JSON import/export.
-- History: snapshots plus versioned transformation events and deterministic patches. Compact history-only export exists in the history library, but **compact document export is not yet wired into the Workspace UI**.
+- Scalar expression trees, numerical combination, rearrangement, distribution, factorisation, explicit grouping and identity insertion, with direct gestures and feedback.
+- Binary equality, symmetry and limited clipboard-driven addition/ordered multiplication on both sides.
+- Multiple Mathematical Objects per document, branching histories, session mathematical clipboard, IndexedDB saves and validated compact/legacy JSON import/export.
+- Registered transformation proposals and shared confirmation/history preparation for seven principal transformation families.
+
+See [current status](Developer%20Documentation/05_Roadmap/Current_Status.md) for precise scope and limitations.
 
 ## Saved work
 
@@ -34,8 +35,12 @@ Documents are saved in the browser's IndexedDB for the current site origin and b
 
 ## Documentation for developers
 
-Start with [Current implementation status](Developer%20Documentation/CURRENT_STATUS.md), then the [Developer Documentation index](Developer%20Documentation/README.md) and [Project context](Developer%20Documentation/PROJECT_CONTEXT.md). The [Architecture decisions](Developer%20Documentation/ARCHITECTURE_DECISIONS.md) preserve the rationale for major design choices. The [Historical development README](Developer%20Documentation/Historical%20Notes/README_DEVELOPMENT_CHRONICLE.md) is retained for reference, **not** as an authoritative description of today's code.
+Start at the [authoritative documentation index](Developer%20Documentation/README.md), then read the [founding student-agency vision](Developer%20Documentation/01_Founding_Vision/Student_Agency.md), [current status](Developer%20Documentation/05_Roadmap/Current_Status.md) and [architecture map](Developer%20Documentation/02_Architecture/System_Overview.md). Older milestone notes are preserved under [historical records](Developer%20Documentation/06_Historical_Records/README.md) but are not current specifications.
 
 ## Known limits
 
-Browser pointer, accessibility, and storage-failure cases still need broader automated end-to-end testing. Imported JSON receives basic envelope validation; deep AST/event/patch validation and complexity limits remain planned. Cross-document substitution, simultaneous interactive windows, logical connectors, and full keyboard support for identity insertion are not implemented.
+Advanced function/domain reasoning, general substitution, inequalities, matrices, multiple active resizable windows and annotations remain future work. See [known issues](Developer%20Documentation/05_Roadmap/Known_Issues.md) and [future features](Developer%20Documentation/05_Roadmap/Future_Features.md).
+
+## Automated browser tests
+
+The optional Playwright suite tests actual mouse interactions in Chromium. Install Node.js/npm, then run `npm install`, `npx playwright install chromium`, and `npm run test:e2e`. See [Testing and verification](Developer%20Documentation/03_Developer_Guides/Testing_and_Verification.md) for scope and limitations. The existing mathematical tests still run with `npm test`.

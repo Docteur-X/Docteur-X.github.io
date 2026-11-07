@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "id": "doc-legacy-fixture",
+  "title": "Historical v1 fixture",
+  "root": {
+    "id": "node-3",
+    "type": "Add",
+    "operands": [
+      {
+        "id": "node-1",
+        "type": "Symbol",
+        "name": "a"
+      },
+      {
+        "id": "node-2",
+        "type": "Symbol",
+        "name": "b"
+      }
+    ]
+  },
+  "kind": "expression",
+  "history": {
+    "schemaVersion": 2,
+    "nodes": [
+      {
+        "id": 1,
+        "stateId": "state-1",
+        "eventId": "event-1",
+        "kind": "rule-transform",
+        "parentId": null,
+        "children": [],
+        "actionLabel": "Start",
+        "snapshot": {
+          "expression": {
+            "id": "node-3",
+            "type": "Add",
+            "operands": [
+              {
+                "id": "node-1",
+                "type": "Symbol",
+                "name": "a"
+              },
+              {
+                "id": "node-2",
+                "type": "Symbol",
+                "name": "b"
+              }
+            ]
+          },
+          "substitutions": {}
+        },
+        "transformation": null,
+        "event": {
+          "schemaVersion": 1,
+          "id": "event-1",
+          "kind": "rule-transform",
+          "ruleId": null,
+          "ruleVersion": null,
+          "inputs": null,
+          "affectedNodeIds": [],
+          "generatedNodeIds": [
+            "node-3",
+            "node-1",
+            "node-2"
+          ],
+          "provenance": null,
+          "fromStateId": null,
+          "toStateId": "state-1",
+          "beforeFingerprint": null,
+          "afterFingerprint": "23a8b01f",
+          "patch": [
+            {
+              "op": "set",
+              "path": [],
+              "value": {
+                "expression": {
+                  "id": "node-3",
+                  "type": "Add",
+                  "operands": [
+                    {
+                      "id": "node-1",
+                      "type": "Symbol",
+                      "name": "a"
+                    },
+                    {
+                      "id": "node-2",
+                      "type": "Symbol",
+                      "name": "b"
+                    }
+                  ]
+                },
+                "substitutions": {}
+              }
+            }
+          ]
+        },
+        "createdAt": "2026-11-05T21:54:33.829Z"
+      }
+    ],
+    "nextNodeId": 2,
+    "currentNodeId": 1
+  },
+  "substitutions": {},
+  "metadata": {
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+}

@@ -193,16 +193,65 @@ export function exportEventHistory(history) {
   };
 }
 
+/** Refuse patches that would create sparse arrays or traverse the wrong container. */
+function assertPatchTargets(snapshot, changes) {
+  for (const change of changes) {
+    if (!Array.isArray(change.path)) throw new Error('Invalid history patch path.');
+    if (!change.path.length) continue;
+    let parent = snapshot;
+    for (const key of change.path.slice(0, -1)) {
+      if (parent === null || typeof parent !== 'object' || !own(parent, key))
+        throw new Error('History patch path not found.');
+      if (Array.isArray(parent) && (!Number.isSafeInteger(key) || key < 0 || key >= parent.length))
+        throw new Error('Invalid history array path.');
+      parent = parent[key];
+    }
+    if (parent === null || typeof parent !== 'object') throw new Error('Invalid history patch parent.');
+    const key = change.path.at(-1);
+    if (Array.isArray(parent)) {
+      if (!Number.isSafeInteger(key) || key < 0 || key >= parent.length || change.op === 'remove')
+        throw new Error('Invalid history array operation.');
+    } else if (typeof key !== 'string') {
+      throw new Error('Invalid history object path.');
+    }
+  }
+}
+
 /** Rebuild missing snapshots from events before handing history to the editor. */
 export function hydrateHistorySnapshots(historyData) {
   const history = copy(historyData);
+  const byId = new Map();
   for (const node of history.nodes) {
-    if (!node.event) throw new Error("Cannot hydrate history without replayable events.");
-    const restored = replayHistoryState(history, node.id);
-    if (node.snapshot && !same(node.snapshot, restored)) {
-      throw new Error("Stored snapshot conflicts with its event history.");
+    if (!Number.isSafeInteger(node.id) || byId.has(node.id)) throw new Error('Duplicate or invalid history node ID.');
+    byId.set(node.id, node);
+  }
+  const completed = new Set(), visiting = new Set();
+  // Iterative parent-first traversal: each event is applied exactly once.
+  for (const target of history.nodes) {
+    let node = target;
+    const chain = [];
+    while (!completed.has(node.id)) {
+      if (visiting.has(node.id)) throw new Error('Cycle in history graph.');
+      visiting.add(node.id); chain.push(node);
+      if (node.parentId === null) break;
+      node = byId.get(node.parentId);
+      if (!node) throw new Error('Broken history parent link.');
     }
-    node.snapshot = restored;
+    for (const state of chain.reverse()) {
+      const previous = state.parentId === null ? null : byId.get(state.parentId).snapshot;
+      const event = state.event;
+      if (!event || event.schemaVersion !== HISTORY_EVENT_VERSION ||
+          event.beforeFingerprint !== (previous === null ? null : snapshotFingerprint(previous)))
+        throw new Error('History replay input differs from recorded state.');
+      assertPatchTargets(previous, event.patch);
+      const restored = applySnapshotPatch(previous, event.patch);
+      if (snapshotFingerprint(restored) !== event.afterFingerprint)
+        throw new Error('History replay result differs from recorded state.');
+      if (state.snapshot && !same(state.snapshot, restored))
+        throw new Error('Stored snapshot conflicts with its event history.');
+      state.snapshot = restored;
+      completed.add(state.id); visiting.delete(state.id);
+    }
   }
   return history;
 }

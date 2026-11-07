@@ -1,3 +1,10 @@
+import { createWorkspaceStatusGate } from './workspace/workspaceStatusGate.js';
+import { createEqualityInteractionController } from './interaction/equalityInteractionController.js';
+import { createClipboardPanelController } from './interaction/clipboardPanelController.js';
+import { queryApplicationDom } from './ui/domBindings.js';
+import { renderWorkspaceNavigation, renderObjectNavigation } from './ui/workspaceNavigation.js';
+import { normaliseMultiplicationMode, readSavedTheme, applyThemePreference } from './ui/presentationPreferences.js';
+import { createApplicationTransformationFeatures } from './composition/transformationFeatureAssembly.js';
 /* ========================================================================== *
  * Algebra Workspace — application controller
  * ========================================================================== *
@@ -22,9 +29,14 @@
  * ========================================================================== */
 
 import { cloneExpression, reserveNodeIds } from "./core/nodeFactory.js";
+import { equalityFunctionActionRequest } from "./manipulator/equalityFunctionGesture.js";
+import { activeClipboardEntry } from "./core/clipboardLibrary.js";
+import { captureMathematicalClipboard } from "./core/mathematicalClipboard.js";
+import { createClipboardLibrary, appendClipboardEntry } from "./core/clipboardLibrary.js";
 import { createDocumentController } from "./core/documentController.js";
-import { newDocument, duplicateDocument, validateDocument } from "./core/workspaceDocuments.js";
+import { newDocument, addObject, duplicateDocument, validateDocument, getActiveObject, reserveDocumentNodeIds } from "./core/workspaceDocuments.js";
 import { documentRepository } from "./core/documentRepository.js";
+import { serializeCompactDocument, deserializeCompactDocument } from "./core/documentSerialization.js";
 import { createDocumentHistory, findHistoryState, appendHistoryState } from "./core/documentHistory.js";
 import { createMathematicalDocument, updateDocumentRoot } from "./core/mathematicalDocument.js";
 import { swapEqualitySides, evaluateEquality } from "./relations/equality.js";
@@ -36,11 +48,11 @@ import {
   getUniqueSymbolNames
 } from "./core/treeUtils.js";
 import { normaliseWithRules } from "./core/normalization.js";
-import { canCombineAddends, combineNumericAddends, reorderAddend, canReorderAddend } from "./operations/addition.js";
+import { canCombineAddends, combineNumericAddends } from "./operations/addition.js";
 import {
   canCombineFactors,
   combineNumericFactors,
-  reorderFactor, canReorderFactor
+  // Rearrangement rules are invoked through the shared coordinator.
 } from "./operations/multiplication.js";
 import { removeGroup, wrapNodeInGroup, getRangeGroupingPlan, groupOperandRange } from "./operations/grouping.js";
 import { getDistributionPlan, applyDistribution, unwrapGroupedSum } from "./operations/distribution.js";
@@ -51,12 +63,33 @@ import { captureDragGeometry, hitTestDrag, hitTestVisibleInsertion, retainInsert
 import { createDragFeedback } from "./interaction/dragFeedback.js";
 import { createSelectionModel } from "./interaction/selection.js";
 import { createHitboxVisibility } from "./interaction/hitboxVisibility.js";
+import { createNegationInlinePreview } from "./interaction/negationInlinePreview.js";
+import { createVisualFeedbackController } from "./interaction/visualFeedbackController.js";
+import { resolveNegationCompressionTarget } from "./interaction/negationCompressionTarget.js";
 import { createGroupingPreview } from "./interaction/groupingPreview.js";
 import { createFactorisationPreview } from "./interaction/factorisationPreview.js";
 import { createTransformationPreview } from "./interaction/transformationPreview.js";
-import { proposeIdentityInsertion } from "./operations/identityInsertion.js";
 import { createIdentityToolPreview } from "./interaction/identityTool.js";
 import { createIdentityDragFeedback, describeIdentityTarget } from "./interaction/identityDragFeedback.js";
+import { interpretIdentityPointer } from "./manipulator/identityGesture.js";
+import { createTransformationCoordinator } from "./manipulator/transformationCoordinator.js";
+import { createTransformationCommitLifecycle } from "./manipulator/transformationCommitLifecycle.js";
+import { prepareAtomicTransformationCommit } from "./manipulator/atomicTransformationCommit.js";
+import { publishPreparedTransformation } from "./manipulator/transformationPublication.js";
+// These adapters are used by live pointer/drop handlers as well as by the
+// feature registry. Keep direct imports until those handlers are fully routed
+// through the registry; removing them silently breaks all drag confirmations.
+import { describeIdentityPreview } from "./manipulator/identityVisual.js";
+import { distributionActionRequest } from "./manipulator/distributionGesture.js";
+import { describeDistributionPreview } from "./manipulator/distributionVisual.js";
+import { groupingActionRequest } from "./manipulator/groupingGesture.js";
+import { describeGroupingPreview } from "./manipulator/groupingVisual.js";
+import { factorisationActionRequest } from "./manipulator/factorisationGesture.js";
+import { describeFactorisationPreview } from "./manipulator/factorisationVisual.js";
+import { describeRearrangementFeedback } from "./manipulator/rearrangementVisual.js";
+import { rearrangementActionRequest } from "./manipulator/rearrangementGesture.js";
+import { proposeRearrangement } from "./manipulator/rearrangementRule.js";
+import { prepareRearrangementCommitCandidate } from "./manipulator/rearrangementCommitCandidate.js";
 
 (function initialiseAlgebraWorkspace() {
   "use strict";
@@ -68,70 +101,13 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
    * by the renderer and use event delegation from the equation container.
    * ---------------------------------------------------------------------- */
 
-  const dom = {
-    workspaceList: document.querySelector("#workspaceList"),
-    workspaceName: document.querySelector("#workspaceName"),
-    workspaceNew: document.querySelector("#workspaceNew"),
-    workspaceSave: document.querySelector("#workspaceSave"),
-    workspaceRename: document.querySelector("#workspaceRename"),
-    workspaceDuplicate: document.querySelector("#workspaceDuplicate"),
-    workspaceClose: document.querySelector("#workspaceClose"),
-    workspaceDelete: document.querySelector("#workspaceDelete"),
-    workspaceExport: document.querySelector("#workspaceExport"),
-    workspaceImport: document.querySelector("#workspaceImport"),
-    workspaceStatus: document.querySelector("#workspaceStatus"),
-    workspaceEditor: document.querySelector("#workspaceEditor"),
-    workspaceEmpty: document.querySelector("#workspaceEmpty"),
-    html: document.documentElement,
-    body: document.body,
-    expressionForm: document.querySelector("#expressionForm"),
-    expressionInput: document.querySelector("#expressionInput"),
-    resetButton: document.querySelector("#resetButton"),
-    equation: document.querySelector("#equation"),
-    swapEqualityButton: document.querySelector("#swapEqualityButton"),
-    equalityStatus: document.querySelector("#equalityStatus"),
-    statusMessage: document.querySelector("#statusMessage"),
-    themeToggle: document.querySelector("#themeToggle"),
-    hitboxVisibilityMode: document.querySelector("#hitboxVisibilityMode"),
-    variablesList: document.querySelector("#variablesList"),
-    variableCount: document.querySelector("#variableCount"),
-    variableStatus: document.querySelector("#variableStatus"),
-    applyValuesButton: document.querySelector("#applyValuesButton"),
-    clearValuesButton: document.querySelector("#clearValuesButton"),
-    multiplicationDisplayMode: document.querySelector("#multiplicationDisplayMode"),
-    selectionLabel: document.querySelector("#selectionLabel"),
-    groupStyle: document.querySelector("#groupStyle"),
-    wrapGroupButton: document.querySelector("#wrapGroupButton"),
-    removeGroupButton: document.querySelector("#removeGroupButton"),
-    groupingPreviewActions: document.querySelector("#groupingPreviewActions"),
-    confirmRangeGroupButton: document.querySelector("#confirmRangeGroupButton"),
-    cancelRangeGroupButton: document.querySelector("#cancelRangeGroupButton"),
-    identityToolbar: document.querySelector("#identityToolbar"),
-    identityPreviewActions: document.querySelector("#identityPreviewActions"),
-    confirmIdentityButton: document.querySelector("#confirmIdentityButton"),
-    cancelIdentityButton: document.querySelector("#cancelIdentityButton"),
-    factorisationToolbar: document.querySelector("#factorisationToolbar"),
-    previewFactorisationButton: document.querySelector("#previewFactorisationButton"),
-    factorisationPreviewActions: document.querySelector("#factorisationPreviewActions"),
-    confirmFactorisationButton: document.querySelector("#confirmFactorisationButton"),
-    cancelFactorisationButton: document.querySelector("#cancelFactorisationButton"),
-    mathJsonOutput: document.querySelector("#mathJsonOutput"),
-    historyToggle: document.querySelector("#historyToggle"),
-    historyPanel: document.querySelector("#historyPanel"),
-    historyCount: document.querySelector("#historyCount"),
-    historyTree: document.querySelector("#historyTree"),
-    currentHistoryLabel: document.querySelector("#currentHistoryLabel"),
-    openHistoryGraphButton: document.querySelector("#openHistoryGraphButton"),
-    historyDialog: document.querySelector("#historyDialog"),
-    closeHistoryGraphButton: document.querySelector("#closeHistoryGraphButton"),
-    historyGraphTree: document.querySelector("#historyGraphTree")
-  };
+  const dom = queryApplicationDom(document);
 
   /* ---------------------------------------------------------------------- *
    * 2. Application state
    * ---------------------------------------------------------------------- *
    * `expressionRoot` is now the source of truth for the mathematics. It is a
-   * tree whose root is always an Add node. There is no longer a flat `terms`
+   * tree whose root may be an expression or equality node. There is no longer a flat `terms`
    * array. Any addend or factor may itself be a Group, Add or Multiply node,
    * allowing nesting to arbitrary depth. The Group preserves explicit user
    * brackets; mathematical operation precedence is handled separately.
@@ -171,6 +147,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     // Multiple selection is general-purpose: non-siblings remain selectable
     // for later factorisation, but only eligible ranges offer grouping.
     multiSelection: createSelectionModel(),
+    touchMultiSelectMode: false, // Interaction mode only; never enters document history.
     groupingMode: "normal", // "normal" | "preview" (a lightweight modal mode)
     groupingPlan: null,
     // Factorisation uses the same general multi-selection, but has its own
@@ -236,28 +213,236 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
    * is transient; the active Document Controller owns committed math/history.
    * Cross-document selection will be a separate future workspace concern.
    * ---------------------------------------------------------------------- */
+  // Transient in-app clipboard: no AST or history is modified by copying.
+  // It deliberately survives object switches, but not a browser reload in v1.
+  let mathematicalClipboard = createClipboardLibrary();
+
+  // The clipboard is session-owned, never document-owned. Rendering is deliberately
+  // a projection of the stored snapshots: neither selection nor removal modifies
+  // source mathematical objects, their histories, or any saved worksheet.
+  // Equality interaction owns menu, arming, and preview DOM. The application
+  // retains the mathematical proposal and history commit until the common
+  // transformation lifecycle is consolidated in a later increment.
+  // Shared, DOM-free, single-use commit gate. Equality is the first feature
+  // migrated; other previews retain their existing lifecycles for this release.
+  const equalityCommitLifecycle = createTransformationCommitLifecycle();
+  // One independent, single-use proposal gate for explicit negation changes.
+  // The preview is an ephemeral view; the authoritative AST is untouched.
+  const negationCommitLifecycle = createTransformationCommitLifecycle();
+  // One semantic feedback channel for compression eligibility. Geometry and
+  // DOM targeting live in the interaction adapter; the engine owns validity.
+  const negationDragFeedback = createVisualFeedbackController(dom.equation);
+  const NEGATION_DRAG_OWNER = 'negation-compression-drop';
+  // Candidate DOM is managed by a view-local presentation controller, not by
+  // app.js or the Mathematical Engine. Its amber feedback uses the shared
+  // semantic Visual Feedback Controller rather than feature-specific CSS.
+  const negationPreviewUI = createNegationInlinePreview({
+    equation: dom.equation,
+    renderCandidate: root => renderExpression(root, {
+      displayStyleOverride: state.multiplicationDisplayOverride,
+      substitutions: state.substitutions
+    }),
+    onConfirm: () => confirmNegationPreview(),
+    onCancel: () => { cancelNegationPreview(); setStatus('Negation preview cancelled.'); }
+  });
+
+  // Both equality and identity transformations use the same source-state contract.
+  const transformationSourceStamp = () => ({
+    documentId: workspace.activeId,
+    objectId: activeDocument()?.activeObjectId ?? null,
+    revision: state.history.currentNodeId,
+    rootId: state.expressionRoot?.id ?? null,
+    fingerprint: JSON.stringify(state.expressionRoot)
+  });
+  const equalityUI = createEqualityInteractionController({
+    document, window, equation: dom.equation,
+    getRoot: () => state.expressionRoot,
+    onApplySelected: () => openEqualityApplication(activeClipboardEntry(mathematicalClipboard)),
+    onConfirm: () => confirmEqualityApplication(),
+    onCancel: () => cancelEqualityApplication()
+  });
+  const closeEqualityMenu = () => equalityUI.closeMenu();
+  const paintEqualityArming = () => equalityUI.paintArming();
+  const cancelEqualityApplication = () => {
+    equalityUI.cancelPreview();
+    equalityCommitLifecycle.cancel();
+  };
+
+  function openEqualityApplication(entry) {
+    if (!equalityUI.arming || state.expressionRoot?.type !== 'Equal' ||
+        equalityUI.arming.relationId !== state.expressionRoot.id) return false;
+    if (state.groupingMode !== 'normal' || state.factorisationMode !== 'normal' ||
+        state.distributionPreview || state.drag || state.factorDrag) return false;
+    if (!entry || entry.category !== 'expression') {
+      setStatus('Choose a copied expression (not a relation) as the operand.');
+      return false;
+    }
+    const action = equalityFunctionActionRequest({
+      relationId: state.expressionRoot.id, context: equalityUI.arming.context,
+      clipboardId: entry.clipboardId, documentId: workspace.activeId,
+      objectId: activeDocument()?.activeObjectId ?? null,
+      revision: state.history.currentNodeId
+    });
+    if (!action) return false;
+    try {
+      // All mathematical proposals, including equality application, now
+      // pass through the registered transformation coordinator. The clipboard
+      // is a session-level service; pass a captured operand as request data
+      // rather than making the Engine depend on UI or clipboard storage.
+      const candidate = transformationCoordinator.propose(state.expressionRoot, {
+        ...action, parameters: { ...action.parameters, operandRoot: entry.root }
+      });
+      if (!candidate) {
+        setStatus('This equality transformation is not mathematically eligible.');
+        return false;
+      }
+      const result = candidate.result;
+      const visualDescription = transformationCoordinator.describe(candidate);
+      // Preserve a snapshot of the exact operand used; the session clipboard
+      // may be cleared, or the original source document edited, before commit.
+      // Capture the immutable operand source and the authoritative state stamp
+      // at proposal time. The session clipboard may later change independently.
+      const proposal = {
+        ...candidate,
+        clipboardSource: structuredClone(entry.source)
+      };
+      if (!equalityCommitLifecycle.open(proposal, transformationSourceStamp())) return false;
+      // UI controller owns transient DOM and renderer visual roles. It does not
+      // receive permission to mutate the Mathematical Object or its history.
+      equalityUI.showPreview(result.root, visualDescription, {
+        displayStyleOverride: state.multiplicationDisplayOverride
+      });
+      setStatus('Preview: only the two copied operands are amber. Select amber to confirm, or Cancel.');
+      return true;
+    } catch (error) { cancelEqualityApplication(); setStatus(`Equality application unavailable: ${error.message}`); return false; }
+  }
+
+  const confirmEqualityApplication = () => {
+    // Confirm through the common single-use gate. It checks the document,
+    // object, branch cursor and complete source tree before the commit callback
+    // may touch the Mathematical Object. Presentation cleanup is separate.
+    let outcome;
+    try {
+      outcome = equalityCommitLifecycle.confirm(transformationSourceStamp(), proposal => {
+        const { result, action, clipboardSource } = proposal;
+        // Build the new root and history on detached data. If patch creation,
+        // cloning or provenance serialisation fails, the live Mathematical
+        // Object and its history remain untouched. This is the atomic boundary;
+        // UI rendering and IndexedDB autosave are intentionally outside it.
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history, resultRoot: result.root,
+          substitutions: state.substitutions,
+          actionLabel: 'Applied function to both sides of equality',
+          transformation: {
+            ...result.provenance, source: clipboardSource,
+            clipboardId: action.parameters.clipboardId
+          },
+          kind: 'rule-transform',
+          operation: {
+            ruleId: 'equality.apply-function', ruleVersion: 1,
+            affectedNodeIds: [action.parameters.relationId]
+          }
+        });
+        // Publish the coherent root/history pair without any fallible history
+        // construction between assignments. The UI is single-threaded and
+        // synchronous here; no other gesture can observe an intermediate pair.
+        publishPreparedTransformation({ state, staged });
+        // A failed local save is a durability problem, not a reason to erase a
+        // valid mathematical step. Keep the in-memory result and report it.
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) { workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`); }
+        }
+        renderHistory();
+      });
+    } catch (error) {
+      cancelEqualityApplication();
+      setStatus(`Could not commit equality application: ${error.message}`);
+      return;
+    }
+    cancelEqualityApplication();
+    if (outcome.status === 'stale') {
+      setStatus('The equation changed since preview; please try again.');
+    } else if (outcome.status === 'committed') {
+      syncExpressionInput();
+      renderApplication(false);
+      setStatus('Applied the chosen function context to both sides.');
+    }
+  };
+
+  // The clipboard panel and pointer gesture adapter are presentation-only.
+  // Their callbacks resolve a session entry, never an IndexedDB document.
+  const clipboardUI = createClipboardPanelController({
+    document, window, dom, equation: dom.equation,
+    getLibrary: () => mathematicalClipboard,
+    setLibrary: next => { mathematicalClipboard = next; },
+    getArming: () => equalityUI.arming,
+    onApply: entry => openEqualityApplication(entry),
+    onStatus: message => setStatus(message)
+  });
+  const renderClipboard = () => clipboardUI.render();
+  renderClipboard();
   const workspace = { documents: new Map(), activeId: null, controller: null,
     openIds: new Set(), dirty: new Set(), saveTimer: null, saveQueue: Promise.resolve() };
 
+  const workspaceStatusGate = createWorkspaceStatusGate();
   function workspaceMessage(message) { dom.workspaceStatus.textContent = message; }
   function activeDocument() { return workspace.controller?.document ?? null; }
   function updateWorkspaceUI() {
-    dom.workspaceList.replaceChildren();
-    for (const doc of workspace.documents.values()) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'workspace-document';
-      button.dataset.documentId = doc.id;
-      button.setAttribute('aria-current', String(doc.id === workspace.activeId));
-      button.textContent = `${doc.title}${workspace.dirty.has(doc.id) ? ' •' : ''}`;
-      dom.workspaceList.append(button);
+    renderWorkspaceNavigation(dom, workspace.documents, workspace.activeId,
+      workspace.dirty, activeDocument());
+  }
+  function renderObjectList() { renderObjectNavigation(dom, activeDocument()); }
+  // Rebind the existing single Manipulator to one object's committed state.
+  function loadActiveObject() {
+    const object = workspace.controller?.activeObject ?? null;
+    if (object) {
+      reserveNodeIds(object.root);
+      object.history.nodes.forEach(node => reserveNodeIds(node.snapshot?.expression));
     }
-    const active = Boolean(activeDocument());
-    dom.workspaceEditor.hidden = !active;
-    dom.workspaceEmpty.hidden = active;
-    for (const button of [dom.workspaceSave, dom.workspaceRename, dom.workspaceDuplicate,
-      dom.workspaceClose, dom.workspaceDelete, dom.workspaceExport]) button.disabled = !active;
-    dom.workspaceName.textContent = activeDocument()?.title || 'No document selected';
+    state.expressionRoot = object?.root ? cloneExpression(object.root) : null;
+    state.history = object?.history ?? createDocumentHistory();
+    state.substitutions = { ...(object?.substitutions ?? {}) };
+    state.variableDrafts = Object.fromEntries(Object.entries(state.substitutions)
+      .map(([key, value]) => [key, String(value)]));
+    state.selectedNodeId = null;
+    distributionCommitLifecycle.cancel();
+    state.distributionPreview = null;
+    factorisationCommitLifecycle.cancel();
+    state.factorisationMode = 'normal';
+    state.factorisationPlan = null;
+    state.factorisationProposal = null;
+    resetRangeSelection();
+    dom.expressionInput.value = state.expressionRoot ? expressionToInput(state.expressionRoot) : '';
+    if (state.expressionRoot) renderApplication(false);
+    else {
+      dom.equation.replaceChildren();
+      dom.variablesList.replaceChildren();
+      dom.mathJsonOutput.textContent = '';
+      dom.swapEqualityButton.hidden = true;
+      dom.equalityStatus.hidden = true;
+      renderHistory();
+    }
+    renderObjectList();
+  }
+  function switchObject(id) {
+    if (!workspace.controller || activeDocument().activeObjectId === id) return;
+    cancelWorkspaceInteraction();
+    workspace.controller.activateObject(id);
+    workspace.documents.set(workspace.activeId, activeDocument());
+    loadActiveObject();
+    updateWorkspaceUI();
+    setStatus('Mathematical object opened.');
+  }
+  function changeObject(operation) {
+    if (!workspace.controller) return;
+    cancelWorkspaceInteraction();
+    operation(workspace.controller);
+    workspace.documents.set(workspace.activeId, activeDocument());
+    workspace.dirty.add(workspace.activeId);
+    loadActiveObject();
+    updateWorkspaceUI();
+    scheduleSave();
   }
 
   // Capture only committed state; never serialize pointer geometry or previews.
@@ -275,19 +460,35 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   }
   async function saveDocument(doc) {
     if (!doc) return;
+    // Capture the status context BEFORE awaiting the queued IndexedDB write.
+    // A save may finish after the user imports or activates another document.
+    // It must still finish writing, but must not overwrite the newer status.
+    const statusToken = workspaceStatusGate.capture(doc.id);
     try {
       await queueSave(doc);
       if (workspace.documents.get(doc.id) === doc) workspace.dirty.delete(doc.id);
       updateWorkspaceUI();
-      workspaceMessage(`Saved ${doc.title} locally.`);
+      if (workspaceStatusGate.isCurrent(statusToken, workspace.activeId)) {
+        workspaceMessage(`Saved ${doc.title} locally.`);
+      }
     } catch (error) {
-      workspaceMessage(`Save failed: ${error.message}. Export a JSON backup.`);
+      // Retain the dirty marker after a failed write. Report a failure only
+      // while the saved document is still the active workspace context.
+      if (workspaceStatusGate.isCurrent(statusToken, workspace.activeId)) {
+        workspaceMessage(`Save failed: ${error.message}. Export a JSON backup.`);
+      }
     }
   }
   function scheduleSave() {
     clearTimeout(workspace.saveTimer);
     workspaceMessage('Unsaved changes — autosave pending.');
-    workspace.saveTimer = setTimeout(() => saveDocument(activeDocument()), 350);
+    // Capture the committed document snapshot at scheduling time. Never read
+    // activeDocument() later inside a timer after the user may have switched.
+    const pendingDocument = activeDocument();
+    workspace.saveTimer = setTimeout(() => {
+      workspace.saveTimer = null;
+      void saveDocument(pendingDocument);
+    }, 350);
   }
   function cancelWorkspaceInteraction() {
     cancelIdentityTool();
@@ -304,6 +505,9 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     if (!workspace.documents.has(id)) return;
     if (workspace.activeId === id) return;
     clearTimeout(workspace.saveTimer);
+    workspace.saveTimer = null;
+    // Invalidate asynchronous status messages from the previous document.
+    workspaceStatusGate.invalidate();
     if (workspace.controller) {
       cancelWorkspaceInteraction();
       // Existing document is already captured after each committed change.
@@ -313,37 +517,18 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     workspace.openIds.add(id);
     workspace.controller = createDocumentController(workspace.documents.get(id));
     const doc = activeDocument();
-    // Reserve every historical ID, not just IDs in the current branch.
-    // Otherwise a later edit could accidentally reuse an occurrence ID.
-    reserveNodeIds(doc.root);
-    doc.history.nodes.forEach(node => reserveNodeIds(node.snapshot?.expression));
-    state.mathematicalDocument = doc;
-    state.expressionRoot = doc.root ? cloneExpression(doc.root) : null;
-    state.history = doc.history;
-    state.substitutions = { ...doc.substitutions };
-    state.variableDrafts = Object.fromEntries(Object.entries(state.substitutions)
-      .map(([key, value]) => [key, String(value)]));
-    state.selectedNodeId = null;
-    state.distributionPreview = null;
-    state.factorisationMode = 'normal';
-    state.factorisationPlan = null;
-    state.factorisationProposal = null;
-    resetRangeSelection();
-    dom.expressionInput.value = state.expressionRoot ? expressionToInput(state.expressionRoot) : '';
+    // All objects retain their own histories, even when not displayed.
+    reserveDocumentNodeIds(doc);
+    // Legacy one-root wrapper is not used for schema-v2 document collections.
+    state.mathematicalDocument = null;
     updateWorkspaceUI();
-    if (state.expressionRoot) renderApplication(false);
-    else {
-      dom.equation.replaceChildren();
-      dom.variablesList.replaceChildren();
-      dom.mathJsonOutput.textContent = '';
-      dom.swapEqualityButton.hidden = true;
-      dom.equalityStatus.hidden = true;
-      renderHistory();
-    }
+    loadActiveObject();
     setStatus(state.expressionRoot ? 'Document opened.' : 'Enter an expression or equation to begin.');
   }
   async function createWorkspaceDocument(title) {
-    const doc = newDocument(title);
+    // A newly opened document starts with one empty working object. The v2
+    // schema itself also permits genuinely zero-object documents.
+    const doc = addObject(newDocument(title), "Object 1");
     workspace.documents.set(doc.id, doc);
     activateDocument(doc.id);
     workspace.dirty.add(doc.id);
@@ -374,27 +559,40 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   function exportActiveDocument() {
     const doc = activeDocument();
     if (!doc) return;
-    const blob = new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `${doc.title.replace(/[^a-z0-9_-]+/gi, '_') || 'mathematics'}.json`;
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    try {
+      // Compact export is a boundary format; the live document retains snapshots.
+      const payload = serializeCompactDocument(doc);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${doc.title.replace(/[^a-z0-9_-]+/gi, '_') || 'mathematics'}.json`;
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      workspaceMessage(`Exported ${doc.title} as compact JSON.`);
+    } catch (error) {
+      workspaceMessage(`Export failed: ${error.message}`);
+    }
   }
   async function importWorkspaceDocument(file) {
     if (!file) return;
+    // An import is a new user-visible operation. Pending saves must still
+    // persist, but their completion messages may no longer supersede it.
+    workspaceStatusGate.invalidate();
     try {
       if (file.size > 10 * 1024 * 1024) throw new Error('File is too large (10 MB limit).');
-      const doc = validateDocument(JSON.parse(await file.text()));
-      // Imports receive a fresh document identity; original IDs within the
-      // mathematical tree and its history are preserved for provenance.
+      // Fully validate and hydrate before touching storage or the active workspace.
+      const doc = deserializeCompactDocument(JSON.parse(await file.text()));
+      // A new document identity avoids replacing an existing workspace document.
+      // Mathematical object and expression IDs retain their original provenance.
       doc.id = newDocument().id;
       doc.title = `${doc.title} (imported)`;
+      // Commit to durable storage before exposing the imported document in memory.
+      // A rejected import or failed storage write must not switch the active view.
+      await queueSave(doc);
       workspace.documents.set(doc.id, doc);
       activateDocument(doc.id);
-      workspace.dirty.add(doc.id);
-      await saveDocument(doc);
+      workspaceMessage(`Imported ${doc.title}.`);
     } catch (error) { workspaceMessage(`Import failed: ${error.message}`); }
   }
   async function loadWorkspace() {
@@ -402,8 +600,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       const docs = await documentRepository.list();
       for (const doc of docs) {
         workspace.documents.set(doc.id, doc);
-        reserveNodeIds(doc.root);
-        doc.history.nodes.forEach(node => reserveNodeIds(node.snapshot?.expression));
+        reserveDocumentNodeIds(doc);
       }
       updateWorkspaceUI();
       workspaceMessage(docs.length ? `${docs.length} saved document(s) available.` : 'Empty workspace — create a document to begin.');
@@ -465,6 +662,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   function addHistoryNode(actionLabel, transformation = null, kind = "rule-transform", operation = null) {
     if (state.multiSelection.size()) {
       state.multiSelection.clear();
+      state.touchMultiSelectMode = false;
       groupingOverlay.clear();
       factorisationOverlay.clear();
       state.groupingMode = "normal";
@@ -477,6 +675,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       updateDocumentRoot(state.mathematicalDocument, state.expressionRoot);
       state.mathematicalDocument.history = state.history;
     }
+    factorisationCommitLifecycle.cancel();
     state.factorisationMode = "normal";
     state.factorisationPlan = null;
     factorisationOverlay.clear();
@@ -492,9 +691,11 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
 
     cancelDrag(false);
     cancelFactorDrag();
+    factorisationCommitLifecycle.cancel();
     state.factorisationMode = "normal";
     state.factorisationPlan = null;
     factorisationOverlay.clear();
+    distributionCommitLifecycle.cancel();
     state.distributionPreview = null;
     state.expressionRoot = cloneExpression(node.snapshot.expression);
     if (state.mathematicalDocument) updateDocumentRoot(state.mathematicalDocument, state.expressionRoot);
@@ -628,53 +829,166 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     identityProposal = null;
     identityPreviewModal = false;
     identityVisual.clear();
+    identityCommitLifecycle.cancel();
     identityFeedback.stop();
     dom.identityPreviewActions.hidden = true;
   }
 
-  function identityTargetAt(x, y, operation) {
-    // Resolve the existing equation DOM only: never inspect a proposed layout.
-    const element = document.elementFromPoint(x, y);
-    if (!element || !dom.equation.contains(element)) return null;
-    const operator = element.closest('.plus[data-operator-index], .multiply-operator[data-operator-index]');
-    const kind = operation === 'Add' ? 'plus' : 'multiply-operator';
-    if (operator?.classList.contains(kind)) {
-      return { request: { operation, parentNodeId: operator.dataset.operatorParentId,
-        insertionIndex: Number(operator.dataset.operatorIndex) }, element: operator };
+  // Feature composition lives outside the browser interaction controller.
+  const transformationFeatures = createApplicationTransformationFeatures();
+  const transformationCoordinator = createTransformationCoordinator(transformationFeatures);
+  // Local aliases minimise changes to the sensitive drag and preview lifecycle.
+  // They all refer to the same coordinator; future integrations can use it directly.
+  const identityCoordinator = transformationCoordinator;
+  const distributionCoordinator = transformationCoordinator;
+  const groupingCoordinator = transformationCoordinator;
+  const factorisationCoordinator = transformationCoordinator;
+  const rearrangementCoordinator = transformationCoordinator;
+  // A single-use gate is shared by pointer and keyboard rearrangement. Unlike
+  // modal transformations, rearrangement opens and confirms synchronously at drop.
+  const rearrangementCommitLifecycle = createTransformationCommitLifecycle();
+  // Numeric combination has an immediate drop commit, but still needs the same
+  // source-stamped, single-use protection as rearrangement.
+  const numericCombinationCommitLifecycle = createTransformationCommitLifecycle();
+  // Identity now uses the same single-use, stale-safe gate as equality.
+  // Other preview families remain on the legacy coordinator until migrated.
+  const identityCommitLifecycle = createTransformationCommitLifecycle();
+  // Distribution shares the single-use, stale-safe commit gate with identity and equality.
+  const distributionCommitLifecycle = createTransformationCommitLifecycle();
+  // Grouping now uses the same source-stamped, single-use gate as other
+  // deliberately confirmed transformations. Its blue overlay is unchanged.
+  const groupingCommitLifecycle = createTransformationCommitLifecycle();
+  // Factorisation now shares the stale-safe, single-use commit gate.
+  const factorisationCommitLifecycle = createTransformationCommitLifecycle();
+
+  function getRearrangementCandidate(parentId, parentType, draggedNodeId, destinationIndex) {
+    const action = rearrangementActionRequest({ parentId, parentType, draggedNodeId, destinationIndex });
+    return action ? rearrangementCoordinator.propose(state.expressionRoot, action) : null;
+  }
+
+  /**
+   * Rearrangement is visually previewed during the drag, but has no modal
+   * confirmation. Prepare a detached mathematical candidate only on drop (or
+   * keyboard action), then immediately consume the same source-stamped gate
+   * used by the other transformations. Never mutate the live AST to test a
+   * reordering: failures in history preparation must leave it untouched.
+   *
+   * This function intentionally does not render: pointer drop must not replay
+   * its already-settled FLIP animation; keyboard callers retain normal render.
+   */
+  function commitRearrangementCandidate(candidate, { normalise = false } = {}) {
+    if (!candidate?.result?.changed || rearrangementCommitLifecycle.isOpen()) return false;
+    const parameters = candidate.action.parameters;
+    // A pure adapter converts the visual-order proposal into a detached AST.
+    // This occurs only on commit, never on every pointer movement.
+    const proposal = prepareRearrangementCommitCandidate(state.expressionRoot, candidate, { normalise });
+    if (!proposal) return false;
+    if (!rearrangementCommitLifecycle.open(proposal, transformationSourceStamp())) return false;
+    let outcome;
+    try {
+      outcome = rearrangementCommitLifecycle.confirm(transformationSourceStamp(), selected => {
+        const parentType = parameters.parentType;
+        const moved = findNodeById(state.expressionRoot, parameters.draggedNodeId);
+        const label = `${parentType === 'Add' ? 'Reordered addend' : 'Reordered factor'} ${expressionToDisplayString(moved)}`;
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history,
+          resultRoot: selected.result.root,
+          substitutions: state.substitutions,
+          actionLabel: label,
+          operation: {
+            ruleId: selected.action.ruleId, ruleVersion: 1,
+            inputs: { parentId: parameters.parentId, destinationIndex: parameters.destinationIndex },
+            affectedNodeIds: [parameters.draggedNodeId, parameters.parentId]
+          }
+        });
+        // Publish root and history as one synchronous in-memory transition.
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) {
+            workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`);
+          }
+        }
+        renderHistory();
+      });
+    } catch (error) {
+      setStatus(`Rearrangement could not be committed: ${error.message}`);
+      return false;
     }
-    const hitbox = element.closest('.add-operand[data-node-id], .factor-slot[data-node-id]');
-    if (!hitbox) return null;
-    const rect = hitbox.getBoundingClientRect();
-    return { request: { operation, targetNodeId: hitbox.dataset.nodeId,
-      side: x < rect.left + rect.width / 2 ? 'left' : 'right' }, element: hitbox };
+    if (outcome?.status !== 'committed') {
+      setStatus('Rearrangement was rejected because its source changed.');
+      return false;
+    }
+    syncExpressionInput();
+    return true;
+  }
+
+  function identityTargetAt(x, y, operation) {
+    return interpretIdentityPointer(dom.equation, document.elementFromPoint(x, y), x, operation);
   }
 
   function updateIdentityTool(event) {
     if (!identityDrag || identityPreviewModal) return;
     identityFeedback.move(event.clientX, event.clientY);
     const target = identityTargetAt(event.clientX, event.clientY, identityDrag.operation);
-    const request = target?.request || null;
-    const key = request ? JSON.stringify(request) : null;
+    const key = target?.action ? JSON.stringify(target.action) : null;
     // The candidate is mathematical data only. Rendering it while hovering
     // would make the equation jump and compete with stable hit testing.
     if (key !== identityDrag.lastKey) {
       identityDrag.lastKey = key;
-      identityProposal = request ? proposeIdentityInsertion(state.expressionRoot, request) : null;
-      setStatus(describeIdentityTarget(identityProposal ? request : null));
+      identityProposal = target?.action
+        ? identityCoordinator.propose(state.expressionRoot, target.action) : null;
+      setStatus(describeIdentityTarget(identityProposal ? target.action.parameters : null));
     }
     identityFeedback.highlight(identityProposal ? target.element : null);
   }
 
   function confirmIdentityTool() {
-    if (!identityPreviewModal || !identityProposal) return;
-    const proposal = identityProposal;
+    if (!identityPreviewModal || !identityCommitLifecycle.isOpen()) return;
+    let outcome;
+    try {
+      outcome = identityCommitLifecycle.confirm(transformationSourceStamp(), proposal => {
+        const result = proposal.result;
+        // Prepare a complete history branch on detached data before publishing
+        // either half of the authoritative mathematical state. This protects
+        // identity insertion from partial history-construction failures.
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history,
+          resultRoot: result.root,
+          substitutions: state.substitutions,
+          actionLabel: `Introduced ${result.operation === 'Add' ? '+0' : '×1'}`,
+          transformation: {
+            sourceNodeIds: result.request.targetNodeId ? [result.request.targetNodeId] : [],
+            createdNodeIds: [result.identityNodeId]
+          },
+          kind: 'rule-transform',
+          operation: {
+            ruleId: 'identity.introduce', ruleVersion: 1,
+            inputs: result.request, generatedNodeIds: [result.identityNodeId]
+          }
+        });
+        // No fallible history construction occurs between these assignments.
+        // The DOM and persistence are updated only after this synchronous publish.
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) {
+            workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`);
+          }
+        }
+        renderHistory();
+      });
+    } catch (error) {
+      cancelIdentityTool();
+      setStatus(`Could not commit identity insertion: ${error.message}`);
+      return;
+    }
     cancelIdentityTool();
-    state.expressionRoot = proposal.root; // Reuse the preview's exact generated IDs.
-    addHistoryNode(`Introduced ${proposal.operation === 'Add' ? '+0' : '×1'}`,
-      { sourceNodeIds: proposal.request.targetNodeId ? [proposal.request.targetNodeId] : [],
-        createdNodeIds: [proposal.identityNodeId] },
-      'rule-transform', { ruleId: 'identity.introduce', ruleVersion: 1,
-        inputs: proposal.request, generatedNodeIds: [proposal.identityNodeId] });
+    if (outcome.status === 'stale') {
+      setStatus('Identity preview is stale; nothing changed.');
+      return;
+    }
+    if (outcome.status !== 'committed') return;
     renderApplication(false);
     setStatus('Identity introduced. The original mathematical objects retain their IDs.');
   }
@@ -699,8 +1013,15 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     identityFeedback.stop();
     if (!identityProposal) { cancelIdentityTool(); return; }
     // Only now render the proposed expression, in deliberate modal preview.
+    if (!identityCommitLifecycle.open(identityProposal, transformationSourceStamp())) {
+      cancelIdentityTool();
+      return;
+    }
     identityPreviewModal = true;
-    identityVisual.show(identityProposal);
+    // The visual adapter describes the candidate; the existing renderer owns
+    // notation and the overlay owns temporary amber highlighting.
+    const visual = describeIdentityPreview(identityProposal);
+    identityVisual.show({ ...identityProposal.result, identityNodeId: visual.confirmationNodeId });
     identityVisual.setModal();
     dom.identityPreviewActions.hidden = false;
     setStatus('Identity preview: click the amber identity or Confirm to insert; Escape or click elsewhere to cancel.');
@@ -722,7 +1043,76 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     event.stopImmediatePropagation();
   }, true);
 
+  /**
+   * A small inline candidate preview. The engine produces the detached AST;
+   * this application adapter only presents it and delegates confirmation to
+   * the shared history/commit lifecycle. It never edits mathematical nodes.
+   */
+  function cancelNegationPreview() {
+    negationCommitLifecycle.cancel();
+    negationPreviewUI.clear();
+  }
+
+  function openNegationPreview(ruleId, parameters) {
+    if (!state.expressionRoot || negationCommitLifecycle.isOpen()) return;
+    const candidate = transformationCoordinator.propose(state.expressionRoot, {
+      ruleId, parameters
+    });
+    if (!candidate?.result?.root ||
+        !negationCommitLifecycle.open(candidate, transformationSourceStamp())) return;
+    try {
+      negationPreviewUI.show(candidate);
+    } catch (error) {
+      // Never leave a pending proposal if presentation construction fails.
+      cancelNegationPreview();
+      setStatus(`Negation preview could not be displayed: ${error.message}`);
+      return;
+    }
+    setStatus(describeNegationCandidate(candidate).status);
+  }
+
+  function confirmNegationPreview() {
+    let outcome;
+    try {
+      outcome = negationCommitLifecycle.confirm(transformationSourceStamp(), candidate => {
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history,
+          resultRoot: candidate.result.root,
+          substitutions: state.substitutions,
+          actionLabel: candidate.action.ruleId === 'negation.expand'
+            ? 'Expanded negation into a factor of -1'
+            : 'Compressed -1 into unary negation',
+          operation: {
+            ruleId: candidate.action.ruleId, ruleVersion: 1,
+            affectedNodeIds: candidate.result.affectedNodeIds
+          }
+        });
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) { workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`); }
+        }
+      });
+    } catch (error) {
+      cancelNegationPreview();
+      setStatus(`Negation could not be committed: ${error.message}`);
+      return;
+    }
+    cancelNegationPreview();
+    if (outcome?.status === 'committed') {
+      syncExpressionInput();
+      renderApplication(false);
+      setStatus('Negation transformation committed.');
+    } else setStatus('Negation preview is no longer current; try again.');
+  }
+
   function renderEquation(animate = true) {
+    if (negationCommitLifecycle.isOpen()) cancelNegationPreview();
+    // A full mathematical rerender invalidates view-local transient gestures.
+    // This guard also covers direct renderEquation callers (e.g. display mode),
+    // not only the higher-level renderApplication path.
+    if (equalityCommitLifecycle.isOpen()) cancelEqualityApplication();
+    clipboardUI.cancelDrag();
     if (identityDrag || identityPreviewModal) cancelIdentityTool();
     // Any unrelated rerender (theme, input rebuild, history navigation, etc.)
     // must close the modal candidate first. Otherwise its saved DOM could be
@@ -739,6 +1129,14 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       });
     }
 
+    // The visible window represents the active mathematical object. This
+    // semantic identity is shared with accessibility tooling and browser tests;
+    // it does not create a second AST identity or affect hit-testing.
+    const windowDocument = activeDocument();
+    dom.equation.closest('[data-testid="mathematical-window"]')?.setAttribute(
+      'data-object-id', windowDocument?.activeObjectId || '');
+    dom.equation.closest('[data-testid="mathematical-window"]')?.setAttribute(
+      'data-document-id', windowDocument?.id || '');
     const newTreeElement = renderExpression(state.expressionRoot, {
       substitutions: state.substitutions,
       // A live pointer gesture never rebuilds the equation. Its temporary
@@ -753,8 +1151,18 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       distributionPreview: state.distributionPreview
     });
 
-    hitboxVisibility.clearHover(); // The old hovered DOM node is about to be detached.
+    // The renderer returns a detached DOM tree. Mount it before rebinding
+    // relation controls, measuring hitboxes, or painting selection overlays.
+    // Omitting this step leaves the mathematical model/history updated while
+    // the visible equation stays empty (a browser-only integration regression).
+    // replaceChildren also discards stale hitboxes from the previous revision.
     dom.equation.replaceChildren(newTreeElement);
+
+    hitboxVisibility.clearHover(); // The old hovered DOM node is about to be detached.
+    // Rebind the relation control after every full mathematical render. The
+    // controller portals its menu outside the equation clipping viewport.
+    equalityUI.mountOnRenderedEquation();
+
 
     // Reapply multiple-selection outlines to the NEW DOM after a committed
     // edit/history restore. Pointer hover itself never calls this renderer.
@@ -972,16 +1380,23 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   /** Parse a fresh expression and establish it as a new history state. */
   function buildExpression(rawExpression) {
     try {
+      if (workspace.controller && !workspace.controller.activeObject) {
+        setStatus("Create a mathematical object before entering an expression.");
+        return;
+      }
       const nextExpression = parseExpression(rawExpression);
       cancelDrag(false);
       cancelFactorDrag();
       state.factorisationMode = "normal";
       state.factorisationPlan = null;
       factorisationOverlay.clear();
+      distributionCommitLifecycle.cancel();
       state.distributionPreview = null;
       state.expressionRoot = nextExpression;
-      if (!state.mathematicalDocument) state.mathematicalDocument = createMathematicalDocument(nextExpression);
-      else updateDocumentRoot(state.mathematicalDocument, nextExpression);
+      if (!workspace.controller) {
+        if (!state.mathematicalDocument) state.mathematicalDocument = createMathematicalDocument(nextExpression);
+        else updateDocumentRoot(state.mathematicalDocument, nextExpression);
+      }
       state.selectedNodeId = null;
       resetRangeSelection();
 
@@ -1006,44 +1421,56 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   }
 
   /**
-   * Attempt to combine the moving node with a compatible target in its parent.
-   * Addition applies between Add operands; multiplication applies between
-   * factors in the same Multiply node. Both use the same numeric evaluator.
+   * Numerical combination is immediate (no modal preview), but the entire
+   * mathematical rewrite and history event are prepared on detached data.
+   * Do not remove the dragged operand from the live AST before confirmation.
+   * The same rule used for green hover eligibility is rechecked on drop.
    */
-  function commitNumericCombination(targetId, movingNode) {
-    const parent = findNodeById(state.expressionRoot, state.drag.parentId);
-    if (!parent) return false;
-
-    const movingText = expressionToDisplayString(movingNode);
-    const targetNode = parent.operands.find((child) => child.id === targetId);
-    if (!targetNode) return false;
-
-    let result;
-    let operationLabel;
-
-    if (parent.type === "Add") {
-      result = combineNumericAddends(parent, targetId, movingNode, state.substitutions);
-      operationLabel = "Added";
-    } else if (parent.type === "Multiply") {
-      result = combineNumericFactors(parent, targetId, movingNode, state.substitutions);
-      operationLabel = "Multiplied";
-    } else {
+  function commitNumericCombination(targetId, drag) {
+    if (numericCombinationCommitLifecycle.isOpen()) return false;
+    const parent = findNodeById(state.expressionRoot, drag.parentId);
+    const action = {
+      ruleId: parent?.type === 'Add' ? 'addition.combine-numeric' :
+        parent?.type === 'Multiply' ? 'multiplication.combine-numeric' : '',
+      parameters: { parentId: drag.parentId, movingNodeId: drag.item.id,
+        targetNodeId: targetId, substitutions: state.substitutions }
+    };
+    // Numeric combination is now dispatched through the same registered
+    // mathematical capability as other transformations. It remains an
+    // immediate gesture, with no extra modal confirmation or preview.
+    const proposal = transformationCoordinator.propose(state.expressionRoot, action);
+    if (proposal) proposal.actionLabel = proposal.result.actionLabel;
+    if (!proposal || !numericCombinationCommitLifecycle.open(proposal, transformationSourceStamp())) return false;
+    let outcome;
+    try {
+      outcome = numericCombinationCommitLifecycle.confirm(transformationSourceStamp(), selected => {
+        const { parentId, movingNodeId, targetNodeId } = selected.action.parameters;
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history, resultRoot: selected.result.root,
+          substitutions: state.substitutions, actionLabel: selected.actionLabel,
+          operation: { ruleId: selected.action.ruleId, ruleVersion: 1,
+            inputs: { parentId, movingNodeId, targetNodeId },
+            affectedNodeIds: [parentId, movingNodeId, targetNodeId] }
+        });
+        // Publish only after history preparation succeeds. Autosave failure
+        // must not undo mathematically valid work already committed in memory.
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) {
+            workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`);
+          }
+        }
+        state.selectedNodeId = null;
+        renderHistory();
+        syncExpressionInput();
+        setStatus(`${selected.actionLabel}. Saved in history.`);
+      });
+    } catch (error) {
+      setStatus(`Numerical combination could not be committed: ${error.message}`);
       return false;
     }
-
-    if (!result) return false;
-
-    state.expressionRoot = normaliseWithRules(state.expressionRoot);
-    // Not every combination creates a number: 0+a returns a, 1*a returns a.
-    // Describe the actual symbolic result rather than formatting null as zero.
-    const resultText = expressionToDisplayString(result.result);
-    state.selectedNodeId = null;
-    addHistoryNode(
-      `${operationLabel} ${movingText} and ${expressionToDisplayString(targetNode)} to make ${resultText}`
-    );
-    syncExpressionInput();
-    setStatus(`${operationLabel} the operands to make ${resultText}. Saved in history.`);
-    return true;
+    return outcome?.status === 'committed';
   }
 
   /* ---------------------------------------------------------------------- *
@@ -1058,51 +1485,101 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
 
   function cancelDistributionPreview(showMessage = true) {
     if (!state.distributionPreview) return;
+    distributionCommitLifecycle.cancel();
     state.distributionPreview = null;
     renderEquation(false);
     if (showMessage) setStatus("Distribution preview dismissed. The expression was not changed.");
   }
 
   function openDistributionPreview(plan) {
-    const source = findNodeById(state.expressionRoot, plan.sourceFactorId);
-    if (!source) return;
+    const action = distributionActionRequest(plan);
+    const candidate = action ? distributionCoordinator.propose(state.expressionRoot, action) : null;
+    if (!candidate) return;
+    // Distribution's registry proposal identifies a verified plan, not yet a
+    // resulting AST. Materialize the candidate ONCE before opening the shared
+    // gate; the source AST and history remain authoritative and untouched.
+    // The distribution rule rewrites its supplied tree in place. Never pass the
+    // live Mathematical Object into speculative preview construction.
+    const rewritten = applyDistribution(structuredClone(state.expressionRoot), candidate.result.plan);
+    if (!rewritten) return;
+    const proposal = {
+      result: { root: normaliseWithRules(rewritten.root), provenance: rewritten.provenance,
+        plan: candidate.result.plan },
+      action
+    };
+    if (!distributionCommitLifecycle.open(proposal, transformationSourceStamp())) return;
+    const visual = describeDistributionPreview(candidate);
+    const source = findNodeById(state.expressionRoot, visual.sourceNodeId);
+    if (!source) { distributionCommitLifecycle.cancel(); return; }
+    // The preview renderer still receives the original, stable hitboxes and
+    // the verified plan. It does not mount the proposed AST until confirmation.
     state.distributionPreview = {
-      ...plan,
+      ...candidate.result.plan,
       sourceText: expressionToDisplayString(source)
     };
     state.selectedNodeId = null;
     renderEquation(false);
-    setStatus(`Amber preview: ${plan.direction} distribution. Click any highlighted factor copy to expand, or click elsewhere / press Escape to cancel.`);
+    setStatus(`Amber preview: ${visual.direction} distribution. Click any highlighted factor copy to expand, or click elsewhere / press Escape to cancel.`);
   }
 
   /**
-   * Commit once, with the current tree revalidated by distribution.js.
-   * History stores copiesBySourceId so a future inspector can trace every
-   * new factor back to its source in the preceding expression snapshot.
+   * Commit a distribution proposal using the SAME shared safety boundary as
+   * equality application and identity insertion. The gate consumes a proposal
+   * before invoking this callback, preventing reentrant or repeated commits.
+   * History construction happens on detached data, so an exception cannot
+   * leave the live expression updated without a matching history node.
    */
   function commitDistributionPreview() {
     const plan = state.distributionPreview;
-    if (!plan) return;
+    if (!plan || !distributionCommitLifecycle.isOpen()) return;
     const original = dom.equation.querySelector(`[data-node-id="${plan.sourceFactorId}"]`);
     const originalRect = original?.getBoundingClientRect();
-    const rewritten = applyDistribution(state.expressionRoot, plan);
-    state.distributionPreview = null;
-    if (!rewritten) {
+    let committedProvenance = null;
+    let outcome;
+    try {
+      outcome = distributionCommitLifecycle.confirm(transformationSourceStamp(), proposal => {
+        const result = proposal.result;
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history,
+          resultRoot: result.root,
+          substitutions: state.substitutions,
+          actionLabel: `Applied ${plan.direction} distribution`,
+          transformation: result.provenance,
+          kind: 'rule-transform',
+          operation: {
+            ruleId: `distribution.${plan.direction}`, ruleVersion: 1,
+            inputs: { direction: plan.direction, sumId: plan.sumId ?? null },
+            affectedNodeIds: [plan.sourceFactorId, plan.sumId].filter(Boolean)
+          }
+        });
+        // Publish the coherent pair synchronously, then update the document
+        // and attempt persistence. Autosave failure does not undo valid maths.
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) {
+            workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`);
+          }
+        }
+        committedProvenance = result.provenance;
+        renderHistory();
+      });
+    } catch (error) {
+      state.distributionPreview = null;
       renderEquation(false);
-      setStatus("The proposed expansion is no longer available; nothing changed.");
+      setStatus(`Could not commit distribution: ${error.message}`);
       return;
     }
-
-    state.expressionRoot = normaliseWithRules(rewritten.root);
+    state.distributionPreview = null;
+    if (outcome.status !== 'committed') {
+      renderEquation(false);
+      setStatus('The proposed expansion is no longer available; nothing changed.');
+      return;
+    }
     state.selectedNodeId = null;
-    addHistoryNode(`Applied ${plan.direction} distribution`, rewritten.provenance, "rule-transform", {
-      ruleId: `distribution.${plan.direction}`, ruleVersion: 1,
-      inputs: { direction: plan.direction, sumId: plan.sumId ?? null },
-      affectedNodeIds: [plan.factorId, plan.sumId].filter(Boolean)
-    });
     syncExpressionInput();
     renderApplication();
-    animateDistributedCopies(originalRect, rewritten.provenance);
+    animateDistributedCopies(originalRect, committedProvenance);
     setStatus(`Applied ${plan.direction} distribution. Newly copied factors and their source IDs are recorded in history.`);
   }
 
@@ -1147,7 +1624,10 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     if (!state.drag?.ghost) return;
     const x = clientX - state.drag.offsetX;
     const y = clientY - state.drag.offsetY;
-    state.drag.ghost.style.transform = `translate3d(${x}px, ${y}px, 0) scale(1.04)`;
+    // The ghost is an exact-size representation of the source occurrence.
+    // Scaling a deeply nested Group magnifies its already-large hitbox and
+    // makes the mathematical window appear to expand during pickup.
+    state.drag.ghost.style.transform = `translate3d(${x}px, ${y}px, 0)`;
   }
 
   /**
@@ -1210,6 +1690,9 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     const rect = hitbox.getBoundingClientRect();
     const ghost = document.createElement("div");
     ghost.className = "drag-ghost";
+    // The decorative ghost must never intercept elementFromPoint() drop
+    // targeting, especially the thin bracket region of a nested Group.
+    ghost.style.pointerEvents = "none";
     // Dragging a Group moves the visual brackets too. Its clone stays outside
     // #equation, is aria-hidden and cannot itself become a drop target.
     const visualClone = hitbox.cloneNode(true);
@@ -1221,6 +1704,16 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       child.setAttribute('tabindex', '-1');
     });
     visualClone.setAttribute("aria-hidden", "true");
+    // Freeze the clone to the measured source box. A cloned compound term has
+    // width:max-content in the ordinary renderer; without an explicit width
+    // it can remeasure itself outside the expression's flex context and grow
+    // dramatically with nested Group nodes. The ghost is presentation only.
+    visualClone.style.boxSizing = 'border-box';
+    visualClone.style.width = `${rect.width}px`;
+    visualClone.style.height = `${rect.height}px`;
+    visualClone.style.minWidth = '0';
+    visualClone.style.maxWidth = 'none';
+    visualClone.style.flex = 'none';
     ghost.append(visualClone);
     ghost.style.width = `${rect.width}px`;
     ghost.style.height = `${rect.height}px`;
@@ -1234,6 +1727,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       startIndex: location.index,
       originalOrder: location.parent.operands.map((child) => child.id),
       pointerId: event.pointerId,
+      pointerType: event.pointerType,
       offsetX: event.clientX - rect.left,
       offsetY: event.clientY - rect.top,
       ghost,
@@ -1256,6 +1750,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
 
   /** Clear temporary UI only; never touch the mathematical expression. */
   function clearDragState() {
+    negationDragFeedback.clear(NEGATION_DRAG_OWNER);
     dragFeedback.stop();
     state.drag?.ghost?.remove();
     state.drag = null;
@@ -1269,22 +1764,14 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   }
 
   /**
-   * Commit a single numeric rewrite. The source operand is removed ONLY HERE,
-   * after the user has completed a valid drag; operation modules preserve the
-   * appropriate surviving ID, such as `a` in 0+a or 1*a.
-   *
-   * On a refused transformation, reinsertion restores the exact same objects
-   * and IDs (no reparsing and no history entry). canCombineDraggedSibling()
-   * normally guarantees applicability; this extra check is defensive.
+   * Commit only after the final drop target is revalidated. In contrast with
+   * the old implementation, the live moving node is never spliced out first.
    */
   function commitDraggedCombination(targetId, drag) {
     const parent = findNodeById(state.expressionRoot, drag.parentId);
     if (!parent || parent.operands[drag.startIndex]?.id !== drag.item.id ||
         !canCombineDraggedSibling(targetId)) return false;
-    parent.operands.splice(drag.startIndex, 1);
-    const succeeded = commitNumericCombination(targetId, drag.item);
-    if (!succeeded) parent.operands.splice(drag.startIndex, 0, drag.item);
-    return succeeded;
+    return commitNumericCombination(targetId, drag);
   }
 
   /**
@@ -1297,6 +1784,12 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     const target = drag.activeTarget || { kind: "none" };
 
     if (commit && !drag.moved) {
+      if (drag.pointerType === "touch") {
+        const id = drag.item.id;
+        clearDragState();
+        selectTouchNode(id);
+        return;
+      }
       const now = Date.now();
       const doubleClick = state.lastClick?.nodeId === drag.item.id &&
         now - state.lastClick.time < 370;
@@ -1320,6 +1813,17 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       return;
     }
 
+    if (commit && target.kind === "negation-compress") {
+      // A drop is never trusted solely because it was green during hover.
+      // Re-resolve the mathematical candidate against the live AST. The
+      // preview/commit gate will additionally check the document revision.
+      const sourceId = drag.item.id;
+      const targetId = target.id;
+      clearDragState();
+      openNegationPreview('negation.compress', { minusOneId: sourceId, targetNodeId: targetId });
+      return;
+    }
+
     if (commit && target.kind === "combine") {
       const succeeded = commitDraggedCombination(target.id, drag);
       clearDragState();
@@ -1329,28 +1833,14 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     }
 
     if (commit && target.kind === "insert") {
+      // The same action validated during hover is rechecked against the live
+      // mathematical object at drop. Never trust a stale visual insertion.
       const parent = findNodeById(state.expressionRoot, drag.parentId);
-      // The target index is measured in the ordered array with the moving
-      // operand omitted, which is exactly what reorderChild() expects.
-      const changed = parent?.type === "Add"
-        ? reorderAddend(parent, drag.item.id, target.index)
-        : parent?.type === "Multiply"
-          ? reorderFactor(parent, drag.item.id, target.index)
-          : false;
-      const orderChanged = Boolean(changed) && parent.operands.some(
-        (child, index) => child.id !== drag.originalOrder[index]
-      );
-      if (orderChanged) {
-        state.expressionRoot = normaliseWithRules(state.expressionRoot);
-        addHistoryNode(parent.type === "Add"
-          ? `Reordered addend ${expressionToDisplayString(drag.item)}`
-          : `Reordered factor ${expressionToDisplayString(drag.item)}`);
-        syncExpressionInput();
-        setStatus("Rearrangement saved in history.");
-      } else {
-        setStatus(changed ? "The expression stayed in its original order."
-          : "Reordering is not permitted by this operation's rules.");
-      }
+      const candidate = getRearrangementCandidate(drag.parentId, parent?.type, drag.item.id, target.index);
+      const committed = commitRearrangementCandidate(candidate, { normalise: true });
+      if (committed) setStatus("Rearrangement saved in history.");
+      else if (candidate && !candidate.result.changed) setStatus("The expression stayed in its original order.");
+      else setStatus("Reordering is not permitted or the source changed; nothing was committed.");
       clearDragState();
       // The student has ALREADY watched the proposed order settle in the
       // rearrangement preview. A second FLIP animation after pointerup would
@@ -1437,12 +1927,31 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     // must independently authorise it, including noncommutative products.
     if (next.kind === "insert" && next.index !== drag.startIndex) {
       const parent = findNodeById(state.expressionRoot, drag.parentId);
-      const allowed = parent?.type === "Add"
-        ? canReorderAddend(parent, drag.item.id, next.index)
-        : parent?.type === "Multiply"
-          ? canReorderFactor(parent, drag.item.id, next.index)
-          : false;
+      const candidate = getRearrangementCandidate(drag.parentId, parent?.type, drag.item.id, next.index);
+      // The semantic descriptor is intentionally presentation-only; the
+      // existing stable drag renderer still owns all DOM/animation work.
+      const feedback = describeRearrangementFeedback(candidate);
+      const allowed = Boolean(feedback);
       if (!allowed) next = { kind: "invalid", id: `reorder-${next.index}` };
+    }
+    // A Number(-1) dropped onto a Symbol or explicit Group can expose a
+    // compact Negate node. This intention is resolved from the exact nested
+    // DOM target (bracket vs numeral), not the enclosing sibling rectangle.
+    // Ordinary number-on-number combination retains its existing priority.
+    const compression = resolveNegationCompressionTarget({
+      equation: dom.equation, root: state.expressionRoot,
+      sourceId: drag.item.id, parentId: drag.parentId,
+      x: event.clientX, y: event.clientY
+    });
+    if (compression && transformationCoordinator.propose(state.expressionRoot, {
+      ruleId: 'negation.compress',
+      parameters: { minusOneId: drag.item.id, targetNodeId: compression.nodeId }
+    })) {
+      next = { kind: 'negation-compress', id: compression.nodeId };
+      negationDragFeedback.show(NEGATION_DRAG_OWNER,
+        [{ element: compression.element, role: 'eligible', hint: 'Release to negate' }]);
+    } else {
+      negationDragFeedback.clear(NEGATION_DRAG_OWNER);
     }
     drag.requestedTarget = next;
     // The feedback module reports what is VISUALLY SETTLED, not merely what
@@ -1455,7 +1964,10 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       ? drag.plansBySumId.get(effective.id) || null : null;
     drag.invalidTarget = effective.kind === "invalid";
 
-    if (effective.kind === "distribution" &&
+    if (effective.kind === "negation-compress" &&
+        (previous.kind !== effective.kind || previous.id !== effective.id)) {
+      setStatus('Release to negate this expression using the factor -1.');
+    } else if (effective.kind === "distribution" &&
         (previous.kind !== effective.kind || previous.id !== effective.id)) {
       setStatus(`Release on + to preview ${drag.distributionPlan.direction} distribution. Yellow means a rule, not numeric evaluation.`);
     } else if (effective.kind === "invalid" &&
@@ -1474,6 +1986,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     if (!state.drag) return;
     // Previous highlighted DOM targets may no longer be in the same place.
     // Clear their painting before deriving the new target from new rectangles.
+    negationDragFeedback.clear(NEGATION_DRAG_OWNER);
     dragFeedback.show({ kind: "none" }, state.drag.geometry);
     state.drag.geometry = makeDragGeometry(state.drag);
     state.drag.activeTarget = { kind: "none" };
@@ -1503,18 +2016,8 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     if (destinationIndex < 0 || destinationIndex >= location.parent.operands.length) return;
 
     const movedNode = location.node;
-    const changed = location.parent.type === "Add"
-      ? reorderAddend(location.parent, nodeId, destinationIndex)
-      : location.parent.type === "Multiply"
-        ? reorderFactor(location.parent, nodeId, destinationIndex)
-        : false;
-
-    if (!changed) return;
-
-    addHistoryNode(location.parent.type === "Add"
-      ? `Reordered addend ${expressionToDisplayString(movedNode)}`
-      : `Reordered factor ${expressionToDisplayString(movedNode)}`);
-    syncExpressionInput();
+    const candidate = getRearrangementCandidate(location.parent.id, location.parent.type, nodeId, destinationIndex);
+    if (!commitRearrangementCandidate(candidate)) return;
     renderApplication();
 
     const movedElement = dom.equation.querySelector(
@@ -1533,36 +2036,11 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
    * ---------------------------------------------------------------------- */
 
   function applyMultiplicationDisplayMode(mode) {
-    const validModes = new Set(["source", "implicit", "dot", "times"]);
-    state.multiplicationDisplayOverride = validModes.has(mode) ? mode : "source";
+    state.multiplicationDisplayOverride = normaliseMultiplicationMode(mode);
     renderEquation();
   }
-
-  /* ---------------------------------------------------------------------- *
-   * 11. Theme switching
-   * ---------------------------------------------------------------------- */
-
-  function readSavedTheme() {
-    try {
-      return localStorage.getItem("algebra-workspace-theme") === "dark" ? "dark" : "light";
-    } catch (error) {
-      return "light";
-    }
-  }
-
   function applyTheme(theme) {
-    state.theme = theme === "dark" ? "dark" : "light";
-    dom.html.dataset.theme = state.theme;
-
-    const nextTheme = state.theme === "light" ? "dark" : "light";
-    dom.themeToggle.textContent = `Switch to ${nextTheme} mode`;
-    dom.themeToggle.setAttribute("aria-pressed", String(state.theme === "dark"));
-
-    try {
-      localStorage.setItem("algebra-workspace-theme", state.theme);
-    } catch (error) {
-      // The current tab still works when browser storage is unavailable.
-    }
+    applyThemePreference(dom, state, theme, window.localStorage);
   }
 
   /* ---------------------------------------------------------------------- *
@@ -1577,6 +2055,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
    * the destination. Other callers retain the existing animated default.
    */
   function renderApplication(animateEquation = true) {
+    if (equalityCommitLifecycle.isOpen()) cancelEqualityApplication();
     renderEquation(animateEquation);
     renderVariables();
     renderHistory();
@@ -1654,17 +2133,12 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     if (state.drag || state.factorDrag || state.distributionPreview ||
         state.groupingMode !== "normal" || state.factorisationMode !== "normal") return;
     const plan = factorPlan();
-    if (!plan) return;
-    const rewritten = applyFactorisation(state.expressionRoot, plan);
-    if (!rewritten) return;
-
-    // Normalization acts on the independent candidate, never on the live tree.
-    // Preserve the SAME IDs if the student confirms: do not rerun the rewrite.
-    const proposal = {
-      ...rewritten,
-      root: normaliseWithRules(rewritten.root),
-      plan
-    };
+    const action = factorisationActionRequest(plan);
+    const candidate = action ? factorisationCoordinator.propose(state.expressionRoot, action) : null;
+    if (!candidate || !factorisationCommitLifecycle.open(candidate, transformationSourceStamp())) return;
+    const proposal = candidate.result.proposal;
+    const visual = describeFactorisationPreview(candidate);
+    if (!visual) { factorisationCommitLifecycle.cancel(); return; }
     const proposedElement = createEquationElement(proposal.root);
     state.factorisationPlan = plan;
     state.factorisationProposal = proposal;
@@ -1674,11 +2148,12 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
 
     const opened = transformationPreview.show({
       candidateElement: proposedElement,
-      sourceNodeIds: plan.sourceFactorIds,
-      resultNodeId: proposal.extractedFactorId,
-      inlineExtraction: { scopeNodeId: plan.scopeNodeId, direction: plan.direction }
+      sourceNodeIds: visual.sourceNodeIds,
+      resultNodeId: visual.resultNodeId,
+      inlineExtraction: { scopeNodeId: visual.scopeNodeId, direction: visual.direction }
     });
     if (!opened) {
+      factorisationCommitLifecycle.cancel();
       state.factorisationMode = "normal";
       state.factorisationPlan = null;
       state.factorisationProposal = null;
@@ -1695,6 +2170,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     if (state.factorisationMode !== "preview") return;
     // Restores the SAME DOM objects, not just an equivalent re-render.
     transformationPreview.cancel();
+    factorisationCommitLifecycle.cancel();
     state.factorisationMode = "normal";
     state.factorisationPlan = null;
     state.factorisationProposal = null;
@@ -1703,38 +2179,90 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     setStatus("Factorisation preview cancelled; original expression, IDs and selection are unchanged.");
   }
 
+  /**
+   * Confirm a factorisation through the same source-stamped, single-use gate
+   * used by equality application, identity insertion and distribution.
+   *
+   * The original factorisation plan is revalidated against the authoritative
+   * tree and the current teaching scope. History is constructed on detached
+   * data before the coherent root/history pair is published. The renderer's
+   * provenance animation remains entirely presentation-owned.
+   */
   function commitFactorisationPreview() {
-    if (state.factorisationMode !== "preview") return;
-    const proposal = state.factorisationProposal;
-    // The modal mode forbids edits to the committed tree. Still re-check the
-    // mathematical applicability against that original tree before committing.
-    // Crucially, we DO NOT apply the rule a second time: that would create new
-    // IDs different from those already shown in the candidate preview.
-    const currentPlan = proposal && getFactorisationPlan(state.expressionRoot, proposal.plan.sourceFactorIds);
-    const teachingStillAllows = checkFactorisationTeachingPolicy(state.expressionRoot, currentPlan).allowed;
-    if (!teachingStillAllows || !currentPlan || currentPlan.rule !== proposal.plan.rule ||
-        currentPlan.sumId !== proposal.plan.sumId ||
-        currentPlan.groupId !== proposal.plan.groupId ||
-        currentPlan.productIds.join("|") !== proposal.plan.productIds.join("|")) {
-      cancelFactorisationPreview();
-      setStatus("Factorisation is no longer valid; no mathematical change was committed.");
+    if (state.factorisationMode !== "preview" || !factorisationCommitLifecycle.isOpen()) return;
+    let outcome;
+    try {
+      outcome = factorisationCommitLifecycle.confirm(transformationSourceStamp(), candidate => {
+        const proposal = candidate.result.proposal;
+        const original = candidate.result.plan;
+        const current = getFactorisationPlan(state.expressionRoot,
+          candidate.action.parameters.sourceFactorIds);
+        // A changed selection, scope or direction must never be silently
+        // interpreted as another mathematical operation at confirmation.
+        if (!proposal || !original || !current ||
+            !checkFactorisationTeachingPolicy(state.expressionRoot, current).allowed ||
+            current.direction !== original.direction || current.sumId !== original.sumId ||
+            current.groupId !== original.groupId ||
+            current.productIds.join('|') !== original.productIds.join('|') ||
+            current.sourceFactorIds.join('|') !== original.sourceFactorIds.join('|')) {
+          throw new Error('Factorisation is no longer mathematically eligible.');
+        }
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history,
+          resultRoot: proposal.root,
+          substitutions: state.substitutions,
+          actionLabel: 'Extracted common factor',
+          transformation: proposal.provenance,
+          kind: 'rule-transform',
+          operation: {
+            ruleId: `factorisation.${original.direction}`, ruleVersion: 1,
+            inputs: { direction: original.direction, scopeNodeId: original.scopeNodeId },
+            affectedNodeIds: original.sourceFactorIds
+          }
+        });
+        // No fallible history preparation takes place between these two
+        // assignments. Presentation and local storage are updated afterwards.
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) {
+            workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`);
+          }
+        }
+        state.selectedNodeId = proposal.extractedFactorId;
+        renderHistory();
+      });
+    } catch (error) {
+      // The gate consumes the proposal before invoking the callback. Even
+      // after an exception the student cannot accidentally confirm it twice.
+      transformationPreview.cancel();
+      state.factorisationMode = 'normal';
+      state.factorisationPlan = null;
+      state.factorisationProposal = null;
+      updateFactorisationToolbar();
+      paintRangeSelection();
+      setStatus(`Could not commit factorisation: ${error.message}`);
+      return;
+    }
+    if (outcome.status !== 'committed') {
+      // A stale proposal must restore the original DOM and leave history alone.
+      transformationPreview.cancel();
+      state.factorisationMode = 'normal';
+      state.factorisationPlan = null;
+      state.factorisationProposal = null;
+      updateFactorisationToolbar();
+      paintRangeSelection();
+      setStatus('Factorisation proposal expired; no mathematical change was committed.');
       return;
     }
     transformationPreview.finish();
-    state.factorisationMode = "normal";
+    state.factorisationMode = 'normal';
     state.factorisationPlan = null;
     state.factorisationProposal = null;
     factorisationOverlay.clear();
-    state.expressionRoot = proposal.root;
-    state.selectedNodeId = proposal.extractedFactorId;
-    addHistoryNode("Extracted common factor", proposal.provenance, "rule-transform", {
-      ruleId: `factorisation.${proposal.plan.direction}`, ruleVersion: 1,
-      inputs: { direction: proposal.plan.direction, scopeNodeId: proposal.plan.scopeNodeId },
-      affectedNodeIds: proposal.plan.sourceFactorIds
-    });
     syncExpressionInput();
     renderApplication();
-    setStatus("Common factor extracted. History records which original factors contributed to the new factor.");
+    setStatus('Common factor extracted. History records which original factors contributed to the new factor.');
   }
 
   /**
@@ -1749,10 +2277,19 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     const rect = hitbox.getBoundingClientRect();
     const ghost = document.createElement("div");
     ghost.className = "drag-ghost";
+    // The decorative ghost must never intercept elementFromPoint() drop
+    // targeting, especially the thin bracket region of a nested Group.
+    ghost.style.pointerEvents = "none";
     const copy = hitbox.cloneNode(true);
     copy.setAttribute("aria-hidden","true");
     copy.removeAttribute("tabindex");
     copy.querySelectorAll("[tabindex],button").forEach(el => el.setAttribute("tabindex","-1"));
+    // Match the source's measured geometry, including deeply nested Groups.
+    copy.style.boxSizing = 'border-box';
+    copy.style.width = `${rect.width}px`;
+    copy.style.height = `${rect.height}px`;
+    copy.style.minWidth = '0';
+    copy.style.flex = 'none';
     ghost.append(copy);
     ghost.style.width = `${rect.width}px`;
     ghost.style.height = `${rect.height}px`;
@@ -1811,7 +2348,9 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   }
 
   function resetRangeSelection() {
+    groupingCommitLifecycle.cancel();
     state.multiSelection.clear();
+    state.touchMultiSelectMode = false;
     state.groupingMode = "normal";
     state.groupingPlan = null;
     groupingOverlay.clear();
@@ -1827,6 +2366,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   function toggleRangeSelection(nodeId) {
     if (state.groupingMode !== "normal") return;
     state.multiSelection.toggle(state.expressionRoot, nodeId);
+    if (!state.multiSelection.size()) state.touchMultiSelectMode = false;
     state.selectedNodeId = null;
     state.lastClick = null;
     // Clear the old single-node outline without rendering.
@@ -1848,19 +2388,22 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   function enterRangeGroupingPreview() {
     if (state.drag || state.distributionPreview || state.groupingMode !== "normal") return;
     const plan = rangePlan();
-    if (!plan) return;
-    state.groupingPlan = plan;
+    const action = groupingActionRequest(plan, dom.groupStyle.value);
+    const candidate = action ? groupingCoordinator.propose(state.expressionRoot, action) : null;
+    if (!candidate || !groupingCommitLifecycle.open(candidate, transformationSourceStamp())) return;
+    const visual = describeGroupingPreview(candidate);
+    state.groupingPlan = candidate.result.plan;
     state.groupingMode = "preview";
-    groupingOverlay.enterPreview(dom.groupStyle.value);
+    groupingOverlay.enterPreview(visual.bracketStyle);
     updateGroupToolbar();
-    // A keyboard user can confirm immediately, without hunting for an overlay
-    // whose position may depend on the current zoom and line wrapping.
+    // Keyboard confirmation works even when a blue overlay spans many rows.
     dom.confirmRangeGroupButton.focus({ preventScroll: true });
     setStatus("Grouping preview: click the blue bracketed region or Confirm. Click elsewhere or press Escape to cancel.");
   }
 
   function cancelRangeGroupingPreview() {
     if (state.groupingMode !== "preview") return;
+    groupingCommitLifecycle.cancel();
     state.groupingMode = "normal";
     state.groupingPlan = null;
     groupingOverlay.setSelection(rangePlan()?.operandIds || []);
@@ -1868,38 +2411,79 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     setStatus("Grouping preview cancelled. Your selected operands are unchanged.");
   }
 
+  /**
+   * Confirm a blue range-grouping preview through the shared single-use gate.
+   * The registered Engine proposal already contains a detached grouped AST.
+   * Only after the source stamp and exact sibling-range plan are rechecked do
+   * we prepare history on a detached graph and publish root/history together.
+   * This preserves selected operand identities and never commits on cancel.
+   */
   function commitRangeGrouping() {
-    if (state.groupingMode !== "preview") return;
-    // Revalidate at COMMIT time, not only when opening the preview. This is
-    // essential when a future editor can update the tree from other controls.
-    const current = rangePlan();
-    if (!current || current.parentId !== state.groupingPlan?.parentId ||
-        current.operandIds.join("|") !== state.groupingPlan.operandIds.join("|")) {
-      cancelRangeGroupingPreview();
-      setStatus("The grouping proposal is no longer valid; nothing changed.");
+    if (state.groupingMode !== 'preview' || !groupingCommitLifecycle.isOpen()) return;
+    let outcome;
+    try {
+      outcome = groupingCommitLifecycle.confirm(transformationSourceStamp(), candidate => {
+        const parameters = candidate.action.parameters;
+        const current = getRangeGroupingPlan(state.expressionRoot, parameters.operandIds);
+        const original = candidate.result.plan;
+        if (!current || !original || current.parentId !== original.parentId ||
+            current.parentType !== original.parentType ||
+            current.operandIds.join('|') !== original.operandIds.join('|') ||
+            current.operandIds.join('|') !== state.groupingPlan?.operandIds.join('|')) {
+          throw new Error('Grouping is no longer mathematically eligible.');
+        }
+        const staged = prepareAtomicTransformationCommit({
+          history: state.history,
+          resultRoot: candidate.result.root,
+          substitutions: state.substitutions,
+          actionLabel: `Grouped ${original.count} adjacent ${original.parentType === 'Add' ? 'addends' : 'factors'}`,
+          transformation: candidate.result.provenance,
+          kind: 'rule-transform',
+          operation: {
+            ruleId: 'grouping.range', ruleVersion: 1,
+            inputs: { bracketStyle: parameters.bracketStyle, parentId: original.parentId },
+            affectedNodeIds: original.operandIds
+          }
+        });
+        publishPreparedTransformation({ state, staged });
+        if (workspace.controller) {
+          try { captureActive(); scheduleSave(); }
+          catch (error) {
+            workspaceMessage(`Work is in memory but could not be saved: ${error.message}. Export a JSON backup.`);
+          }
+        }
+        state.selectedNodeId = candidate.result.groupId;
+        renderHistory();
+      });
+    } catch (error) {
+      groupingCommitLifecycle.cancel();
+      state.groupingMode = 'normal';
+      state.groupingPlan = null;
+      groupingOverlay.clear();
+      updateGroupToolbar();
+      paintRangeSelection();
+      setStatus(`Could not commit grouping: ${error.message}`);
       return;
     }
-    const result = groupOperandRange(state.expressionRoot, current.operandIds, dom.groupStyle.value);
-    if (!result) {
-      cancelRangeGroupingPreview();
+    if (outcome.status !== 'committed') {
+      groupingCommitLifecycle.cancel();
+      state.groupingMode = 'normal';
+      state.groupingPlan = null;
+      groupingOverlay.clear();
+      updateGroupToolbar();
+      paintRangeSelection();
+      setStatus('The grouping proposal is stale; nothing changed.');
       return;
     }
-    state.groupingMode = "normal";
+    state.groupingMode = 'normal';
     state.groupingPlan = null;
     state.multiSelection.clear();
+    state.touchMultiSelectMode = false;
     groupingOverlay.clear();
-    state.selectedNodeId = result.group.id;
     state.lastClick = null;
-    // Group is an explicit boundary, so the normalizer may not flatten it.
-    state.expressionRoot = normaliseWithRules(state.expressionRoot);
-    addHistoryNode(`Grouped ${current.count} adjacent ${current.parentType === "Add" ? "addends" : "factors"}`, result.provenance, "rule-transform", {
-      ruleId: "grouping.range", ruleVersion: 1,
-      inputs: { bracketStyle: dom.groupStyle.value, parentId: current.parentId },
-      affectedNodeIds: current.operandIds
-    });
     syncExpressionInput();
     renderApplication();
-    setStatus("Added explicit brackets to the selected range; original operand IDs were preserved.");
+    setStatus('Added explicit brackets to the selected range; original operand IDs were preserved.');
   }
 
   function updateGroupToolbar() {
@@ -1924,6 +2508,14 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     dom.wrapGroupButton.disabled = state.groupingMode === "preview" || state.factorisationMode === "preview" || (count > 0 ? !plan : !selected);
     dom.removeGroupButton.disabled = state.groupingMode === "preview" || state.factorisationMode === "preview" || count > 0 || selected?.type !== "Group";
     dom.groupingPreviewActions.hidden = state.groupingMode !== "preview";
+    // A single AST node or the whole root can be copied. A multi-selection
+    // with several disjoint nodes is not a single mathematical subtree.
+    // Keep this explicit rather than inventing implicit addition or grouping.
+    dom.copyMathButton.disabled = !state.expressionRoot || count > 1 ||
+      state.groupingMode !== 'normal' || state.factorisationMode !== 'normal' ||
+      Boolean(state.distributionPreview);
+    dom.multiSelectButton.setAttribute("aria-pressed", String(state.touchMultiSelectMode));
+    dom.multiSelectButton.classList.toggle("is-active", state.touchMultiSelectMode);
   }
 
   function addGroupToSelection(style = dom.groupStyle.value) {
@@ -1978,6 +2570,44 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     event.stopImmediatePropagation();
   }, true);
 
+  // Touch taps share the existing ID-based selection model with Ctrl/Cmd+click.
+  // A completed drag is handled by the drag lifecycle, never as a selection tap.
+  let touchTap = null;
+  function selectTouchNode(nodeId) {
+    if (state.touchMultiSelectMode) {
+      toggleRangeSelection(nodeId);
+      return;
+    }
+    if (state.selectedNodeId === nodeId) {
+      state.touchMultiSelectMode = true;
+      state.multiSelection.replace(state.expressionRoot, nodeId);
+      state.selectedNodeId = null;
+      state.lastClick = null;
+      dom.equation.querySelectorAll(".is-selected").forEach(el => el.classList.remove("is-selected"));
+      paintRangeSelection();
+      updateGroupToolbar();
+      updateFactorisationToolbar();
+      setStatus("Multiple selection: tap terms to add or remove; tap empty space to clear.");
+    } else {
+      state.selectedNodeId = nodeId;
+      state.lastClick = null;
+      renderApplication();
+    }
+  }
+  dom.multiSelectButton.addEventListener("click", () => {
+    if (state.touchMultiSelectMode) { resetRangeSelection(); return; }
+    if (state.groupingMode !== "normal" || state.factorisationMode !== "normal" || state.distributionPreview) return;
+    state.touchMultiSelectMode = true;
+    if (state.selectedNodeId) state.multiSelection.replace(state.expressionRoot, state.selectedNodeId);
+    state.selectedNodeId = null;
+    state.lastClick = null;
+    dom.equation.querySelectorAll(".is-selected").forEach(el => el.classList.remove("is-selected"));
+    paintRangeSelection();
+    updateGroupToolbar();
+    updateFactorisationToolbar();
+    setStatus("Multiple selection: tap terms to toggle; tap empty space to clear.");
+  });
+
   document.addEventListener("pointerdown", (event) => {
     if (identityDrag || identityPreviewModal) return;
     if (state.factorisationMode === "preview") {
@@ -2002,7 +2632,18 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       return;
     }
     if (state.drag || state.factorDrag || state.distributionPreview) return;
-    const hitbox = event.target.closest?.(".factor-slot, .add-operand");
+    const hitbox = event.target.closest?.(".factor-slot, .add-operand, .nested-occurrence");
+    if (event.pointerType === "touch" && dom.equation.contains(event.target) &&
+        state.groupingMode === "normal" && state.factorisationMode === "normal") {
+      touchTap = { pointerId: event.pointerId, nodeId: hitbox?.dataset.nodeId ?? null,
+        x: event.clientX, y: event.clientY, moved: false };
+      // In multi-select mode, suppress pickup so taps cannot initiate a drag.
+      if (state.touchMultiSelectMode) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+    }
     if (hitbox && (event.ctrlKey || event.metaKey)) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -2013,19 +2654,50 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     // clear the multi-selection on its pointerdown: otherwise factorisation
     // could never be initiated by dragging one of the selected factors.
     const selectedFactorPickup = hitbox && factorPlan()?.sourceFactorIds.includes(hitbox.dataset.nodeId);
-    if (state.multiSelection.size() && !event.ctrlKey && !event.metaKey &&
+    if (state.touchMultiSelectMode && !hitbox && !event.target.closest?.(".group-toolbar, .factorisation-toolbar, .grouping-envelope__edge")) {
+      resetRangeSelection();
+      return;
+    }
+    if (state.multiSelection.size() && !state.touchMultiSelectMode && !event.ctrlKey && !event.metaKey &&
         !selectedFactorPickup &&
         !event.target.closest?.(".grouping-envelope__edge, .group-toolbar, .factorisation-zone, .factorisation-toolbar")) {
       resetRangeSelection();
     }
   }, true);
 
+  // Operator glyphs are not draggable occurrences. A deliberate click on the
+  // compact minus sign asks the Engine for an explicit -1 factor instead.
+  dom.equation.addEventListener('pointerdown', event => {
+    if (event.target.closest('.negate-operator-hitbox')) event.stopImmediatePropagation();
+  });
+  dom.equation.addEventListener('click', event => {
+    const operator = event.target.closest('.negate-operator-hitbox');
+    if (!operator || !dom.equation.contains(operator)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openNegationPreview('negation.expand', { negateNodeId: operator.dataset.operatorOwnerId });
+  });
+  dom.equation.addEventListener('keydown', event => {
+    if (!['Enter', ' '].includes(event.key)) return;
+    const operator = event.target.closest('.negate-operator-hitbox');
+    if (!operator) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openNegationPreview('negation.expand', { negateNodeId: operator.dataset.operatorOwnerId });
+  });
+
   dom.equation.addEventListener("pointerdown", (event) => {
     // While previewing, the amber copies are buttons, not draggable terms.
     // Other clicks cancel the preview; only an intentional copy click commits.
     if (identityDrag || identityPreviewModal || state.distributionPreview || state.groupingMode !== "normal" || state.factorisationMode !== "normal") return;
-    if (event.ctrlKey || event.metaKey) return;
+    if (event.ctrlKey || event.metaKey || (event.pointerType === "touch" && state.touchMultiSelectMode)) return;
     if (event.target.closest("[data-distribution-confirm]")) return;
+    // A nested occurrence is an independent mathematical target, not an
+    // Add/Multiply sibling. Do not pick up its outer draggable ancestor: that
+    // used to make a click on the inner Number select/drag the outer Group.
+    // Mouse selection is handled by the click listener below; touch retains
+    // the existing pointerup tap/multi-select controller.
+    if (event.target.closest('.nested-occurrence[data-node-id]')) return;
     let hitbox = event.target.closest(".factor-slot, .add-operand");
     // Alt+click reaches the enclosing level when hitboxes are nested.
     if (event.altKey && hitbox) {
@@ -2035,6 +2707,24 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
       if (state.multiSelection.has(hitbox.dataset.nodeId) && startFactorDrag(event,hitbox)) return;
       startDrag(event, hitbox);
     }
+  });
+
+  // A Group's immediate child can now be a separately addressable Number,
+  // Symbol or Group. Pointer clicks select that exact occurrence instead of
+  // being promoted to its enclosing draggable Group. Bracket clicks continue
+  // to select the enclosing Group because the brackets sit outside the child.
+  // Do not modify AST/history: this is strictly selection interaction state.
+  dom.equation.addEventListener('click', (event) => {
+    if (event.detail === 0 || event.pointerType === 'touch' ||
+        event.ctrlKey || event.metaKey || state.touchMultiSelectMode || state.drag || state.factorDrag ||
+        state.distributionPreview || state.groupingMode !== 'normal' ||
+        state.factorisationMode !== 'normal') return;
+    const nested = event.target.closest('.nested-occurrence[data-node-id]');
+    if (!nested || !dom.equation.contains(nested)) return;
+    event.stopPropagation();
+    state.selectedNodeId = nested.dataset.nodeId;
+    state.lastClick = null;
+    renderApplication();
   });
 
   // Only the innermost hitbox receives the transient hover outline.
@@ -2054,7 +2744,16 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     saveHitboxPreference(hitboxVisibility.setMode(dom.hitboxVisibilityMode.value));
   });
 
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && negationCommitLifecycle.isOpen()) {
+      cancelNegationPreview();
+      setStatus('Negation preview cancelled.');
+    }
+  });
+
   window.addEventListener("pointermove", (event) => {
+    if (touchTap?.pointerId === event.pointerId &&
+        Math.hypot(event.clientX - touchTap.x, event.clientY - touchTap.y) > 8) touchTap.moved = true;
     if (identityDrag || identityPreviewModal) return;
     if (state.factorDrag) updateFactorDrag(event);
     else updateDragTarget(event);
@@ -2080,6 +2779,17 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   });
 
   window.addEventListener("pointerup", (event) => {
+    if (touchTap?.pointerId === event.pointerId) {
+      const tap = touchTap;
+      touchTap = null;
+      if (!tap.moved && !state.drag && !state.factorDrag && !identityDrag && !identityPreviewModal &&
+          !state.distributionPreview && state.groupingMode === "normal" && state.factorisationMode === "normal") {
+        if (tap.nodeId) selectTouchNode(tap.nodeId);
+        else if (state.touchMultiSelectMode || state.multiSelection.size()) resetRangeSelection();
+        else if (!tap.nodeId && state.selectedNodeId) { state.selectedNodeId = null; renderApplication(); }
+        return;
+      }
+    }
     if (identityDrag || identityPreviewModal) return;
     if (state.factorDrag) { finishFactorDrag(event,true); return; }
     if (!state.drag || event.pointerId !== state.drag.pointerId) return;
@@ -2094,6 +2804,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   });
 
   window.addEventListener("pointercancel", (event) => {
+    if (touchTap?.pointerId === event.pointerId) touchTap = null;
     if (state.factorDrag) { finishFactorDrag(event,false); return; }
     if (state.drag && event.pointerId === state.drag.pointerId) finishDrag(false);
   });
@@ -2135,7 +2846,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
     // normally; otherwise this editor's hitbox keyboard handler could catch
     // the bubbling event and select a parent Group instead of confirming.
     if (event.target.closest("[data-distribution-confirm]")) return;
-    const hitbox = event.target.closest(".factor-slot, .add-operand");
+    const hitbox = event.target.closest(".factor-slot, .add-operand, .nested-occurrence");
     if (!hitbox) return;
     // Accessible equivalent of Ctrl/Cmd+click for keyboard-only students.
     if ((event.ctrlKey || event.metaKey) && (event.key === "Enter" || event.key === " ")) {
@@ -2180,10 +2891,55 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
   dom.confirmRangeGroupButton.addEventListener("click", commitRangeGrouping);
   dom.cancelRangeGroupButton.addEventListener("click", cancelRangeGroupingPreview);
   dom.groupStyle.addEventListener("change", () => {
-    if (state.groupingMode === "preview") groupingOverlay.setBracketStyle(dom.groupStyle.value);
+    if (state.groupingMode === "preview") {
+      // The previewed bracket style is part of the action request. Reopen
+      // the proposal so the visible brackets and committed style agree.
+      groupingCommitLifecycle.cancel();
+      state.groupingMode = "normal";
+      state.groupingPlan = null;
+      enterRangeGroupingPreview();
+    }
   });
   dom.removeGroupButton.addEventListener("click", removeSelectedGroup);
 
+  dom.copyMathButton.addEventListener('click', () => {
+    if (!state.expressionRoot || state.groupingMode !== 'normal' ||
+        state.factorisationMode !== 'normal' || state.distributionPreview) return;
+    const ids = state.multiSelection.ids();
+    if (ids.length > 1) {
+      setStatus('Copy one mathematical subtree at a time; select one node or clear the selection to copy the whole object.');
+      return;
+    }
+    try {
+      const captured = captureMathematicalClipboard(
+        state.expressionRoot, ids[0] ?? state.selectedNodeId ?? null,
+        { documentId: workspace.activeId, objectId: activeDocument()?.activeObjectId ?? null }
+      );
+      mathematicalClipboard = appendClipboardEntry(mathematicalClipboard, captured);
+      renderClipboard();
+      setStatus('Selection remembered in the session clipboard.');
+    } catch (error) { setStatus(`Copy failed: ${error.message}`); }
+  });
+
+  dom.objectNew.addEventListener('click', () => {
+    const title = window.prompt('Name the mathematical object:', `Object ${(activeDocument()?.objectOrder.length ?? 0) + 1}`);
+    if (title !== null) changeObject(controller => controller.addObject(title));
+  });
+  dom.objectList.addEventListener('click', event => {
+    const button = event.target.closest('[data-object-id]');
+    if (button) switchObject(button.dataset.objectId);
+  });
+  dom.objectRename.addEventListener('click', () => {
+    const object = workspace.controller?.activeObject;
+    if (!object) return;
+    const title = window.prompt('Rename mathematical object:', object.title);
+    if (title !== null) changeObject(controller => controller.renameObject(object.id, title));
+  });
+  dom.objectDelete.addEventListener('click', () => {
+    const object = workspace.controller?.activeObject;
+    if (!object || !window.confirm(`Delete mathematical object “${object.title}”?`)) return;
+    changeObject(controller => controller.removeObject(object.id));
+  });
   dom.workspaceNew.addEventListener('click', () => {
     const title = window.prompt('Name the new mathematical document:', 'Untitled');
     if (title !== null) void createWorkspaceDocument(title);
@@ -2300,7 +3056,7 @@ import { createIdentityDragFeedback, describeIdentityTarget } from "./interactio
    * ---------------------------------------------------------------------- */
 
   function startApplication() {
-    applyTheme(readSavedTheme());
+    applyTheme(readSavedTheme(window.localStorage));
     dom.hitboxVisibilityMode.value = hitboxVisibility.setMode(readHitboxPreference());
     updateWorkspaceUI();
     void loadWorkspace(); // Starts empty; saved documents are listed, not auto-opened.

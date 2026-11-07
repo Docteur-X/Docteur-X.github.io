@@ -3,9 +3,9 @@
  * ========================================================================== *
  * GRAMMAR (highest precedence is at the bottom):
  *
- *   sum      := product ("+" product)*
+ *   sum      := product (("+" | "-") product)*
  *   product  := signedFactor (("*" | "×" | "·" | implicit) signedFactor)*
- *   signedFactor := "-"? atom
+ *   signedFactor := ("+" | "-")* atom
  *   atom     := number | identifier | openBracket sum closeBracket
  *
  * The parser is RECURSIVE DESCENT: each grammar level has a method. When a
@@ -21,7 +21,7 @@
  *
  * Identifiers: ab is ONE symbol, not a*b; _a _b are two symbols multiplied.
  * a(b+c) currently means a times (b+c), NOT a function call.
- * Subtraction and general function calls are reserved for later grammar work.
+ * Function calls remain reserved for later grammar work.
  * ========================================================================== */
 
 import {
@@ -110,9 +110,6 @@ class ExpressionParser {
       if (extra.type === "close") {
         throw new Error(`Unmatched closing bracket “${extra.value}” at position ${extra.position + 1}.`);
       }
-      if (extra.type === "minus") {
-        throw new Error("Subtraction is not implemented yet. Write a+-2 for a negative numeric addend.");
-      }
       throw new Error(`Unexpected “${extra.value}” at position ${extra.position + 1}.`);
     }
     return expression.type === "Add" ? expression : createAdd([expression]);
@@ -121,12 +118,16 @@ class ExpressionParser {
   /** Addition has lower precedence than multiplication. */
   parseSum() {
     const operands = [this.parseProduct()];
-    while (this.current()?.type === "plus") {
-      this.consume();
+    while (["plus", "minus"].includes(this.current()?.type)) {
+      const operator = this.consume();
       if (!this.current() || this.current()?.type === "close") {
-        throw new Error("A + sign needs an expression after it.");
+        throw new Error(`A ${operator.value} sign needs an expression after it.`);
       }
-      operands.push(this.parseProduct());
+      const term = this.parseProduct();
+      // Subtraction is addition of the additive inverse. Keep the Negate
+      // node explicit rather than normalizing it away: it is a manipulable
+      // mathematical occurrence, with its own minus operator hitbox.
+      operands.push(operator.type === "minus" ? createNegate(term) : term);
     }
     // A nested sum with only one item is that item. Group records its own
     // boundary separately; no artificial one-child Add is required here.
@@ -148,7 +149,7 @@ class ExpressionParser {
       const next = this.current();
       if (next.type === "multiply") {
         this.consume();
-        if (!this.current() || this.current().type === "close" || this.current().type === "plus") {
+        if (!this.current() || this.current().type === "close" || ["plus", "minus"].includes(this.current().type)) {
           throw new Error(`The multiplication sign “${next.value}” needs a factor after it.`);
         }
         operands.push(this.parseSignedFactor());
@@ -180,12 +181,22 @@ class ExpressionParser {
     return Boolean(token && ["number", "identifier", "open"].includes(token.type));
   }
 
-  /** A literal -3 becomes Number(-3); -(a+b) becomes Negate(Group(Add)). */
+  /**
+   * Parse unary signs recursively. A bare -3 remains an atomic Number(-3),
+   * while -(3) is an explicit Negate(Group(Number(3))). Repeated signs are
+   * represented structurally, so --b is not silently simplified to b.
+   */
   parseSignedFactor() {
-    if (this.current()?.type !== "minus") return this.parseAtom();
+    const sign = this.current();
+    if (sign?.type !== "minus" && sign?.type !== "plus") return this.parseAtom();
     this.consume();
-    const operand = this.parseAtom();
-    return operand.type === "Number" ? createNumber(-operand.value) : createNegate(operand);
+    if (!this.current() || this.current().type === "close" || this.current().type === "multiply") {
+      throw new Error(`A ${sign.value} sign needs an expression after it.`);
+    }
+    const operand = this.parseSignedFactor();
+    if (sign.type === "plus") return operand;
+    return operand.type === "Number" && operand.value >= 0
+      ? createNumber(-operand.value) : createNegate(operand);
   }
 
   /** The recursion happens when an opening bracket is encountered. */

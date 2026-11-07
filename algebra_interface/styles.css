@@ -1429,7 +1429,8 @@ body.is-dragging {
  * large enough for mouse, touch and keyboard users. Inherit the surrounding
  * mathematics font rather than the browser's default button appearance.
  */
-.distribution-preview__copy {
+.distribution-preview__copy,
+.equality-inline-preview .equality-inserted-operand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1449,7 +1450,9 @@ body.is-dragging {
   transition: background-color .12s ease, box-shadow .12s ease;
 }
 .distribution-preview__copy:hover,
-.distribution-preview__copy:focus-visible {
+.distribution-preview__copy:focus-visible,
+.equality-inline-preview .equality-inserted-operand:hover,
+.equality-inline-preview .equality-inserted-operand:focus-visible {
   outline: 2px solid var(--distribution-ink);
   outline-offset: 3px;
   background: color-mix(in srgb, var(--distribution-soft) 65%, var(--distribution-halo));
@@ -1862,14 +1865,14 @@ body.is-dragging {
  * must remain identical in both modes. The JS hover controller marks exactly
  * one deepest hitbox, while selection/green/amber feedback remain independent.
  * ========================================================================== */
-:root[data-hitbox-visibility="hover"] .equation .term:not(.is-selected):not(.is-multi-selected):not(.is-hitbox-hovered):not(.is-combine-target):not(.is-distribution-target):not(.is-factorisation-source) {
+:root[data-hitbox-visibility="hover"] .equation .term:not(.is-selected):not(.is-multi-selected):not(.is-hitbox-hovered):not(.is-combine-target):not(.is-distribution-target):not(.is-factorisation-source):not(.math-feedback--proposed-insertion) {
   border-color: transparent;
   outline-color: transparent;
   box-shadow: none;
 }
 /* The browser's :hover matches every nested ancestor. Suppress that implicit
  * styling, including its background, and rely on the single JS-resolved class. */
-:root[data-hitbox-visibility="hover"] .equation .term:hover:not(.is-hitbox-hovered):not(.is-selected):not(.is-multi-selected):not(.is-combine-target):not(.is-distribution-target):not(.is-factorisation-source) {
+:root[data-hitbox-visibility="hover"] .equation .term:hover:not(.is-hitbox-hovered):not(.is-selected):not(.is-multi-selected):not(.is-combine-target):not(.is-distribution-target):not(.is-factorisation-source):not(.math-feedback--proposed-insertion) {
   border-color: transparent;
   background: var(--term-bg);
   box-shadow: none;
@@ -1943,4 +1946,281 @@ body.is-dragging {
   outline-offset:2px;
   box-shadow:0 0 0 4px rgba(226,172,59,.16) !important;
   background-color:rgba(226,172,59,.12) !important;
+}
+
+/* Selection-mode feedback is outside the equation and never alters hitboxes. */
+#multiSelectButton.is-active {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* Clipboard v2: utility panels are opt-in, preserving vertical space for the
+   mathematical view. The selected entry is marked without altering ASTs. */
+.clipboard-panel, .settings-panel, .interaction-help {
+  margin: .75rem 0; padding: .7rem 1rem;
+  border: 1px solid var(--border-color, #8885); border-radius: 10px;
+}
+.clipboard-panel { max-width: 1200px; margin: 1rem auto; }
+.clipboard-panel summary, .settings-panel summary, .interaction-help summary,
+.symbols-details summary, .workspace-manager > summary { cursor: pointer; font-weight: 600; }
+.clipboard-entries { display: flex; flex-direction: column; gap: .5rem; margin: .75rem 0; }
+.clipboard-entry { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.clipboard-entry [aria-pressed="true"] { outline: 2px solid var(--accent, #3676d9); }
+.symbols-details { width: 100%; }
+.workspace-manager > summary { margin-bottom: .35rem; }
+
+/* Equality function application: menus float without changing the mathematical
+   hitbox geometry. The actual equation remains the only authoritative AST. */
+.equality-root { position: relative; }
+.equality-sign { cursor: pointer; user-select: none; }
+.equality-sign[data-armed]:not([data-armed=""]) { outline: 2px solid var(--accent, #3676d9); outline-offset: 2px; }
+.relation-armed-indicator { font-size: .72rem; font-weight: 700; color: var(--accent, #3676d9); align-self: flex-start; }
+.equality-operation-menu { position: absolute; z-index: 30; top: calc(100% + .35rem); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: .25rem; padding: .35rem; border: 1px solid currentColor; border-radius: .6rem; background: var(--surface, #fff); box-shadow: 0 8px 24px #0002; min-width: 9rem; }
+.equality-operation-menu[hidden] { display: none; }
+.equality-operation-choice { cursor: pointer; padding: .4rem .7rem; border-radius: .4rem; border: 1px solid currentColor; background: transparent; color: inherit; font: inherit; }
+.equality-operation-choice:hover:not(:disabled), .equality-operation-choice[aria-pressed="true"] { background: rgba(54,118,217,.16); }
+.equality-operation-choice:disabled { opacity: .4; cursor: not-allowed; }
+.equality-drop-hover .equality-root { outline: 2px dashed var(--accent, #3676d9); outline-offset: 4px; }
+.clipboard-draggable { touch-action: none; }
+.relation-preview-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+
+/* Equality application v1.1: a clearly non-mathematical floating palette.
+   A body-level portal avoids clipping by the equation viewport. The small
+   controls are intentionally visually unlike operand hitboxes. */
+.equality-operation-menu {
+  position: fixed; top: 0; left: 0; transform: none; z-index: 2000;
+  min-width: 0; width: max-content; max-width: calc(100vw - 16px);
+  padding: 4px; gap: 3px; border: 1px solid #6483a7;
+  border-radius: 9px; background: #263c53; color: #eef5ff;
+  box-shadow: 0 12px 28px #0008;
+}
+.equality-operation-choice {
+  min-width: 36px; min-height: 34px; padding: 3px 6px;
+  border: 1px solid #6985a5; border-radius: 6px;
+  background: #344b64; color: #eef5ff;
+}
+.equality-operation-choice[aria-pressed="true"] { background: #805e2e; border-color: #efbd60; }
+.equality-use-clipboard { max-width: 145px; white-space: normal; font-size: .7rem; }
+.clipboard-drag-ghost {
+  position: fixed; pointer-events: none; z-index: 2100;
+  max-width: min(280px, 65vw); padding: 8px 12px;
+  border: 2px dashed #e8ae51; border-radius: 9px;
+  background: #3a3022; color: #ffe4ad; box-shadow: 0 5px 16px #0007;
+  font-weight: 600; opacity: .94;
+}
+/* Equality v1.3.1: renderer-assigned semantic insertion roles use the SAME
+ * glowing, dashed amber surface as distribution's proposed factor copies.
+ * The shared declarations above are the single visual authority for both.
+ * Do not add amber to structural Add/Multiply wrappers: those wrappers also
+ * contain PRE-EXISTING mathematical nodes, and highlighting them would falsely
+ * imply that the entire expression was inserted. The compound hitbox remains
+ * geometrically present for the renderer, but its ordinary surface is quiet.
+ *
+ * This preview-specific selector must never affect the committed equation.
+ * It also must not alter the source AST or the preview's confirmation logic.
+ */
+.equality-inline-preview { cursor: default; flex-wrap: nowrap; max-width: none; width: max-content; }
+.equality-inline-preview > .expression-root { flex-wrap: nowrap; flex: 0 0 auto; }
+.equality-inline-preview .add-content,
+.equality-inline-preview .multiply-content { flex-wrap: nowrap; }
+.equality-inline-preview .term--compound:not(.equality-inserted-operand) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+/* The copy is a renderer-owned AST hitbox rather than a button, so retain
+ * keyboard focusability/confirmation from domRenderer's visual role. */
+.equality-inline-preview .equality-inserted-operand {
+  position: relative;
+  z-index: 1;
+}
+/* A wide mathematical statement remains one coherent line. The viewport may
+ * scroll horizontally until the future resizable-window system is available;
+ * wrapping the equality into unrelated rows is not mathematically helpful. */
+.equation:has(.equality-inline-preview) { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .distribution-preview__copy,
+  .equality-inline-preview .equality-inserted-operand { transition: none; }
+}
+.equality-inline-actions {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: .6rem; padding: .55rem;
+  color: #e9bd74; font-size: .85rem;
+}
+
+/* Equality v1.3.2: the relation indicator is an OVERLAY anchored to the
+ * equals sign itself, not another flex child of the equation. It therefore
+ * cannot drift to the end of a long equality or affect expression layout. */
+.equality-sign { position: relative; }
+.equality-sign .relation-armed-indicator {
+  position: absolute; left: 50%; bottom: calc(100% + 5px);
+  transform: translateX(-50%); white-space: nowrap;
+  font-size: .68rem; line-height: 1; font-weight: 800;
+  color: var(--accent, #3676d9); pointer-events: none;
+}
+.equality-sign .relation-armed-indicator:empty { display: none; }
+
+/* The renderer assigns this class ONLY to the outermost newly introduced
+ * operand occurrence. Earlier styles shared a selector with distribution,
+ * but compound hitbox surfaces and nested terms visually swallowed the glow.
+ * Explicitly give the OUTER box a luminous outline, while keeping its interior
+ * neutral and its mathematical hit-testing geometry unchanged. */
+.equality-inline-preview .term.equality-inserted-operand {
+  border: 2px solid var(--distribution-ink);
+  background: color-mix(in srgb, var(--distribution-soft) 28%, transparent);
+  color: var(--text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--distribution-ink) 55%, transparent),
+              0 0 17px 5px color-mix(in srgb, var(--distribution-halo) 62%, transparent);
+  outline: 1px dashed var(--distribution-ink);
+  outline-offset: -5px;
+}
+.equality-inline-preview .term.equality-inserted-operand:hover,
+.equality-inline-preview .term.equality-inserted-operand:focus-visible {
+  box-shadow: 0 0 0 4px var(--distribution-ink),
+              0 0 22px 7px color-mix(in srgb, var(--distribution-halo) 75%, transparent);
+}
+/* Neutral nested hitboxes preserve the visual distinction between the copied
+ * mathematical unit and the components that happen to constitute it. */
+.equality-inline-preview .equality-inserted-operand .term {
+  color: var(--text);
+}
+
+/* ========================================================================== *
+ * Nested Mathematical Hitbox Visual Contract v1
+ * ========================================================================== *
+ * The renderer owns the presence and geometry of hitboxes. This stylesheet
+ * describes their resting grammar; the Visual Feedback Controller adds the
+ * shared semantic classes below. Outlines and shadows never change layout.
+ * The existing legacy preview classes remain supported during migration.
+ * ========================================================================== */
+.equation [data-hitbox-role="occurrence"].nested-occurrence {
+  min-width: 0;
+  min-height: 0;
+  padding: 3px 5px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-line) 35%, transparent);
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  vertical-align: middle;
+}
+.equation [data-hitbox-role="occurrence"].nested-occurrence:hover,
+.equation [data-hitbox-role="occurrence"].nested-occurrence.is-hitbox-hovered,
+.equation [data-hitbox-role="occurrence"].nested-occurrence:focus-visible {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.equation [data-hitbox-role="operator"] { position: relative; }
+.equation [data-hitbox-role="content"] { border: 0; }
+/* All feedback uses geometry-neutral decorations. Mathematical eligibility
+ * colours have precedence over the neutral structural role appearance. */
+.equation .math-feedback--eligible { outline: 2px solid #398e63; outline-offset: 1px; }
+.equation .math-feedback--rejected { outline: 2px dashed #bb665a; outline-offset: 1px; }
+.equation .math-feedback--proposed-insertion {
+  outline: 2px dashed var(--distribution-ink);
+  outline-offset: 2px;
+  background: var(--distribution-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--distribution-halo) 35%, transparent),
+              0 0 13px color-mix(in srgb, var(--distribution-ink) 30%, transparent);
+}
+.equation .math-feedback--selected,
+.equation .math-feedback--grouping { outline: 2px solid var(--accent-line); outline-offset: 2px; }
+/* No DOM/layout mutation is needed when a feedback role is added/removed. */
+
+/* Nested Hitbox Interaction Refinement v1.
+ * Drag ghosts are measured copies of the mathematical source, not fresh flex
+ * layout contexts. Never allow a compound child to expand the fixed ghost.
+ * Feedback uses shadows/outlines rather than scaling the mathematical box.
+ */
+.drag-ghost { box-sizing: border-box; flex: none; }
+.drag-ghost > .term {
+  box-sizing: border-box;
+  flex: none;
+  transform: none !important;
+}
+
+/* Negation operator: a semantic operator target, not an independent AST node.
+   Outline and shadow do not alter geometry when hovered/focused. */
+.negate-operator-hitbox {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 0.65em; cursor: pointer; border-radius: 3px;
+  outline: 1px dashed var(--border-color, #8895a5); outline-offset: 1px;
+}
+.negate-operator-hitbox:hover, .negate-operator-hitbox:focus-visible {
+  outline: 2px solid #4e8ee6; box-shadow: 0 0 0 3px rgba(78,142,230,.14);
+}
+/* Negation v1.1: candidate occupies the original mathematical view, not a
+ * duplicate panel. Only its new -1 occurrence receives the shared amber role.
+ * Controls live in a separate flex row, outside the mathematical expression.
+ */
+/* A preview is read-only except for the exact semantic insertion targets.
+ * These targets are controlled by the generic preview gesture binding, not
+ * the renderer. The parent remains inert to prevent editing a candidate AST. */
+.equation .negation-preview-math { pointer-events: none; }
+.equation .negation-preview-math [data-preview-confirm="true"] {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.equation .negation-preview-math [data-preview-confirm="true"]:hover,
+.equation .negation-preview-math [data-preview-confirm="true"]:focus-visible {
+  /* Preserve the shared proposed-insertion dashed outline on hover/focus.
+   * Strengthen only the halo; interaction must not change semantic border style. */
+  outline: 2px dashed var(--distribution-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--distribution-halo) 55%, transparent),
+              0 0 15px color-mix(in srgb, var(--distribution-ink) 40%, transparent);
+}
+.equation .negation-preview-actions {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 10px; width: 100%; margin-top: 12px;
+  font-size: .88rem; color: var(--text-muted, #b4c4d9);
+}
+.equation .negation-preview-actions button { cursor: pointer; }
+
+/* Negation v1.2: compression highlights the newly introduced operator, not
+ * the existing Group or Symbol. Shared semantic feedback remains the owner
+ * of the amber role; this only resolves the neutral operator-hover cascade. */
+.equation .negation-preview-math .negate-operator-hitbox.math-feedback--proposed-insertion,
+.equation .negation-preview-math .negate-operator-hitbox.math-feedback--proposed-insertion:hover,
+.equation .negation-preview-math .negate-operator-hitbox.math-feedback--proposed-insertion:focus-visible {
+  outline: 2px dashed var(--distribution-ink);
+  outline-offset: 2px;
+  background: var(--distribution-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--distribution-halo) 35%, transparent),
+              0 0 13px color-mix(in srgb, var(--distribution-ink) 30%, transparent);
+}
+
+/* Negation v1.2.2 — Semantic eligibility is a mathematical-operation category,
+ * not a generic green success indicator. Combining a numerical factor (-1)
+ * with a symbolic/grouped operand uses the same green family as evaluation.
+ * This rule is shared by all eligible-feedback owners, not feature-specific.
+ * Keep geometry fixed: outline and box-shadow never change the target size.
+ * Place these rules after neutral hitbox visibility and nested-hover rules so
+ * feedback remains visible in BOTH hitbox display modes and themes. */
+.equation [data-hitbox-role="occurrence"].math-feedback--eligible,
+:root[data-hitbox-visibility="hover"] .equation .term.math-feedback--eligible,
+:root[data-hitbox-visibility="hover"] .equation .term.math-feedback--eligible:hover {
+  outline: 2px solid var(--success, #62c999);
+  outline-offset: 2px;
+  border-color: var(--success, #62c999);
+  box-shadow: 0 0 0 3px rgba(72, 190, 133, .20),
+              0 0 12px rgba(72, 190, 133, .30);
+}
+/* Hints are owned by VisualFeedbackController and disappear on clear().
+ * The pseudo-element cannot steal the pointer or alter mathematical layout. */
+.equation .math-feedback--eligible[data-math-feedback-hint] { position: relative; }
+.equation .math-feedback--eligible[data-math-feedback-hint]::after {
+  content: attr(data-math-feedback-hint);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 13px);
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 220px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: #60c99a;
+  color: #102b22;
+  font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .18);
+  pointer-events: none;
+  z-index: 15;
 }

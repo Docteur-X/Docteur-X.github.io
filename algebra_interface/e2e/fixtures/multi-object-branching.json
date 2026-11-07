@@ -1,0 +1,353 @@
+{
+  "format": "algebra-document-event-history",
+  "formatVersion": 1,
+  "document": {
+    "id": "doc-59c03c94-d391-454d-93d5-d87873c92387",
+    "schemaVersion": 2,
+    "title": "Branching fixture",
+    "objects": {
+      "object-5f83d840-ba12-46d1-968e-521d737e230e": {
+        "id": "object-5f83d840-ba12-46d1-968e-521d737e230e",
+        "title": "First",
+        "root": {
+          "id": "node-10",
+          "type": "Add",
+          "operands": [
+            {
+              "id": "node-7",
+              "type": "Symbol",
+              "name": "a"
+            },
+            {
+              "id": "node-8",
+              "type": "Symbol",
+              "name": "b"
+            },
+            {
+              "id": "node-9",
+              "type": "Symbol",
+              "name": "c"
+            }
+          ]
+        },
+        "kind": "expression",
+        "history": {
+          "schemaVersion": 2,
+          "nextNodeId": 4,
+          "currentNodeId": 3,
+          "nodes": [
+            {
+              "id": 1,
+              "stateId": "state-1",
+              "eventId": "event-1",
+              "kind": "rule-transform",
+              "parentId": null,
+              "children": [
+                2,
+                3
+              ],
+              "actionLabel": "Start",
+              "transformation": null,
+              "event": {
+                "schemaVersion": 1,
+                "id": "event-1",
+                "kind": "rule-transform",
+                "ruleId": null,
+                "ruleVersion": null,
+                "inputs": null,
+                "affectedNodeIds": [],
+                "generatedNodeIds": [
+                  "node-3",
+                  "node-1",
+                  "node-2"
+                ],
+                "provenance": null,
+                "fromStateId": null,
+                "toStateId": "state-1",
+                "beforeFingerprint": null,
+                "afterFingerprint": "23a8b01f",
+                "patch": [
+                  {
+                    "op": "set",
+                    "path": [],
+                    "value": {
+                      "expression": {
+                        "id": "node-3",
+                        "type": "Add",
+                        "operands": [
+                          {
+                            "id": "node-1",
+                            "type": "Symbol",
+                            "name": "a"
+                          },
+                          {
+                            "id": "node-2",
+                            "type": "Symbol",
+                            "name": "b"
+                          }
+                        ]
+                      },
+                      "substitutions": {}
+                    }
+                  }
+                ]
+              },
+              "createdAt": "2026-11-05T21:54:33.825Z"
+            },
+            {
+              "id": 2,
+              "stateId": "state-2",
+              "eventId": "event-2",
+              "kind": "rule-transform",
+              "parentId": 1,
+              "children": [],
+              "actionLabel": "Reorder",
+              "transformation": null,
+              "event": {
+                "schemaVersion": 1,
+                "id": "event-2",
+                "kind": "rule-transform",
+                "ruleId": null,
+                "ruleVersion": null,
+                "inputs": null,
+                "affectedNodeIds": [],
+                "generatedNodeIds": [
+                  "node-6",
+                  "node-4",
+                  "node-5"
+                ],
+                "provenance": null,
+                "fromStateId": "state-1",
+                "toStateId": "state-2",
+                "beforeFingerprint": "23a8b01f",
+                "afterFingerprint": "8aff5efa",
+                "patch": [
+                  {
+                    "op": "set",
+                    "path": [
+                      "expression",
+                      "id"
+                    ],
+                    "value": "node-6"
+                  },
+                  {
+                    "op": "set",
+                    "path": [
+                      "expression",
+                      "operands"
+                    ],
+                    "value": [
+                      {
+                        "id": "node-4",
+                        "type": "Symbol",
+                        "name": "b"
+                      },
+                      {
+                        "id": "node-5",
+                        "type": "Symbol",
+                        "name": "a"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "createdAt": "2026-11-05T21:54:33.825Z"
+            },
+            {
+              "id": 3,
+              "stateId": "state-3",
+              "eventId": "event-3",
+              "kind": "rule-transform",
+              "parentId": 1,
+              "children": [],
+              "actionLabel": "Branch",
+              "transformation": null,
+              "event": {
+                "schemaVersion": 1,
+                "id": "event-3",
+                "kind": "rule-transform",
+                "ruleId": null,
+                "ruleVersion": null,
+                "inputs": null,
+                "affectedNodeIds": [],
+                "generatedNodeIds": [
+                  "node-10",
+                  "node-7",
+                  "node-8",
+                  "node-9"
+                ],
+                "provenance": null,
+                "fromStateId": "state-1",
+                "toStateId": "state-3",
+                "beforeFingerprint": "23a8b01f",
+                "afterFingerprint": "2d914119",
+                "patch": [
+                  {
+                    "op": "set",
+                    "path": [
+                      "expression",
+                      "id"
+                    ],
+                    "value": "node-10"
+                  },
+                  {
+                    "op": "set",
+                    "path": [
+                      "expression",
+                      "operands"
+                    ],
+                    "value": [
+                      {
+                        "id": "node-7",
+                        "type": "Symbol",
+                        "name": "a"
+                      },
+                      {
+                        "id": "node-8",
+                        "type": "Symbol",
+                        "name": "b"
+                      },
+                      {
+                        "id": "node-9",
+                        "type": "Symbol",
+                        "name": "c"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "set",
+                    "path": [
+                      "substitutions",
+                      "x"
+                    ],
+                    "value": 3
+                  }
+                ]
+              },
+              "createdAt": "2026-11-05T21:54:33.825Z"
+            }
+          ]
+        },
+        "substitutions": {
+          "x": 3
+        },
+        "metadata": {
+          "createdAt": "2026-11-05T21:54:33.822Z",
+          "updatedAt": "2026-11-05T21:54:33.825Z"
+        }
+      },
+      "object-135f8bb0-8a7c-4715-b1ac-2acdb6ffdd1b": {
+        "id": "object-135f8bb0-8a7c-4715-b1ac-2acdb6ffdd1b",
+        "title": "Second",
+        "root": {
+          "id": "node-14",
+          "type": "Add",
+          "operands": [
+            {
+              "id": "node-13",
+              "type": "Multiply",
+              "operands": [
+                {
+                  "id": "node-11",
+                  "type": "Symbol",
+                  "name": "x"
+                },
+                {
+                  "id": "node-12",
+                  "type": "Symbol",
+                  "name": "y"
+                }
+              ],
+              "displayStyle": "dot"
+            }
+          ]
+        },
+        "kind": "expression",
+        "history": {
+          "schemaVersion": 2,
+          "nextNodeId": 2,
+          "currentNodeId": 1,
+          "nodes": [
+            {
+              "id": 1,
+              "stateId": "state-1",
+              "eventId": "event-1",
+              "kind": "rule-transform",
+              "parentId": null,
+              "children": [],
+              "actionLabel": "Start",
+              "transformation": null,
+              "event": {
+                "schemaVersion": 1,
+                "id": "event-1",
+                "kind": "rule-transform",
+                "ruleId": null,
+                "ruleVersion": null,
+                "inputs": null,
+                "affectedNodeIds": [],
+                "generatedNodeIds": [
+                  "node-14",
+                  "node-13",
+                  "node-11",
+                  "node-12"
+                ],
+                "provenance": null,
+                "fromStateId": null,
+                "toStateId": "state-1",
+                "beforeFingerprint": null,
+                "afterFingerprint": "60f133e7",
+                "patch": [
+                  {
+                    "op": "set",
+                    "path": [],
+                    "value": {
+                      "expression": {
+                        "id": "node-14",
+                        "type": "Add",
+                        "operands": [
+                          {
+                            "id": "node-13",
+                            "type": "Multiply",
+                            "operands": [
+                              {
+                                "id": "node-11",
+                                "type": "Symbol",
+                                "name": "x"
+                              },
+                              {
+                                "id": "node-12",
+                                "type": "Symbol",
+                                "name": "y"
+                              }
+                            ],
+                            "displayStyle": "dot"
+                          }
+                        ]
+                      },
+                      "substitutions": {}
+                    }
+                  }
+                ]
+              },
+              "createdAt": "2026-11-05T21:54:33.825Z"
+            }
+          ]
+        },
+        "substitutions": {},
+        "metadata": {
+          "createdAt": "2026-11-05T21:54:33.825Z",
+          "updatedAt": "2026-11-05T21:54:33.825Z"
+        }
+      }
+    },
+    "objectOrder": [
+      "object-5f83d840-ba12-46d1-968e-521d737e230e",
+      "object-135f8bb0-8a7c-4715-b1ac-2acdb6ffdd1b"
+    ],
+    "activeObjectId": "object-5f83d840-ba12-46d1-968e-521d737e230e",
+    "metadata": {
+      "createdAt": "2026-11-05T21:54:33.819Z",
+      "updatedAt": "2026-11-05T21:54:33.825Z"
+    }
+  }
+}

@@ -34,6 +34,8 @@ export function renderExpression(root, options = {}) {
     equation.append(renderExpression(root.left, { ...options, relationParentId: root.id }));
     const sign = document.createElement("span");
     sign.className = "equality-sign";
+    sign.dataset.hitboxRole = "operator";
+    sign.dataset.operatorOwnerId = root.id;
     sign.textContent = "=";
     sign.setAttribute("aria-label", "equals");
     equation.append(sign, renderExpression(root.right, { ...options, relationParentId: root.id }));
@@ -56,11 +58,13 @@ export function renderExpression(root, options = {}) {
     const hitbox = document.createElement("div");
     hitbox.className = "term add-operand term--compound root-expression-hitbox";
     hitbox.dataset.nodeId = root.id;
+    hitbox.dataset.hitboxRole = "occurrence";
     if (options.relationParentId) hitbox.dataset.parentId = options.relationParentId;
     hitbox.setAttribute("role", "button");
     hitbox.setAttribute("tabindex", "0");
     hitbox.setAttribute("aria-label", `Expression: ${describe(root)}. Click selects.`);
     if (options.selectedNodeId === root.id) hitbox.classList.add("is-selected");
+    applyVisualRoles(hitbox, root.id, options);
     hitbox.append(makeNodeContents(root, options));
     container.append(hitbox);
   }
@@ -95,6 +99,20 @@ function renderOperandSequence(parent, container, options) {
   });
 }
 
+/**
+ * Apply declarative presentation roles to the OUTERMOST occurrence hitbox.
+ * This renderer owns visual semantics and geometry; the Engine only reports
+ * identities. Descendant hitboxes are never marked by inherited CSS classes.
+ * A future visualiser can supply additional roles through this boundary.
+ */
+function applyVisualRoles(element, nodeId, options) {
+  if (options.visualRoles?.insertedOperandIds?.includes(nodeId)) {
+    element.classList.add("equality-inserted-operand");
+    element.dataset.equalityPreviewConfirm = "true";
+    element.title = "Confirm insertion of this clipboard expression on both sides";
+  }
+}
+
 /** One moveable node (including any visible brackets) has ONE outer hitbox. */
 function makeHitbox(node, parent, options, index) {
   const element = document.createElement("div");
@@ -105,6 +123,7 @@ function makeHitbox(node, parent, options, index) {
     if (kind === "add-operand") element.classList.add("add-operand--product");
   }
   element.dataset.nodeId = node.id;
+  element.dataset.hitboxRole = "occurrence";
   element.dataset.parentId = parent.id;
   element.setAttribute("role", "button");
   element.setAttribute("tabindex", "0");
@@ -120,6 +139,7 @@ function makeHitbox(node, parent, options, index) {
     element.append(makeNodeContents(node, options));
   }
   if (options.selectedNodeId === node.id) element.classList.add("is-selected");
+  applyVisualRoles(element, node.id, options);
   // A source factor is not multiplied yet; yellow shows a *proposed rule*.
   if (options.distributionPreview?.sourceFactorId === node.id) {
     element.classList.add("is-distribution-source");
@@ -140,11 +160,45 @@ function makeHitbox(node, parent, options, index) {
   return element;
 }
 
+/**
+ * Give a Group's directly enclosed leaf or Group its OWN occurrence target.
+ * Previously Group(Number(-3)) displayed the Number only as text inside the
+ * Group hitbox. This made the mathematical distinction between dropping onto
+ * -3 and onto (-3) impossible to express through hit-testing.
+ *
+ * Add/Multiply children already receive operand hitboxes from their sequence
+ * renderer. We intentionally retain that established geometry in v1 rather
+ * than wrapping whole nested operation containers (which would change drag
+ * coordinates and distribution/factorisation hit-testing). Those remaining
+ * operation-level targets are a documented later migration.
+ *
+ * The nested target is NOT an Add/Multiply sibling: it must not masquerade as
+ * a draggable factor or addend. Its parent ID identifies the enclosing Group.
+ */
+function makeNestedGroupOperand(operand, groupId, options) {
+  if (operand.type === "Add" || operand.type === "Multiply") {
+    return makeNodeContents(operand, options);
+  }
+  const element = document.createElement("span");
+  element.className = "term nested-occurrence";
+  element.dataset.nodeId = operand.id;
+  element.dataset.parentId = groupId;
+  element.dataset.hitboxRole = "occurrence";
+  element.setAttribute("role", "button");
+  element.setAttribute("tabindex", "0");
+  element.setAttribute("aria-label", `Nested expression: ${describe(operand)}. Click selects.`);
+  if (options.selectedNodeId === operand.id) element.classList.add("is-selected");
+  applyVisualRoles(element, operand.id, options);
+  element.append(makeNodeContents(operand, options));
+  return element;
+}
+
 /** Render a node's INTERIOR, not another hitbox around the same node. */
 function makeNodeContents(node, options) {
   if (node.type === "Add" || node.type === "Multiply") {
     const sequence = document.createElement("span");
     sequence.className = `${node.type === "Add" ? "add-content" : "multiply-content"} drag-container`;
+    sequence.dataset.hitboxRole = "content";
     sequence.dataset.parentId = node.id;
     sequence.setAttribute("role", "group");
     sequence.setAttribute("aria-label", node.type === "Add" ? "Addends" : "Factors");
@@ -154,10 +208,11 @@ function makeNodeContents(node, options) {
   if (node.type === "Group") {
     const group = document.createElement("span");
     group.className = "group-content";
+    group.dataset.hitboxRole = "content";
     group.append(makeBracket(GROUP_BRACKETS[node.bracketStyle][0], "explicit"));
     // Render nested sums/products as independent drag containers. A simple
     // grouped symbol displays directly; the outer Group remains draggable.
-    group.append(makeNodeContents(node.operand, options));
+    group.append(makeNestedGroupOperand(node.operand, node.id, options));
     group.append(makeBracket(GROUP_BRACKETS[node.bracketStyle][1], "explicit"));
     return group;
   }
@@ -166,14 +221,21 @@ function makeNodeContents(node, options) {
     label.className = "negate-content";
     const minus = document.createElement("span");
     minus.textContent = "−";
-    minus.setAttribute("aria-hidden", "true");
+    minus.className = "negate-operator-hitbox";
+    minus.dataset.hitboxRole = "operator";
+    minus.dataset.operatorKind = "negate";
+    minus.dataset.operatorOwnerId = node.id;
+    minus.setAttribute("role", "button");
+    minus.setAttribute("tabindex", "0");
+    minus.setAttribute("aria-label", "Expand negation as multiplication by negative one");
+    minus.title = "Click to expose −1";
     label.append(minus);
     if (needsAutomaticBrackets(node, node.operand, "operand")) {
       label.append(makeBracket("(", "automatic"));
-      label.append(makeNodeContents(node.operand, options));
+      label.append(makeNestedGroupOperand(node.operand, node.id, options));
       label.append(makeBracket(")", "automatic"));
     } else {
-      label.append(makeNodeContents(node.operand, options));
+      label.append(makeNestedGroupOperand(node.operand, node.id, options));
     }
     return label;
   }
@@ -204,6 +266,8 @@ function makeBracket(character, purpose) {
 function makeOperator(parent, options) {
   const element = document.createElement("span");
   element.setAttribute("aria-hidden", "true");
+  element.dataset.hitboxRole = "operator";
+  element.dataset.operatorOwnerId = parent.id;
   if (parent.type === "Add") {
     element.className = "plus";
     element.dataset.sumId = parent.id;

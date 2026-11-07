@@ -1,3 +1,4 @@
+import { createVisualFeedbackController } from './visualFeedbackController.js';
 /* ========================================================================== *
  * Hitbox visibility (presentation-only interaction state)
  * ========================================================================== *
@@ -15,9 +16,10 @@ export function normalizeHitboxVisibility(value) {
 export function createHitboxVisibility(root, host = document.documentElement) {
   let mode = HITBOX_VISIBILITY.VISIBLE;
   let hovered = null;
+  const feedback = createVisualFeedbackController(root);
 
   function clearHover() {
-    hovered?.classList.remove('is-hitbox-hovered');
+    feedback.clear('hitbox-hover');
     hovered = null;
   }
 
@@ -37,7 +39,7 @@ export function createHitboxVisibility(root, host = document.documentElement) {
     if (eligible === hovered) return;
     clearHover();
     hovered = eligible;
-    hovered?.classList.add('is-hitbox-hovered');
+    if (hovered) feedback.show('hitbox-hover', [{ element: hovered, role: 'hover' }]);
   }
 
   return { setMode, updateFromTarget, clearHover, getMode: () => mode };
