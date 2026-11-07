@@ -34,7 +34,7 @@ jobs:
           cache-dependency-path: algebra_interface/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run Node tests
         run: npm test
