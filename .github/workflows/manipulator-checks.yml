@@ -10,6 +10,15 @@ on:
       - '.github/workflows/manipulator-checks.yml'
   workflow_dispatch:
 
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'algebra_interface/**'
+      - '.github/workflows/manipulator-checks.yml'
+
+  workflow_dispatch:
+
 permissions:
   contents: read
 
