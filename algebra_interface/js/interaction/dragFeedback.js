@@ -55,6 +55,17 @@ export function createDragFeedback(doc = document, onPreviewSettled = () => {}) 
    */
   function show(target, geometry) {
     clearHighlights();
+    // A compression drop is an independently validated mathematical action,
+    // not a rearrangement. The legacy blue preview may still be returning
+    // from an earlier insertion hover. Stop that *decorative* preview now:
+    // its animation must not silently veto an already eligible compression.
+    // The semantic green feedback is owned by VisualFeedbackController, and
+    // the mathematical rule is revalidated on pointerup before opening the
+    // candidate. Do not paint feature-specific CSS here.
+    if (target.kind === 'negation-compress') {
+      rearrangement.stop();
+      return target;
+    }
     if (target.kind === 'insert') {
       const displayed = rearrangement.show(target.index, geometry);
       if (!displayed) {

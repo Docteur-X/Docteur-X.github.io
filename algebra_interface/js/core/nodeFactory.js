@@ -132,6 +132,7 @@ export function createGroup(operand, bracketStyle = "round") {
  * simplification rules can distinguish -a from an arbitrary product.
  */
 export function createNegate(operand) {
+  if (!isExpressionNode(operand)) throw new TypeError("Negate requires exactly one expression operand.");
   return {
     id: createNodeId(),
     type: "Negate",
@@ -178,5 +179,7 @@ export function reserveNodeIds(root) {
   const match = /^node-(\d+)$/.exec(root.id || '');
   if (match) nextNodeId = Math.max(nextNodeId, Number(match[1]) + 1);
   if (Array.isArray(root.operands)) root.operands.forEach(reserveNodeIds);
+  // Future function-call ASTs also own child occurrences.
+  if (Array.isArray(root.arguments)) root.arguments.forEach(reserveNodeIds);
   for (const key of ['left', 'right', 'operand', 'child']) if (root[key]) reserveNodeIds(root[key]);
 }

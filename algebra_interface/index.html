@@ -26,7 +26,7 @@
     </header>
 
     <!-- Document browser: independent of the active mathematical manipulator. -->
-    <section class="workspace-manager" aria-label="Mathematical documents">
+    <details class="workspace-manager" open><summary>Documents</summary><section aria-label="Mathematical documents">
       <div class="workspace-manager__heading">
         <h2>Documents</h2>
         <button class="button button--primary button--small" id="workspaceNew" type="button">New document</button>
@@ -45,8 +45,31 @@
       </div>
       <p id="workspaceStatus" class="field-help" role="status">Loading saved documents…</p>
     </section>
+    </section></details>
     <div id="workspaceEmpty" class="workspace-empty">Create or open a document to begin.</div>
     <div id="workspaceEditor" hidden>
+    <!-- A document contains independent mathematical objects; only one is active. -->
+    <details class="workspace-manager" open><summary>Mathematical objects</summary><section aria-label="Mathematical objects in this document">
+      <div class="workspace-manager__heading">
+        <h2>Mathematical objects</h2>
+        <button class="button button--primary button--small" id="objectNew" type="button">New object</button>
+      </div>
+      <div class="workspace-manager__list" id="objectList" aria-label="Objects in this document"></div>
+      <div class="workspace-manager__actions">
+        <button class="button button--quiet button--small" id="objectRename" type="button">Rename object</button>
+        <button class="button button--quiet button--small" id="objectDelete" type="button">Delete object</button>
+      </div>
+    </section>
+    </section></details>
+    <!-- The session clipboard is independent of every worksheet. Collapsing this
+         panel hides only its presentation; captured mathematical snapshots remain
+         available while the application is open. No paste action is implied. -->
+    <details class="clipboard-panel" id="clipboardPanel">
+      <summary>Mathematical clipboard <span id="clipboardCount" class="count-pill">0</span></summary>
+      <p class="field-help">Copied mathematical structures remain available across documents until this application is reloaded. Select an entry to make it the active saved operand.</p>
+      <div id="clipboardEntries" class="clipboard-entries" role="list" aria-label="Saved mathematical selections"></div>
+      <button class="button button--quiet button--small" id="clipboardClear" type="button">Clear clipboard</button>
+    </details>
     <!-- Main workspace: equation editor on the left, variable panel on the right. -->
     <main class="workspace">
       <section class="workbench" aria-labelledby="expressionHeading">
@@ -79,9 +102,11 @@
           Brackets <code>()</code>, <code>[]</code>, <code>{}</code> are all preserved.
           <code>|</code>, <code>&lt;</code> and <code>&gt;</code> are reserved.
           The name <code>ab</code> is one variable; <code>_a _b</code> is a product.
-          Subtraction and function calls are not implemented yet.
+          Subtraction and unary negation are supported; function calls are not implemented yet.
         </p>
 
+        <details class="settings-panel" open>
+          <summary>Display settings</summary>
         <!-- Multiplication display is presentation metadata, not a change to the expression. -->
         <div class="expression-options">
           <label for="multiplicationDisplayMode">Multiplication display</label>
@@ -102,6 +127,7 @@
           </select>
         </div>
 
+        </details>
         <!--
           Explicit grouping controls. Select a hitbox by clicking once, then
           wrap it in the chosen bracket style or remove one existing Group.
@@ -110,6 +136,8 @@
         -->
         <div class="group-toolbar" role="group" aria-label="Bracket selected expression">
           <span id="selectionLabel" class="group-toolbar__selection" aria-live="polite">Select a term or factor first.</span>
+          <button class="button button--quiet button--small" id="copyMathButton" type="button" disabled>Copy mathematics</button>
+          <button class="button button--quiet button--small" id="multiSelectButton" type="button" aria-pressed="false">Select multiple</button>
           <label for="groupStyle">Bracket style</label>
           <select id="groupStyle" aria-label="Brackets to insert">
             <option value="round">( )</option>
@@ -140,15 +168,15 @@
             <button class="button button--quiet button--small" id="cancelFactorisationButton" type="button">Cancel</button>
           </span>
         </div>
-        <p class="field-help">Click to select; Ctrl/Cmd+click selects multiple operands. If adjacent siblings can be regrouped, click their thin blue outline to preview brackets, then click the preview to confirm (or Escape to cancel). Double-click a single term to toggle ( ). Alt+click selects a containing hitbox. For factorisation, first group the addends, then Ctrl/Cmd+click the matching leftmost or rightmost factor in each product. Drag a selected factor into the amber extraction zone outside the brackets, or choose Preview extraction. For distribution, drag a factor onto the + sign in an adjacent bracketed sum, or focus a factor and press D. Click any temporary amber factor to confirm; Escape or click elsewhere to cancel.</p>
+        <details class="interaction-help"><summary>Interaction guide</summary><p class="field-help">Click to select; Ctrl/Cmd+click selects multiple operands; on touch, tap a selected term again or use Select multiple, then tap to toggle. Tap empty space to clear. If adjacent siblings can be regrouped, click their thin blue outline to preview brackets, then click the preview to confirm (or Escape to cancel). Double-click a single term to toggle ( ). Alt+click selects a containing hitbox. For factorisation, first group the addends, then Ctrl/Cmd+click the matching leftmost or rightmost factor in each product. Drag a selected factor into the amber extraction zone outside the brackets, or choose Preview extraction. For distribution, drag a factor onto the + sign in an adjacent bracketed sum, or focus a factor and press D. Click any temporary amber factor to confirm; Escape or click elsewhere to cancel. To compress negation, drag an exposed -1 factor onto a symbol or the brackets of a grouped expression: a green target says “Release to negate”. Dropping -1 onto an ungrouped number instead evaluates multiplication. Click the new amber minus to confirm, or cancel.</p></details>
 
         <!-- Identity tools are transformation requests, not mathematical nodes.
              Drag onto a hitbox edge or matching associative operator. -->
-        <div class="identity-toolbar" id="identityToolbar" role="group" aria-label="Introduce mathematical identities">
+        <div class="identity-toolbar" id="identityToolbar" data-testid="identity-toolbar" role="group" aria-label="Introduce mathematical identities">
           <span>Introduce identity</span>
           <button class="button button--quiet button--small identity-tool" data-identity-operation="Add" type="button" aria-label="Drag to introduce additive identity">+0</button>
           <button class="button button--quiet button--small identity-tool" data-identity-operation="Multiply" type="button" aria-label="Drag to introduce multiplicative identity">×1</button>
-          <span id="identityPreviewActions" hidden>
+          <span id="identityPreviewActions" data-testid="identity-preview-actions" hidden>
             <button class="button button--small" id="confirmIdentityButton" type="button">Confirm identity</button>
             <button class="button button--quiet button--small" id="cancelIdentityButton" type="button">Cancel</button>
           </span>
@@ -159,8 +187,8 @@
           <span id="equalityStatus" class="equality-status" hidden aria-live="polite"></span>
         </div>
         <!-- The equation renderer replaces the contents of this panel as the model changes. -->
-        <section class="equation-panel" aria-label="Interactive equation area">
-          <div class="equation" id="equation" aria-label="Expression terms"></div>
+        <section class="equation-panel" data-testid="mathematical-window" aria-label="Interactive equation area">
+          <div class="equation" id="equation" data-testid="mathematical-view" aria-label="Expression terms"></div>
         </section>
         <p class="status-message" id="statusMessage" role="status" aria-live="polite">
           Drag onto a term to evaluate (green), or drag a factor onto a neighbouring sum’s + sign to preview distribution (yellow).
@@ -189,7 +217,7 @@
         Variables are stored as symbolic terms; substitutions are stored separately
         in a name-to-number map. This separation makes later symbolic evaluation easier.
       -->
-      <aside class="variables-panel" aria-labelledby="variablesHeading">
+      <aside class="variables-panel" aria-labelledby="variablesHeading"><details class="symbols-details" open><summary>Symbol table</summary>
         <div class="section-heading section-heading--compact">
           <div>
             <p class="eyebrow">Symbol table</p>
@@ -213,7 +241,7 @@
         <p class="panel-note" id="variableStatus" aria-live="polite">
           Values are kept separately from the expression, so the original symbols remain visible.
         </p>
-      </aside>
+      </details></aside>
     </main>
 
     <!--

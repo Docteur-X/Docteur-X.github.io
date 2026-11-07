@@ -50,8 +50,10 @@ test("preserves numeric negatives and negative addends", () => {
   assert.equal(parseExpression("-a").operands[0].type, "Negate");
 });
 
-test("reports unsupported subtraction; bracket grouping is now supported", () => {
-  assert.throws(() => parseExpression("a-2"), /Subtraction is not implemented/);
+test("parses subtraction as addition of negation; bracket grouping is preserved", () => {
+  const subtracted = parseExpression("a-2");
+  assert.equal(subtracted.operands[1].type, "Negate");
+  assert.equal(subtracted.operands[1].operand.value, 2);
   assert.equal(parseExpression("(x)").operands[0].type, "Group");
   // Function calls remain future work. The existing identifier convention
   // interprets sin(x) as multiplication of symbol 'sin' by grouped 'x'.

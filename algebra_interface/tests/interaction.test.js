@@ -456,3 +456,25 @@ test('a transition owns its destination until settled, without hiding explicit o
   assert.equal(retainInsertionDuringTransition({...base,candidate:{kind:'none'},x:300}).kind,'none');
   assert.equal(retainInsertionDuringTransition({...base,candidate:{kind:'insert',index:0},phase:'active'}).index,0);
 });
+
+/**
+ * Regression: a valid semantic compression target is not a blue insertion.
+ * A still-animating rearrangement clone must never veto its confirmation.
+ * The feedback controller can clear that decorative clone, but it cannot
+ * decide mathematical eligibility or publish history.
+ */
+test('negation compression supersedes an unsettled rearrangement preview', () => {
+  const f = makeAnimatedPreviewFixture();
+  const feedback = createDragFeedback(f.doc);
+  feedback.start(f.a, new FakeElement('drag-ghost'));
+  const insertion = { kind: 'insert', index: 1,
+    marker: { x: 65, top: 20, height: 40 } };
+  assert.equal(feedback.show(insertion, f.geometry).kind, 'none');
+  assert.equal(f.container.classList.contains('is-preview-covered'), true);
+  const compression = { kind: 'negation-compress', id: 'group-target' };
+  assert.deepEqual(feedback.show(compression, f.geometry), compression);
+  assert.equal(f.container.classList.contains('is-preview-covered'), false,
+    'decorative rearrangement must be removed before compression');
+  assert.equal(feedback.rearrangementPhase(), 'idle');
+  feedback.stop();
+});
