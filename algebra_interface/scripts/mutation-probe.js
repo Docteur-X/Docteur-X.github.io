@@ -12,13 +12,16 @@ try {
   cpSync(join(root, 'js'), join(temp, 'js'), { recursive: true });
   cpSync(join(root, 'tests'), join(temp, 'tests'), { recursive: true });
   writeFileSync(join(temp, 'package.json'), '{"type":"module"}');
-  const file = join(temp, 'js/operations/distribution.js');
+  const file = join(temp, 'js/engine/operations/distribution.js');
   const original = readFileSync(file, 'utf8');
   const correct = '? [copiedFactor, addend] : [addend, copiedFactor]';
   const incorrect = '? [addend, copiedFactor] : [addend, copiedFactor]';
   if (!original.includes(correct)) throw new Error('Mutation anchor changed; review probe before running.');
   writeFileSync(file, original.replace(correct, incorrect));
-  const result = spawnSync(process.execPath, ['--test', 'tests/distribution.test.js'], {
+  // TAP output names each failing test with "not ok". Node's default reporter
+  // changed between versions (Node 24 prints a cross instead), so ask for TAP
+  // explicitly rather than depend on the default.
+  const result = spawnSync(process.execPath, ['--test', '--test-reporter=tap', 'tests/rules/distribution/distribution.test.js'], {
     cwd: temp, encoding: 'utf8', timeout: 30_000
   });
   if (result.error) throw result.error;

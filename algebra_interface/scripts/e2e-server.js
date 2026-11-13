@@ -4,6 +4,8 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// The normal suite uses 8000; the visual suite picks its own port.
+const PORT = Number(process.env.E2E_PORT) || 8000;
 const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
 http.createServer(async (request, response) => {
@@ -22,4 +24,4 @@ http.createServer(async (request, response) => {
   } catch {
     response.writeHead(404).end('Not found');
   }
-}).listen(8000, '127.0.0.1', () => console.log('Playwright server: http://127.0.0.1:8000'));
+}).listen(PORT, '127.0.0.1', () => console.log(`Playwright server: http://127.0.0.1:${PORT}`));

@@ -1,0 +1,366 @@
+/*
+ * Feedback: what a state means to the student, independent of the feature.
+ * Features name a role through the Visual Feedback Controller and this file paints
+ * it. Keep to outlines, shadows and colours so that hitbox geometry cannot move.
+ * Older feature-named rules also live here until they move onto the shared roles.
+ *
+ * The order of sections here is deliberate. Several rules tie on priority, so the
+ * later one wins; the notes below mark those ties.
+ */
+
+/* --- Combine (green) --- */
+/*
+ * Persistent hover feedback makes the intended operation obvious before the
+ * user releases the pointer. The label is attached to the target itself, so
+ * it moves with the highlighted term and disappears as soon as it is left.
+ */
+/* Both arithmetic targets persist while the dragged object is hovering. */
+.add-operand.is-combine-target,
+.factor-slot.is-combine-target {
+  position: relative;
+  z-index: 3;
+  /* Colour and style only, so the border keeps the width the hitbox reserved:
+     changing a term's thickness would change its size during a drag. */
+  border-style: solid;
+  border-color: var(--success);
+  background: var(--success-soft);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--success) 19%, transparent),
+    0 8px 22px var(--success-glow);
+  /* A bright shadow communicates eligibility without moving/resizing the
+     box that elementFromPoint() must detect as the drop target. Do not scale a
+     target either: a drag would change where the pointer lands, causing repeated
+     enter/leave and re-render feedback (visual jitter). */
+  transition: background .1s ease, border-color .1s ease, box-shadow .1s ease;
+}
+.add-operand.is-combine-target::after,
+.factor-slot.is-combine-target::after {
+  content: attr(data-combine-label);
+  position: absolute;
+  right: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  padding: 5px 9px;
+  border-radius: 7px;
+  color: var(--on-success);
+  background: var(--success);
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 750;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(50%);
+  box-shadow: 0 3px 10px var(--floating-label-shadow);
+}
+/* The source ghost glows green as soon as a mathematically valid target is
+   underneath the pointer; the target hitbox itself also glows green. */
+.drag-ghost.is-combine-moving > .term {
+  border: 2px solid var(--success);
+  background: var(--success-soft);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 22%, transparent);
+}
+
+/* --- Selected term --- */
+/* Ties: beats Combine, loses to Distribution. Moving a section changes who wins. */
+/* Focus and selection must be visible in deeply nested trees. Only the
+   selected NODE gets this class; parent hover does not imply parent selection. */
+.term.is-selected {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+/* A nested sum or product's own box (R1) has no border and is invisible at
+   rest, so its selection is the ring alone (a gap click selects it). */
+.math-scope [data-hitbox-role="occurrence"].nested-operation.is-selected,
+.math-scope [data-hitbox-role="occurrence"].nested-operation.is-multi-selected {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* --- Term inside a drag ghost --- */
+/* Here, not in previews.css, to keep the same winner against the two sections around it. */
+.drag-ghost > .term {
+  margin: 0;
+  cursor: grabbing;
+  box-shadow: 0 12px 26px var(--ghost-term-shadow);
+}
+
+/* --- Distribution (amber) --- */
+/* Yellow when a dragged factor is ON THE PLUS SIGN, not on the whole sum. The sum
+   remains legible. The sizes keep the plain + dimensions and font metrics, because
+   growing the sign would change layout during pointer targeting. */
+.plus.plus--distribution-drop {
+  position: relative;
+  z-index: 6;
+  min-width: 18px;
+  min-height: 0;
+  border-radius: 9px;
+  color: var(--proposal-ink);
+  background: var(--proposal-soft);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--proposal-halo) 50%, transparent);
+  font-weight: inherit;
+}
+.term.is-distribution-target {
+  border-color: var(--proposal-ink);
+  background: color-mix(in srgb, var(--proposal-soft) 40%, var(--term-bg));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--proposal-halo) 42%, transparent);
+}
+.drag-ghost.is-distribution-moving > .term {
+  border: 2px solid var(--proposal-ink);
+  background: var(--proposal-soft);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--proposal-halo) 50%, transparent);
+}
+
+/* --- Drag source --- */
+/* ========================================================================== *
+ * STABLE DRAG INTERACTION (2026)
+ * ========================================================================== *
+ * Hover feedback must not change the sizes/positions of hitboxes. The source
+ * remains in the original row, slightly translucent, while an aria-hidden
+ * floating clone follows the pointer. An insertion marker floats ABOVE the
+ * layout and can never become a hit target (pointer-events:none).
+ * ========================================================================== */
+.term.is-drag-source {
+  opacity: .23;
+  /* Keep exact layout footprint, including brackets and nested children. */
+}
+
+/* --- Rearrangement destination (blue) --- */
+/* ========================================================================== *
+ * SETTLED PREVIEW DESTINATION + DELIBERATE MOTION
+ * ========================================================================== *
+ * A dashed blue outline is an ACTUAL visual destination, not a moving hitbox.
+ * The draggable ghost follows the pointer; this destination is a separate
+ * paint-only clone. The user's drop is accepted against a snapshot taken
+ * after the animation settles, never against an intermediate animation frame.
+ * Do not apply width, margin, padding or font-size changes to this selector:
+ * those would distort the expressed mathematical spacing.
+ * ========================================================================== */
+/* The "1" a product will gain in front when a ÷ factor moves first (the
+   leading-1 rule) is part of the proposal, so it is painted like the moving term. */
+.drag-rearrangement-preview .is-preview-moving,
+.drag-rearrangement-preview .preview-leading-one {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drag-rearrangement-preview .is-preview-moving,
+  .drag-rearrangement-preview .preview-leading-one {
+    outline-style: solid;
+  }
+}
+
+/* --- Range selection --- */
+/* Ties: must follow Distribution and the Rearrangement destination. */
+.term.is-multi-selected {
+  outline: 1px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 1px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* --- Factorisation source --- */
+.term.is-factorisation-source {
+  opacity: .42;
+  outline: 1.5px dashed var(--proposal-ink);
+  outline-offset: 1px;
+}
+
+/* --- Confirmable result of a transformation --- */
+/* !important: the hover-mode rule that hides hitbox outlines would otherwise win,
+   and a term's own background too. Removing it needs that rule redesigned. */
+.transformation-preview__confirm {
+  outline: 2px solid var(--proposal-ink) !important;
+  outline-offset: 3px;
+  border-radius: 8px;
+  background: var(--proposal-soft) !important;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--proposal-halo) 34%, transparent);
+  cursor: pointer;
+  transition: box-shadow 140ms ease, background-color 140ms ease;
+}
+.transformation-preview__confirm:hover,
+.transformation-preview__confirm:focus-visible {
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--proposal-halo) 58%, transparent);
+}
+
+/* --- Other amber proposals --- */
+/* These four show a proposal differently from the shared role. Whether they should
+   all look the same is a design decision; until then their paint at least lives
+   here, and previews.css keeps only their position and size. */
+.distribution-preview__copy {
+  border: 1.5px dashed var(--proposal-ink);
+  color: var(--proposal-ink);
+  background: var(--proposal-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--proposal-halo) 35%, transparent);
+}
+.distribution-preview__copy:hover,
+.distribution-preview__copy:focus-visible {
+  outline: 2px solid var(--proposal-ink);
+  outline-offset: 3px;
+  background: color-mix(in srgb, var(--proposal-soft) 65%, var(--proposal-halo));
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--proposal-halo) 55%, transparent);
+}
+.factorisation-zone {
+  border: 1.5px dashed var(--proposal-ink);
+  background: color-mix(in srgb, var(--proposal-soft) 75%, transparent);
+  color: var(--proposal-ink);
+}
+.factorisation-zone:hover,
+.factorisation-zone:focus-visible,
+.factorisation-zone.is-drop-target {
+  background: var(--proposal-soft);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--proposal-halo) 38%, transparent);
+  outline: none;
+}
+.identity-preview-operator { color:var(--proposal-ink); }
+.identity-drag-ghost {
+  border:1.5px solid var(--proposal-ink);
+  color:var(--proposal-ink);
+  background:var(--proposal-soft);
+}
+/* Provenance arrows inherit this colour. */
+.distribution-connections,
+.transformation-preview__arrows {
+  color: var(--proposal-ink);
+}
+
+/* --- Equality truth and armed state --- */
+.relation-sign[data-truth="true"] { color: var(--truth-true); background: var(--truth-true-fill); box-shadow: 0 0 0 2px var(--truth-true-ring); }
+.relation-sign[data-truth="false"] { color: var(--truth-false); background: var(--truth-false-fill); box-shadow: 0 0 0 2px var(--truth-false-ring); }
+.relation-sign[data-armed]:not([data-armed=""]) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.relation-armed-indicator { font-size: .72rem; font-weight: 700; color: var(--accent); align-self: flex-start; }
+.equality-drop-hover .relation-root { outline: 2px dashed var(--accent); outline-offset: 4px; }
+.relation-sign .relation-armed-indicator {
+  position: absolute; left: 50%; bottom: calc(100% + 5px);
+  transform: translateX(-50%); white-space: nowrap;
+  font-size: .68rem; line-height: 1; font-weight: 800;
+  color: var(--accent); pointer-events: none;
+}
+.relation-sign .relation-armed-indicator:empty { display: none; }
+
+/* --- Shared roles --- */
+/* All feedback uses geometry-neutral decorations. Mathematical eligibility
+ * colours have precedence over the neutral structural role appearance. */
+.equation .math-feedback--rejected { outline: 2px dashed var(--rejected); outline-offset: 1px; }
+/* Hover must not restyle a proposed term: general term hover rules exclude this
+ * role, so its amber has one source. Keyboard focus gets a stronger glow. */
+.math-feedback--proposed-insertion {
+  color: var(--proposal-ink);
+  outline: 2px dashed var(--proposal-ink);
+  outline-offset: 2px;
+  background: var(--proposal-soft);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--proposal-halo) 35%, transparent),
+              0 0 13px color-mix(in srgb, var(--proposal-ink) 30%, transparent);
+  cursor: pointer;
+}
+/* General hover and focus rules skip the two proposal roles using :where(), so
+ * an exclusion adds no CSS priority and cannot displace other feedback. */
+/* In a candidate preview (js/view/preview/candidatePreview.js) a proposed part
+ * has the equality preview's look (owner, 12 November 2026: "use that style
+ * for all"): only the OUTERMOST new occurrence is marked; it gets a solid gold
+ * border, a halo and a dashed inner accent; its interior stays neutral, and the
+ * compound boxes around it stay quiet, so the copied unit stands out. Hover and
+ * keyboard focus strengthen the glow without changing the border. */
+.equation .candidate-preview-math .term.math-feedback--proposed-insertion {
+  position: relative;
+  z-index: 1;
+  border: 2px solid var(--proposal-ink);
+  background: color-mix(in srgb, var(--proposal-soft) 28%, transparent);
+  color: var(--text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--proposal-ink) 55%, transparent),
+              0 0 17px 5px color-mix(in srgb, var(--proposal-halo) 62%, transparent);
+  outline: 1px dashed var(--proposal-ink);
+  outline-offset: -5px;
+}
+.equation .candidate-preview-math .term.math-feedback--proposed-insertion:hover,
+.equation .candidate-preview-math .term.math-feedback--proposed-insertion:focus-visible {
+  border: 2px solid var(--proposal-ink);
+  outline: 1px dashed var(--proposal-ink);
+  outline-offset: -5px;
+  background: color-mix(in srgb, var(--proposal-soft) 28%, transparent);
+  box-shadow: 0 0 0 4px var(--proposal-ink),
+              0 0 22px 7px color-mix(in srgb, var(--proposal-halo) 75%, transparent);
+}
+.equation .candidate-preview-math .math-feedback--proposed-insertion .term { color: var(--text); }
+.equation .candidate-preview-math .term--compound:not(.math-feedback--proposed-insertion) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .equation .candidate-preview-math .term.math-feedback--proposed-insertion { transition: none; }
+}
+/* A valid drop location, matching distribution's amber target. Paint only: the
+ * border width is reserved by .term, so hit-test geometry cannot move. */
+.math-feedback--proposed-target {
+  color: var(--proposal-ink);
+  border-color: var(--proposal-ink);
+  background: color-mix(in srgb, var(--proposal-soft) 40%, var(--term-bg));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--proposal-halo) 42%, transparent);
+}
+/* A confirmable proposal answers the pointer like distribution's amber copies:
+ * solid outer outline, dashed inner border, stronger glow. Border width is
+ * already reserved by .term, so nothing moves. */
+.term.math-feedback--proposed-insertion:hover,
+.term.math-feedback--proposed-insertion:focus-visible {
+  border: 1.5px dashed var(--proposal-ink);
+  outline: 2px solid var(--proposal-ink);
+  outline-offset: 3px;
+  background: color-mix(in srgb, var(--proposal-soft) 65%, var(--proposal-halo));
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--proposal-halo) 55%, transparent);
+}
+/* No DOM/layout mutation is needed when a feedback role is added/removed. */
+.equation .math-feedback--selected,
+.equation .math-feedback--grouping { outline: 2px solid var(--accent-line); outline-offset: 2px; }
+/* Negation v1.2.2 — Semantic eligibility is a mathematical-operation category,
+ * not a generic green success indicator. Combining a numerical factor (-1)
+ * with a symbolic/grouped operand uses the same green family as evaluation.
+ * This rule is shared by all eligible-feedback owners, not feature-specific.
+ * Keep geometry fixed: outline and box-shadow never change the target size.
+ * Place these rules after neutral hitbox visibility and nested-hover rules so
+ * feedback remains visible in BOTH hitbox display modes and themes. */
+.equation [data-hitbox-role="occurrence"].math-feedback--eligible,
+:root[data-hitbox-visibility="hover"] .equation .term.math-feedback--eligible,
+:root[data-hitbox-visibility="hover"] .equation .term.math-feedback--eligible:hover {
+  outline: 2px solid var(--success);
+  outline-offset: 2px;
+  border-color: var(--success);
+  box-shadow: 0 0 0 3px var(--eligible-glow-near),
+              0 0 12px var(--eligible-glow-far);
+}
+/* Hints are owned by VisualFeedbackController and disappear on clear().
+ * The pseudo-element cannot steal the pointer or alter mathematical layout. */
+.equation .math-feedback--eligible[data-math-feedback-hint] { position: relative; }
+.equation .math-feedback--eligible[data-math-feedback-hint]::after {
+  content: attr(data-math-feedback-hint);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 13px);
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 220px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--eligible-hint-fill);
+  color: var(--on-eligible-hint);
+  font: 600 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 3px 12px var(--floating-mark-shadow);
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* --- Structure navigation --- */
+/* Outline and shadow do not alter equation dimensions or pointer hitboxes.
+   !important: the marker must show in hover mode, whose hiding rule would win. */
+.equation .is-structure-navigated { outline:2px dashed var(--navigation-marker) !important; outline-offset:2px; box-shadow:0 0 0 4px var(--navigation-glow); }
+
+/* --- During a drag --- */
+/* D8: during a drag only drop-target feedback shows; ordinary hover belongs
+   to an idle view. Drop targets carry their own classes, excluded here. */
+body.is-dragging .term:hover:not(.is-selected, .is-combine-target, .is-distribution-target, .math-feedback--eligible, .math-feedback--proposed-insertion, .math-feedback--proposed-target) {
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--term-bg);
+}

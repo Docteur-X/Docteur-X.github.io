@@ -1,6 +1,6 @@
 # Negation and Subtraction — v1 implementation reference
 
-**Status:** Negation v1.2.2 is the latest owner-reported browser-verified baseline. v1.2.3 adds semantic preview wording and parser regression hardening (268/268 Node tests passed); browser verification of v1.2.3 is pending. This is a maintained reference, not a milestone diary.
+**Status:** Implemented through v1.2.3 and covered by later owner-reported browser runs; "pending" notes below are historical. Signed factors after the first in a product display with a multiplication sign, such as `b · −c`. This is a maintained reference, not a milestone diary.
 
 ## Purpose and student agency
 
@@ -36,8 +36,8 @@ Students can express subtraction as addition of a negative term, expose the math
 
 ## Tests and safety invariants
 
-- `tests/negation-subtraction-v1.test.js`: parsing, identity preservation, detached candidates, and grouped versus numerical target discrimination.
-- `e2e/negation-subtraction-v1.spec.js`: real click, in-place candidate, amber-only insertion, preview nonmutation, cancellation and one history commit. The v1.2.2 browser suite was reported passing; v1.2.3 browser verification is pending.
+- `tests/rules/negation/subtraction.test.js`: parsing, identity preservation, detached candidates, and grouped versus numerical target discrimination.
+- `e2e/rules/negation/subtraction.spec.js`: real click, in-place candidate, amber-only insertion, preview nonmutation, cancellation and one history commit. The v1.2.2 browser suite was reported passing; v1.2.3 browser verification is pending.
 - Run `node --test tests/*.test.js` and `npm run test:e2e` before approving a release.
 - A preview must not mutate authoritative mathematical objects or history; confirmation must be stale-safe and single-use.
 - Do not add renderer-specific geometry, DOM elements, or CSS concerns to the mathematical rule.
@@ -66,7 +66,7 @@ Students can express subtraction as addition of a negative term, expose the math
   uncommitted candidate inert. The explicit Confirm and Cancel buttons remain.
 - The **shared commit lifecycle** remains the only authority to accept the
   confirmed proposal, validate the source revision, and publish one history event.
-- Tests in `e2e/negation-subtraction-v1.spec.js` inspect computed amber outline,
+- Tests in `e2e/rules/negation/subtraction.spec.js` inspect computed amber outline,
   shadow, and pointer eligibility under both visibility preferences and themes;
   they also verify mouse and keyboard confirmation and one history commit.
 
@@ -82,13 +82,13 @@ handlers in the mathematical renderer or feedback controller.
 - **Interaction:** `interaction/negationCompressionTarget.js` resolves the exact nested DOM occurrence from pointer coordinates. It has no mathematical-rule or CSS knowledge. `app.js` asks the registered coordinator for eligibility, and only then opens the existing inline preview.
 - **Feedback:** The Visual Feedback Controller owns transient green eligibility and shared amber proposed-insertion. The renderer supplies the operator hitbox. The preview interaction binding makes the new amber minus clickable, while the single-use commit gate remains authoritative.
 - **Drag safety:** The drag ghost is pointer-inert so it cannot cover bracket hitboxes during `elementFromPoint` targeting. No AST is modified during hover or preview.
-- **Tests:** `tests/negation-compression-v12.test.js` covers detached candidates, group/numeric distinction and DOM target selection. `e2e/negation-compression-v12.spec.js` exercises real pointer drops, amber preview, cancellation and one history commit. The v1.2.2 browser tests were reported passing; v1.2.3 browser verification is pending.
+- **Tests:** `tests/rules/negation/compression.test.js` covers detached candidates, group/numeric distinction and DOM target selection. `e2e/rules/negation/compression.spec.js` exercises real pointer drops, amber preview, cancellation and one history commit. The v1.2.2 browser tests were reported passing; v1.2.3 browser verification is pending.
 - **Known limitations:** Only direct Multiply siblings are eligible. Targeting nested Group ancestors beyond the direct factor is not automatically promoted. Keyboard/touch drag alternatives and broader type/assumption reasoning remain future work.
 
 ### Current preview wording and regression contract (v1.2.3)
 
 `manipulator/negationVisual.js` owns the semantic copy for both `negation.expand` (− becomes −1) and `negation.compress` (−1 becomes −). `interaction/negationInlinePreview.js` renders the description; `app.js` uses the same description for the status message. Neither the DOM controller nor the mathematical rule contains a duplicated direction-specific string. Unknown rule IDs fail explicitly.
 
-`tests/negation-contract-roundtrip.test.js` compares parsed/serialized AST **structure**, ignoring generated occurrence IDs and purely presentational multiplication separator style. It exercises repeated signs, atomic negative literals, Group boundaries, product/negation precedence and equality contexts. This is regression coverage, not a claim that future exponentiation is implemented.
+`tests/rules/negation/contract-round-trip.test.js` compares parsed/serialized AST **structure**, ignoring generated occurrence IDs and purely presentational multiplication separator style. It exercises repeated signs, atomic negative literals, Group boundaries, product/negation precedence and equality contexts. This is regression coverage, not a claim that future exponentiation is implemented.
 
 Compression hover still builds a detached candidate in the current implementation. Do not add a second eligibility API without a demonstrated performance problem; if profiling warrants one, retain final mathematical revalidation on release.

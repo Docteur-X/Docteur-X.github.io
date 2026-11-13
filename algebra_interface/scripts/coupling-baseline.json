@@ -1,0 +1,47 @@
+{
+  "recorded": "2026-11-11, version 628 (stage 0)",
+  "appLines": 3448,
+  "interactionLines": 9220,
+  "features": {
+    "factorisation": {
+      "files": 18,
+      "appLines": 130,
+      "rendererLines": 1
+    },
+    "grouping": {
+      "files": 18,
+      "appLines": 127,
+      "rendererLines": 0
+    },
+    "identity": {
+      "files": 36,
+      "appLines": 102,
+      "rendererLines": 1
+    },
+    "negation": {
+      "files": 18,
+      "appLines": 56,
+      "rendererLines": 1
+    },
+    "distribution": {
+      "files": 23,
+      "appLines": 98,
+      "rendererLines": 27
+    },
+    "rearrangement": {
+      "files": 17,
+      "appLines": 38,
+      "rendererLines": 0
+    },
+    "combination": {
+      "files": 17,
+      "appLines": 36,
+      "rendererLines": 5
+    },
+    "equality": {
+      "files": 19,
+      "appLines": 58,
+      "rendererLines": 5
+    }
+  }
+}

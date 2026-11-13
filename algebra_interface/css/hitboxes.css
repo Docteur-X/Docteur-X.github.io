@@ -1,0 +1,357 @@
+/*
+ * Hitboxes: the interactive boxes around mathematics, at rest and under the pointer.
+ * These describe how a hitbox looks and how big it is, never what an operation does.
+ * The renderer decides which hitboxes exist; hit testing measures them, so a rule
+ * that changes size here changes where a drag can land.
+ */
+
+/* --- Term --- */
+/* Each narrow-screen rule stays beside its base rule: later sections override it deliberately on ties. */
+/*
+ * A term is a button so it remains keyboard accessible. Pointer-based dragging
+ * is implemented in JavaScript, while CSS provides the visual states.
+ */
+.term {
+  position: relative;
+  display: inline-flex;
+  min-width: 58px;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 13px;
+  border: 1.5px solid transparent;
+  border-radius: 13px;
+  color: var(--text);
+  background: var(--term-bg);
+  box-shadow: 0 2px 7px var(--term-shadow);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease,
+    transform .22s cubic-bezier(.2, .8, .2, 1);
+}
+.term:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):hover,
+.term:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):focus-visible {
+  border-color: var(--accent-line);
+  outline: none;
+  background: var(--term-hover);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 13%, transparent), 0 5px 15px var(--term-hover-shadow);
+}
+.term:active {
+  cursor: grabbing;
+}
+@media (max-width: 600px) {
+  .term {
+    min-width: 49px;
+    min-height: 49px;
+  }
+}
+
+/* --- Add operand and product --- */
+/* ========================================================================== */
+.add-operand {
+  box-sizing: border-box;
+  position: relative;
+  min-width: 58px;
+  min-height: 58px;
+  cursor: grab;
+  outline-offset: 4px;
+}
+.add-operand:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):focus-visible,
+.factor-slot:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):focus-visible {
+  outline: 3px solid var(--accent-line);
+  outline-offset: 3px;
+}
+.add-operand:active,
+.factor-slot:active {
+  cursor: grabbing;
+}
+/* A product's outer outline is a second, larger hitbox for moving the whole
+   multiplicative item as one addend of the surrounding sum. */
+.add-operand--product {
+  min-width: auto;
+  min-height: 62px;
+  padding: 5px 7px;
+  border-style: dashed;
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--term-bg) 72%, transparent);
+  box-shadow: none;
+}
+.add-operand--product:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):hover,
+.add-operand--product:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):focus-visible {
+  background: var(--term-hover);
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+@media (max-width: 620px) {
+  .add-operand {
+    min-width: 49px;
+    min-height: 49px;
+  }
+  .add-operand--product {
+    min-width: auto;
+    min-height: 54px;
+    padding: 3px 5px;
+  }
+}
+
+/* --- Factor --- */
+/* Factor hitboxes are smaller than the enclosing product hitbox. */
+.factor-slot {
+  box-sizing: border-box;
+  min-width: 43px;
+  min-height: 46px;
+  padding: 6px 9px;
+  border-width: 1px;
+  border-color: color-mix(in srgb, var(--border) 80%, var(--accent));
+  background: var(--surface);
+  box-shadow: 0 1px 4px var(--term-shadow);
+}
+@media (max-width: 620px) {
+  .factor-slot {
+    min-width: 37px;
+    min-height: 40px;
+    padding: 5px 7px;
+  }
+}
+
+/* --- Compound --- */
+/* Nested expression-tree rendering and explicit Group nodes                  */
+/* ========================================================================== */
+/* Flexible subexpressions cannot have fixed-width factor buttons: (a+b) and
+   (3*(4+5)) must grow to fit the mathematics. The existing .term styles
+   continue to provide selection/focus and the green drop preview. */
+.term--compound {
+  min-width: auto;
+  width: max-content;
+  max-width: none;
+  min-height: 58px;
+  padding: 5px 8px;
+  vertical-align: middle;
+}
+/* Prevent a child's hover from making all its ancestor hitboxes glow.
+   :has() is supported in modern browsers. Keyboard selection uses .is-selected
+   and does not depend on :hover. */
+/* Only the ordinary hover glow is cancelled: a parent keeps any feedback state
+   (selection, drop targets, preview marks). Since R1 the pointer is often over
+   a nested sum's own box, which made this rule wipe those states (stage 5). */
+.term:has(.term:hover):hover:not(.is-selected, .is-combine-target, .is-distribution-target, .is-distribution-source, [class*="math-feedback"]) {
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--term-bg);
+}
+@media (max-width: 680px) {
+  .term--compound { padding: 4px 5px; }
+}
+
+/* --- Nested occurrences --- */
+/* ========================================================================== *
+ * Nested Mathematical Hitbox Visual Contract v1
+ * (Scoped by .math-scope, not .equation, since D9: the rearrangement preview
+ * and drag ghosts are copies attached to <body>, outside #equation; they carry
+ * .math-scope too, so nested boxes keep their small size in the copies.)
+ * ========================================================================== *
+ * The renderer owns the presence and geometry of hitboxes. This stylesheet
+ * describes their resting grammar; the Visual Feedback Controller adds the
+ * shared semantic classes below. Outlines and shadows never change layout.
+ * The existing legacy preview classes remain supported during migration.
+ * ========================================================================== */
+.math-scope [data-hitbox-role="occurrence"].nested-occurrence {
+  min-width: 0;
+  min-height: 0;
+  padding: 3px 5px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-line) 35%, transparent);
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  vertical-align: middle;
+}
+.math-scope [data-hitbox-role="occurrence"].nested-occurrence:hover,
+.math-scope [data-hitbox-role="occurrence"].nested-occurrence.is-hitbox-hovered,
+.math-scope [data-hitbox-role="occurrence"].nested-occurrence:focus-visible {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.math-scope [data-hitbox-role="occurrence"].nested-operation {
+  /* R1: the box of a nested sum or product. Invisible and layout-neutral at
+     rest; it lights only when the pointer is on its own operators or gaps
+     (its terms have boxes of their own, which suppress it via :has). */
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  gap: 0;
+  cursor: default;
+}
+/* R1 / D8: the nested sum or product lights when the pointer is on its OWN
+   operators or gaps, never when one of its terms (a box of its own) is, and
+   only in an idle view: not during a drag or a preview (data-view-mode is
+   set from the view mode). */
+.equation[data-view-mode="idle"] [data-hitbox-role="occurrence"].nested-operation:hover:not(:has(.term:hover)) {
+  background: var(--term-hover);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+/* When one of its terms is hovered, the nested box stays fully invisible
+   (the shared ".term:has(.term:hover)" reset would otherwise give it the
+   term background). */
+.math-scope [data-hitbox-role="occurrence"].nested-operation:hover:has(.term:hover) {
+  background: transparent;
+}
+.math-scope [data-hitbox-role="operator"] { position: relative; }
+
+/* --- Touch hit areas (R2 option B, owner 12 November 2026) ---
+ * On a touch screen every part has a click/tap area of at least --hit-min,
+ * drawn by an invisible pseudo-element CENTRED on the part, so the layout of
+ * the mathematics never moves. Only the live equation (it carries
+ * data-view-mode); the preview copies and ghosts are inert.
+ * Overlaps are settled by the browser's own hit testing, in paint order:
+ * - a deeper part wins over its parent (its pseudo-element paints later);
+ * - an operator wins over a neighbouring operand (z-index 1).
+ * Desktop pointers are unchanged. */
+@media (pointer: coarse) {
+  .equation[data-view-mode] [data-hitbox-role="occurrence"]::before,
+  .equation[data-view-mode] [data-hitbox-role="operator"]::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--hit-min));
+    height: max(100%, var(--hit-min));
+    transform: translate(-50%, -50%);
+    content: "";
+  }
+  .equation[data-view-mode] [data-hitbox-role="operator"]::before { z-index: 1; }
+}
+.math-scope [data-hitbox-role="content"] { border: 0; }
+
+/* --- Negation operator --- */
+/* Negation operator: a semantic operator target, not an independent AST node.
+   Outline and shadow do not alter geometry when hovered/focused. */
+.negate-operator-hitbox {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.1em; cursor: pointer; border-radius: 3px;
+}
+.negate-operator-hitbox:not(.math-feedback--proposed-insertion) {
+  outline: 1px dashed var(--negate-outline); outline-offset: 1px;
+}
+/* The minus is a hitbox too, so it obeys the "on hover / selection" setting. */
+:root[data-hitbox-visibility="hover"] .equation .negate-operator-hitbox:not(:hover):not(:focus-visible):not(.math-feedback--proposed-insertion) {
+  outline-color: transparent;
+}
+.negate-operator-hitbox:not(.math-feedback--proposed-insertion):hover, .negate-operator-hitbox:not(.math-feedback--proposed-insertion):focus-visible {
+  outline: 2px solid var(--negate-hover); box-shadow: 0 0 0 3px var(--negate-hover-glow);
+}
+
+/* --- Hitbox visibility setting --- */
+/* ========================================================================== *
+ * On-hover hitbox outlines: presentation only, no geometry or AST changes.
+ * ========================================================================== *
+ * Do not use display:none, border:none, or change border widths: drag geometry
+ * must remain identical in both modes. The JS hover controller marks exactly
+ * one deepest hitbox, while selection/green/amber feedback remain independent.
+ *
+ * Exclusions use :where() so they add no priority. A long :not() chain once made
+ * these rules outrank things they should not: it hid the green eligible target
+ * and the keyboard focus outline. This section stays last in the file so it wins
+ * ties with the rules above it, and feedback.css, loaded later, can win over it.
+ * ========================================================================== */
+:root[data-hitbox-visibility="hover"] .equation .term:where(:not(.is-selected, .is-multi-selected, .is-hitbox-hovered, .is-combine-target, .is-distribution-target, .is-factorisation-source, .math-feedback--proposed-insertion, .math-feedback--proposed-target)) {
+  border-color: transparent;
+  outline-color: transparent;
+  box-shadow: none;
+}
+/* The browser's :hover matches every nested ancestor. Suppress that implicit
+ * styling, including its background, and rely on the single JS-resolved class. */
+:root[data-hitbox-visibility="hover"] .equation .term:hover:where(:not(.is-selected, .is-multi-selected, .is-hitbox-hovered, .is-combine-target, .is-distribution-target, .is-factorisation-source, .math-feedback--proposed-insertion, .math-feedback--proposed-target)) {
+  border-color: transparent;
+  background: var(--term-bg);
+  box-shadow: none;
+}
+:root[data-hitbox-visibility="hover"] .equation .term.is-hitbox-hovered:where(:not(.is-selected, .is-multi-selected, .is-combine-target, .is-distribution-target, .math-feedback--proposed-insertion, .math-feedback--proposed-target)) {
+  border-color: var(--accent-line);
+  background: var(--term-hover);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 17%, transparent);
+}
+/* Selected nodes stay outlined even when a different, nested node is hovered.
+ * The existing selection model forbids selecting ancestors and descendants
+ * simultaneously; this rule never auto-selects either. */
+:root[data-hitbox-visibility="hover"] .equation .term.is-selected {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+:root[data-hitbox-visibility="hover"] .equation .term.is-multi-selected {
+  outline: 1px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 1px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+/* Explicit keyboard focus must remain accessible regardless of hover mode. */
+:root[data-hitbox-visibility="hover"] .equation .term:where(:not(.math-feedback--proposed-insertion, .math-feedback--proposed-target)):focus-visible {
+  outline: 3px solid var(--accent-line);
+  outline-offset: 3px;
+}
+
+/* --- Single terms: compact spacing (owner, 13 November 2026) ---
+ * Only a term with no boxes inside it (a letter, a number, x inside sin(x))
+ * gets a smaller box; sums, products and brackets keep theirs. The touch
+ * area stays at least 44 px (the coarse-pointer rule above). Sizes never
+ * change on hover or selection, so nothing moves. */
+:root[data-term-spacing="compact"] .math-scope .term:not(.term--compound, .nested-operation) {
+  min-width: 0;
+  min-height: 0;
+  padding: 1px 3px;
+}
+
+/* --- Box styles (owner, 13 November 2026) ---
+ * At rest only: hover, selection and every feedback state keep their own look.
+ * Light tiles: an outline, no fill or shadow. Printed: nothing at rest, so the
+ * mathematics reads as print; boxes appear on hover (app.js turns the hover
+ * outline mode on). Colours and borders only, never sizes. */
+:root[data-box-style="light"] .math-scope .term:where(:not(.nested-operation, .is-selected, .is-multi-selected, .is-hitbox-hovered, .is-hitbox-hover-parent, .is-combine-target, .is-distribution-target, .is-factorisation-source, .math-feedback--proposed-insertion, .math-feedback--proposed-target, :hover, :focus-visible)) {
+  background: transparent;
+  border-color: var(--border);
+  box-shadow: none;
+}
+:root[data-box-style="printed"] .math-scope .term:where(:not(.nested-operation, .is-selected, .is-multi-selected, .is-hitbox-hovered, .is-hitbox-hover-parent, .is-combine-target, .is-distribution-target, .is-factorisation-source, .math-feedback--proposed-insertion, .math-feedback--proposed-target, :hover, :focus-visible)) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+/* The term holding the hovered one: a light tint, colour only. */
+.math-scope .term.is-hitbox-hover-parent:where(:not(.is-selected, .is-multi-selected, .math-feedback--proposed-insertion, .math-feedback--proposed-target)) {
+  border-color: color-mix(in srgb, var(--accent-line) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+/* Printed spacing (rest of D13, 14 November 2026): with Printed boxes, sums,
+ * products and brackets lose their tile padding and minimum height, so the
+ * line reads at book spacing. Set by the style, at rest and on hover alike:
+ * hovering never changes a size, so nothing moves. Single terms follow the
+ * Single terms setting; on touch screens the 44 px rule above still holds. */
+:root[data-box-style="printed"] .math-scope .term--compound,
+:root[data-box-style="printed"] .math-scope .add-operand--product {
+  min-height: 0;
+  /* No side padding: nested boxes would stack it before their first symbol
+     and push an operator off centre (c + d sin(a)). Their leaves keep theirs. */
+  padding: 1px 0;
+}
+
+/* The boxed − of a − b (css/math-layout.css draws it) is the minus the
+   student sees, so it wears the minus's outline and obeys the same "Hitbox
+   outlines" setting (Printed turns that to on-hover). Outline only: no size
+   changes on hover. */
+:root[data-subtraction="binary"] .plus[data-before-negative]:not(.math-feedback--proposed-insertion) {
+  outline: 1px dashed var(--negate-outline); outline-offset: 1px;
+}
+:root[data-subtraction="binary"][data-hitbox-visibility="hover"] .equation .plus[data-before-negative]:not(:hover):not(:focus-visible):not(.math-feedback--proposed-insertion) {
+  outline-color: transparent;
+}
+:root[data-subtraction="binary"] .plus[data-before-negative]:not(.math-feedback--proposed-insertion):hover,
+:root[data-subtraction="binary"] .plus[data-before-negative]:not(.math-feedback--proposed-insertion):focus-visible {
+  outline: 2px solid var(--negate-hover); box-shadow: 0 0 0 3px var(--negate-hover-glow);
+}

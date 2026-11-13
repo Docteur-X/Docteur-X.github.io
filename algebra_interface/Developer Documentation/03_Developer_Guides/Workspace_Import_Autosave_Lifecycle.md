@@ -26,8 +26,8 @@ save completion to overwrite the current workspace's status message.
 
 ## Verification
 
-`tests/workspace-status-gate.test.js` checks stale status invalidation and
-background-document suppression. `e2e/compact-import-export.spec.js` exercises
+`tests/app/workspace-status-gate.test.js` checks stale status invalidation and
+background-document suppression. `e2e/app/compact-import-export.spec.js` exercises
 real file inputs, overlapping autosave/import, mathematical content, history,
 reload, and preservation of the original document.
 

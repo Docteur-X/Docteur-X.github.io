@@ -37,8 +37,8 @@ Occurrence targets use quiet neutral outlines and stronger focus/selection empha
 
 ## Verification and handover
 
-- `tests/nested-hitbox-contract.test.js`: distinct occurrence IDs, content roles, scoped feedback and no AST mutation.
-- `e2e/nested-hitbox-contract.spec.js`: nested hitboxes, visibility and geometry invariance. Browser verification is required after this increment.
+- `tests/view/nested-hitbox-contract.test.js`: distinct occurrence IDs, content roles, scoped feedback and no AST mutation.
+- `e2e/view/nested-hitbox-contract.spec.js`: nested hitboxes, visibility and geometry invariance. Browser verification is required after this increment.
 - Existing tests for rearrangement, grouping, factorisation, distribution, equality, touch selection and persistence must remain green.
 - Compare light/dark appearance manually; automated role/class assertions cannot establish aesthetic consistency.
 
@@ -62,7 +62,7 @@ remain owned by the renderer and hit-testing modules. Visual feedback owns
 non-layout-changing emphasis only. Never compensate for incorrect renderer
 geometry with mathematical-rule exceptions.
 
-**Regression tests:** `e2e/nested-hitbox-interaction.spec.js` exercises
+**Regression tests:** `e2e/view/nested-hitbox-interaction.spec.js` exercises
 intermediate Group/Number selection, history non-mutation, exact ghost size,
 and cancellation. Run the full browser suite after this change; these tests
 cannot be replaced by source-level class assertions.

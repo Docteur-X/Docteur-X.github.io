@@ -1,0 +1,2063 @@
+{
+  "generatedFrom": "T2_Organization_Pilot",
+  "rows": [
+    {
+      "file": "e2e/view/accessibility/touch-selection.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 55,
+      "phaseNamed": false,
+      "tests": [
+        "repeated touch taps enter multi-selection, toggle nodes, and clear the final selection",
+        "toolbar selection toggles by touch and empty space clears without a history commit"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/engine/ast-root-semantics.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 23,
+      "phaseNamed": false,
+      "tests": [
+        "natural expression roots appear in the renderer inspector"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/app/compact-import-export.spec.js",
+      "suite": "Playwright",
+      "category": "history-state",
+      "declaredTests": 3,
+      "lines": 92,
+      "phaseNamed": false,
+      "tests": [
+        "compact JSON export imports with the same expression and history",
+        "invalid compact import leaves the current workspace untouched",
+        "import during pending autosave preserves both documents and import status"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/distribution/commit-lifecycle.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 38,
+      "phaseNamed": false,
+      "tests": [
+        "distribution cancellation followed by confirmation commits exactly once"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/distribution/distribution.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 27,
+      "phaseNamed": false,
+      "tests": [
+        "drag factor onto +: amber preview, then commit distribution"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/equality/apply-function.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 9,
+      "lines": 268,
+      "phaseNamed": false,
+      "tests": [
+        "armed equals applies remembered scalar addition with preview and confirmation",
+        "clicking the armed choice again disarms and prevents relation application",
+        "equality menu is a compact portal and dismisses independently of arming",
+        "inline equality preview colours only copied operands and cancels without history",
+        "compound clipboard operands share distribution amber glow",
+        "adding compound clipboard content explicitly brackets only new operands",
+        "armed equality badge is geometrically anchored to equals sign",
+        "clicking an amber inserted operand confirms the equality preview",
+        "display preference rerender invalidates equality preview safely"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/distribution/equation-distribution.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 26,
+      "phaseNamed": false,
+      "tests": [
+        "distribution inside equality changes only the chosen side"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/factorisation/commit-lifecycle.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 36,
+      "phaseNamed": false,
+      "tests": [
+        "factorisation preview cancellation then confirmation commits once"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/factorisation/factorisation.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 28,
+      "phaseNamed": false,
+      "tests": [
+        "common factors: extraction proposal, cancel, then confirm"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/grouping/cancel.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 21,
+      "phaseNamed": false,
+      "tests": [
+        "cancelling a grouping preview preserves expression and history"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/grouping/commit-lifecycle.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 32,
+      "phaseNamed": false,
+      "tests": [
+        "grouping cancel then confirm commits one history event"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/grouping/grouping.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 26,
+      "phaseNamed": false,
+      "tests": [
+        "adjacent addends: blue envelope, bracket preview, confirm"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/app/history-navigation.spec.js",
+      "suite": "Playwright",
+      "category": "history-state",
+      "declaredTests": 1,
+      "lines": 62,
+      "phaseNamed": false,
+      "tests": [
+        "students can visit sibling history branches after import and reload"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/identity-element/commit-lifecycle.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 24,
+      "phaseNamed": false,
+      "tests": [
+        "identity confirmation uses one history commit and cannot be repeated"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/identity-element/identity-element.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 55,
+      "phaseNamed": false,
+      "tests": [
+        "drag +0: stationary hover, deliberate preview, then committed history",
+        "cancel identity preview leaves mathematical history unchanged"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/app/integration-regression.spec.js",
+      "suite": "Playwright",
+      "category": "cross-cutting",
+      "declaredTests": 3,
+      "lines": 84,
+      "phaseNamed": false,
+      "tests": [
+        "legacy v1 fixture imports, migrates and exports without changing mathematics",
+        "multi-object branching fixture survives import, export and browser reload",
+        "failed IndexedDB import write does not activate or list imported document"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/interaction-appearance.spec.js",
+      "suite": "Playwright",
+      "category": "cross-cutting",
+      "declaredTests": 7,
+      "lines": 156,
+      "phaseNamed": false,
+      "tests": [
+        "identity preview is dashed amber in ${theme} / ${visibility} hitboxes",
+        "the negation minus has a comfortable width",
+        "the negation minus outline follows the hitbox setting",
+        "a signed factor shows a dot, and its text rebuilds to the same mathematics",
+        "hovering a proposed -1 keeps its amber look with ${visibility} hitboxes",
+        "hovering a proposed +0 answers like a distribution copy, and cancel removes the role",
+        "dragging +0 over a product shows one amber target with ${visibility} hitboxes"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/app/mathematical-clipboard.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 31,
+      "phaseNamed": false,
+      "tests": [
+        "copy remembers mathematical content without creating another object"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/negation/compression.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 68,
+      "phaseNamed": false,
+      "tests": [
+        "drag -1 onto grouped sum previews amber minus and commits once",
+        "cancel compression leaves source and history untouched"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/negation/subtraction.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 113,
+      "phaseNamed": false,
+      "tests": [
+        "clicking a structural minus previews -1 without changing history until confirmed",
+        "negation preview stays in the original view and highlights only the new -1",
+        "amber -1 is visible and clickable in ${theme} / ${visibility}",
+        "amber preview confirmation supports keyboard activation and remains single-use"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/nested-hitbox-contract.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 1,
+      "lines": 30,
+      "phaseNamed": false,
+      "tests": [
+        "grouped literal exposes separate outer and inner mathematical hitboxes"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/nested-hitbox-interaction.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 77,
+      "phaseNamed": false,
+      "tests": [
+        "each bracket level and its inner number can be selected independently",
+        "drag ghost stays the same size as a deeply grouped source occurrence"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/numeric-combination/commit-lifecycle.spec.js",
+      "suite": "Playwright",
+      "category": "architecture",
+      "declaredTests": 1,
+      "lines": 29,
+      "phaseNamed": false,
+      "tests": [
+        "numeric addition combines on drop with exactly one history event"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/semantic-targets.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 35,
+      "phaseNamed": true,
+      "tests": [
+        "real renderer exposes stable, correctly indexed plus operators",
+        "nested and relation renderer targets retain semantic roles"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/gesture-ownership.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 4,
+      "lines": 83,
+      "phaseNamed": true,
+      "tests": [
+        "Escape releases ordinary drag ownership without changing AST or history",
+        "window blur cancels a drag and later pointer release cannot commit",
+        "structural negation operator owns activation rather than starting operand drag",
+        "pointercancel releases an ordinary drag without publishing a transformation"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/negation/hardening.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 76,
+      "phaseNamed": true,
+      "tests": [
+        "keyboard ${key} opens one negation preview and confirmation publishes once",
+        "cancelled operator preview never publishes and a subsequent activation remains usable",
+        "active equality preview cannot be replaced by a competing negation command"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/preview-characterization.spec.js",
+      "suite": "Playwright",
+      "category": "presentation",
+      "declaredTests": 2,
+      "lines": 61,
+      "phaseNamed": true,
+      "tests": [
+        "4A: grouping Escape cancels without publication; reselection permits a new preview",
+        "4A: negation preview Escape does not publish and operator can reopen it"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/negation/preview-lease.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 80,
+      "phaseNamed": true,
+      "tests": [
+        "4C: repeated activation cannot replace an active negation proposal",
+        "4C: rerender closes the negation preview and permits a fresh lease",
+        "4C hardening: switching Mathematical Objects cancels negation and allows reacquisition"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/equality/preview-lease.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 49,
+      "phaseNamed": true,
+      "tests": [
+        "4D-1: equality cancellation releases ownership for a new preview"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/identity-element/preview-lease.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 41,
+      "phaseNamed": true,
+      "tests": [
+        "4D-2: identity cancellation permits a fresh preview and one commit"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/grouping/preview-lease.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 71,
+      "phaseNamed": true,
+      "tests": [
+        "4D-3: grouping style replacement and cancellation preserve single-use confirmation",
+        "4D-3 hardening: switching objects closes grouping preview and permits reopening"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/distribution/preview-lease.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 83,
+      "phaseNamed": true,
+      "tests": [
+        "4D-4: switching objects cancels distribution and allows a fresh preview",
+        "4D-4 hardening: expression rebuild releases distribution ownership"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/factorisation/preview-lease.spec.js",
+      "suite": "Playwright",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 49,
+      "phaseNamed": true,
+      "tests": [
+        "4D-5: rebuilding during factorisation preview releases ownership for a new preview"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/rerender-transitions.spec.js",
+      "suite": "Playwright",
+      "category": "presentation",
+      "declaredTests": 3,
+      "lines": 110,
+      "phaseNamed": true,
+      "tests": [
+        "5D-2: populated to empty to populated object does not reuse old equation targets",
+        "5D-2: distribution-owned display rerender preserves proposal; rebuilding invalidates it",
+        "5D-2: rapid sibling history navigation leaves the final branch visible and current"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/preview-dismissal.spec.js",
+      "suite": "Playwright",
+      "category": "presentation",
+      "declaredTests": 9,
+      "lines": 165,
+      "phaseNamed": false,
+      "tests": [
+        "Escape cancels a factorisation preview without publishing",
+        "Escape cancels an identity preview without publishing",
+        "Escape cancels an equality preview without publishing",
+        "clicking away cancels a distribution preview without publishing",
+        "clicking away cancels an identity preview without publishing",
+        "clicking away cancels an equality preview without publishing",
+        "the identity drag ghost is removed once its preview opens",
+        "pointercancel over an eligible target does not publish the drag",
+        "restoring history by keyboard closes an open distribution preview"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/quick-release.spec.js",
+      "suite": "Playwright",
+      "category": "architecture",
+      "declaredTests": 5,
+      "lines": 104,
+      "phaseNamed": false,
+      "tests": [
+        "quick release on + opens distribution, on first and second drags",
+        "moving without leaving the source position starts no rearrangement preview",
+        "quick release on a numeric target combines once",
+        "release on + right after a rearrangement preview still opens distribution",
+        "quick release on an unseen rearrangement does not commit"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/rearrangement/commit-lifecycle.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 1,
+      "lines": 21,
+      "phaseNamed": false,
+      "tests": [
+        "keyboard rearrangement commits one history event and retains node identities"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/rules/rearrangement/rearrangement.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 1,
+      "lines": 48,
+      "phaseNamed": false,
+      "tests": [
+        "rearrangement: transient proposal before drop, then one history commit"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/cross-rule-verification.spec.js",
+      "suite": "Playwright",
+      "category": "architecture",
+      "declaredTests": 2,
+      "lines": 75,
+      "phaseNamed": false,
+      "tests": [
+        "negation cleanup restores the view and releases its lease when listener unbinding throws",
+        "active equality proposal excludes a real negation activation and survives until cancelled"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/app/smoke.spec.js",
+      "suite": "Playwright",
+      "category": "cross-cutting",
+      "declaredTests": 1,
+      "lines": 17,
+      "phaseNamed": false,
+      "tests": [
+        "application loads ES modules and builds a mathematical expression"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/view/structure-navigation.spec.js",
+      "suite": "Playwright",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 36,
+      "phaseNamed": false,
+      "tests": [
+        "structural navigation follows nested groups without changing mathematics or history",
+        "content-only Add remains navigable and does not invent an occurrence hitbox"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "e2e/app/workspace/persistence.spec.js",
+      "suite": "Playwright",
+      "category": "history-state",
+      "declaredTests": 1,
+      "lines": 23,
+      "phaseNamed": false,
+      "tests": [
+        "document survives reload with the same expression and history"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/architecture/live-adapter-imports.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 1,
+      "lines": 21,
+      "phaseNamed": false,
+      "tests": [
+        "live gesture and visual adapters remain bound in app.js"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/app/composition.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 3,
+      "lines": 64,
+      "phaseNamed": false,
+      "tests": [
+        "application feature composition registers stable transformation IDs including equality application",
+        "presentation preferences normalise modes and tolerate blocked storage",
+        "workspace navigation is presentation-only and handles empty documents"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/architecture/controller-import-boundaries.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 3,
+      "lines": 33,
+      "phaseNamed": false,
+      "tests": [
+        "equality and clipboard presentation controllers are independently importable",
+        "extracted controllers do not import mathematical rules or document persistence",
+        "app delegates relation menu and preview DOM ownership to the controller"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/engine/ast-root-semantics.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 6,
+      "lines": 69,
+      "phaseNamed": false,
+      "tests": [
+        "natural root ${input} is ${expected}",
+        "normalisation collapses historical unary Add without losing child identity",
+        "explicit root grouping is reversible and retains original occurrence identity",
+        "identity introduction can wrap a root occurrence without a synthetic parent",
+        "root-level distribution returns the new Add root, without mutating source",
+        "root negation expansion and compression work with no artificial Add"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/atomic-commit.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 3,
+      "lines": 41,
+      "phaseNamed": false,
+      "tests": [
+        "atomic preparation adds one branch on detached history and preserves the live cursor",
+        "failed history preparation cannot mutate the original history",
+        "published candidates are detached from external proposal references"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/clipboard-library.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 2,
+      "lines": 37,
+      "phaseNamed": false,
+      "tests": [
+        "session library retains multiple immutable selections from different documents",
+        "removing entries and clearing the session never modify source mathematics"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/distribution/architecture.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 66,
+      "phaseNamed": false,
+      "tests": [
+        "distribution gesture produces a frozen DOM-free request",
+        "distribution candidate and visual description preserve left/right provenance targets",
+        "distribution preview rejects stale revisions and supports cancellation"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/distribution/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 80,
+      "phaseNamed": false,
+      "tests": [
+        "${direction} distribution uses detached, single-use history commit",
+        "distribution cancellation and stale source do not commit",
+        "distribution history preparation failure cannot publish partial state"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/distribution/distribution.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 16,
+      "lines": 312,
+      "phaseNamed": false,
+      "tests": [
+        "left distribution of a(b+c+d) preserves original b/c/d IDs",
+        "right distribution of (a+b)c never reverses factor order",
+        "left and right distribution work when commutativity is disabled",
+        "distribution in a longer product keeps unrelated factors in order",
+        "distribution from the right inside an outer product preserves neighbour order",
+        "nonadjacent factors cannot distribute across an intervening factor",
+        "a plus sign in a deeply nested unrelated sum cannot trigger distribution",
+        "multiple nested explicit Group wrappers are transparent to applicability",
+        "compound source factors receive distinct new nested IDs with provenance",
+        "distribution works on nested products and preserves enclosing Groups",
+        "numerical evaluation is unchanged by distribution",
+        "stale or direction-forged plans are rejected without mutation",
+        "associativity permissions are owned by operation modules, not factories",
+        "rendered preview has three clickable amber copies, no circle arrows, and original addends",
+        "rendered plus signs disclose their exact Add parent for hit-testing",
+        "distribution confirms inside equality ${side} side"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/document-invariants.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 6,
+      "lines": 58,
+      "phaseNamed": false,
+      "tests": [
+        "strict invariant audit accepts consistent multi-object documents",
+        "AST audit detects duplicate IDs, invalid children and unknown node types",
+        "history audit rejects broken branches, cycles and stale cursors",
+        "history audit rejects tampered snapshots and events",
+        "document audit catches root, substitution and kind disagreement",
+        "patch audit refuses unsafe and malformed operations"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/equality/apply-function.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 8,
+      "lines": 133,
+      "phaseNamed": false,
+      "tests": [
+        "addition context preserves original side IDs and clones operand twice with unique IDs",
+        "left and right multiplication retain factor order, never claim reversible equivalence",
+        "reject non-equality, unsupported contexts, and statement operands without mutation",
+        "gesture adapter records frozen intent, never mathematical implementation",
+        "atomic addition stays ungrouped; multiplication preserves precedence and identities",
+        "already grouped copied operand is not wrapped in a second Group",
+        "teaching policy groups copied products by default and supports minimal grouping",
+        "multiplication groups introduced compound factor but not the original sum"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/relation-root-rendering.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 61,
+      "phaseNamed": false,
+      "tests": [
+        "grouping all immediate addends under Equal.${side} displays explicit brackets",
+        "non-Add expression roots render without losing their mathematical structure"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/engine/equality.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 10,
+      "lines": 73,
+      "phaseNamed": false,
+      "tests": [
+        "one top-level equality parses to two independent scalar expressions",
+        "invalid equality syntax is rejected before tree construction",
+        "expression parser remains backward compatible",
+        "equality cannot compare a relation or statement to an arithmetic expression",
+        "symmetry preserves both side IDs and can be undone by a snapshot",
+        "tree traversal finds symbols and node locations on both sides",
+        "directly comparable literals give true and false",
+        "symbolic equality is unknown without assignment and reflexive when identical",
+        "truth checking does not silently evaluate both arithmetic sides",
+        "mathematical document stores an expression or statement and updates kind"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/engine/expression-tree.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 12,
+      "lines": 107,
+      "phaseNamed": false,
+      "tests": [
+        "parses a sum into an Add root and separate Symbol nodes",
+        "parses explicit and implicit multiplication styles",
+        "does not split multi-letter identifiers or function-like names",
+        "whitespace-separated symbols are implicit factors and x remains a symbol",
+        "preserves numeric negatives and negative addends",
+        "parses subtraction as addition of negation; bracket grouping is preserved",
+        "serialises the tree back into an unambiguous editable form",
+        "addition can combine numeric addends",
+        "multiplication can combine numeric factors and normalise a one-factor product",
+        "Add and Multiply nodes can reorder their own children",
+        "symbol discovery traverses inside products",
+        "the numeric evaluator handles products and substitutions"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/factorisation/architecture.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 74,
+      "phaseNamed": false,
+      "tests": [
+        "factorisation gesture creates a frozen, DOM-free request",
+        "factorisation coordinator keeps the source tree unchanged and returns semantic visual roles",
+        "factorisation coordinator respects teaching scope",
+        "factorisation preview lifecycle rejects stale confirmations and supports cancel"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/factorisation/preview.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 5,
+      "lines": 92,
+      "phaseNamed": false,
+      "tests": [
+        "extraction zones are outside the Group, never inserted into the equation",
+        "extraction zone only opens the modal preview; it never renders a result factor",
+        "crowded right-side extraction zone avoids the neighbouring factor",
+        "crowded 2-D notation can hide the floating zone and use the toolbar",
+        "right extraction zone is on the right and is a real keyboard-accessible button"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/factorisation/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 79,
+      "phaseNamed": false,
+      "tests": [
+        "factorisation commits one detached history branch and preserves source",
+        "factorisation cancel and stale revision cannot commit",
+        "factorisation history preparation failure leaves authoritative state unchanged"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/factorisation/factorisation.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 16,
+      "lines": 259,
+      "phaseNamed": false,
+      "tests": [
+        "left extraction retains residual IDs and explicit Group/Add IDs",
+        "right extraction preserves order even with commutativity disabled",
+        "factorisation is not a shortcut for commuting ab+ca",
+        "all direct addends must be Multiply nodes with explicit matching factors",
+        "compound common factors match structurally, ignoring IDs and bracket styles",
+        "two-factor extraction works without associativity, longer products require it",
+        "longer products retain residual order and product IDs",
+        "stale plan is rejected atomically, no mutation",
+        "factorisation is invariant under Ctrl+click order",
+        "nonmatching or middle factors do not match",
+        "nested explicit groups use the outer visible group as extraction scope",
+        "full candidate retains neighbouring factor in (ba+ca+da)f",
+        "factorisation candidate preserves unrelated outer addition terms",
+        "mandatory precedence parentheses satisfy visible-brackets teaching policy",
+        "policy modes are independent of mathematical factorisation",
+        "selecting only two of three matching factors is mathematically rejected"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/grouping/architecture.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 89,
+      "phaseNamed": false,
+      "tests": [
+        "grouping adapter uses immutable ordered sibling IDs and valid bracket styles",
+        "coordinator checks grouping eligibility without changing the source tree",
+        "nonadjacent, non-sibling, or non-associative grouping is refused",
+        "grouping preview rejects stale revisions and cancel preserves selection data"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/grouping/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 82,
+      "phaseNamed": false,
+      "tests": [
+        "grouping creates a detached candidate, retains original IDs, and commits exactly once",
+        "grouping cancellation and stale source stamp cannot commit",
+        "grouping history preparation failure does not mutate root or history"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/grouping/grouping.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 17,
+      "lines": 282,
+      "phaseNamed": false,
+      "tests": [
+        "parses the requested complex expression with nested Add, Multiply and Group",
+        "round, square and curly groups retain their individual display styles",
+        "all three styles work around a lone variable and even multiple nested groups",
+        "the parser accepts adjacent grouped factors without splitting multi-letter names",
+        "bracket mismatch, missing bracket, stray closing, empty group and reserved characters have useful errors",
+        "nested numbers evaluate through explicit groups, even inside larger sums/products",
+        "nested drag reordering is scoped to a particular Add or Multiply node",
+        "automatic parentheses prevent misreading Add below Multiply but not vice versa",
+        "adding/removing a Group is reversible; an Add inside Multiply remains parenthesised",
+        "explicit groups survive normalisation; unwrapped same-type operations flatten",
+        "Group can be wrapped around a single variable, then wrapped again",
+        "(1)+2 combines numerically without first removing the explicit Group",
+        "literal zero and one identity rules work both drag directions with symbols",
+        "zero times any remaining factors collapses whole product only when combined",
+        "whole products remain numerically combinable as addends",
+        "IDs are stable across rearrangements and history cloning",
+        "DOM rendering preserves all explicit bracket glyphs INSIDE their hitboxes"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/hitbox-visibility.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 3,
+      "lines": 77,
+      "phaseNamed": false,
+      "tests": [
+        "only deepest hovered hitbox is decorated; selected ancestors are untouched",
+        "multiple selection survives hover changes, leaving equation and mode switches",
+        "preview and drag suppression do not remove selection or alter hitbox layout"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/identity-element/drag-feedback.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 47,
+      "phaseNamed": false,
+      "tests": [
+        "identity hover hints describe left/right wrapping and associative gaps",
+        "floating identity and hover glow are independent and clean up completely"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/identity-element/insertion.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 6,
+      "lines": 80,
+      "phaseNamed": false,
+      "tests": [
+        "additive identity is inserted before or after a hitbox, preserving existing IDs",
+        "multiplicative identity inserts at a factor edge and into a product gap",
+        "wrapping a factor in an addition creates a new operation without deleting the factor",
+        "non-associative operations reject gap insertion but allow explicit wrapping",
+        "identity insertion works within equality without altering the opposite side",
+        "invalid insertion requests are rejected without changing the source"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/identity-element/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 70,
+      "phaseNamed": false,
+      "tests": [
+        "${operation} identity commits once through the shared gate with detached history",
+        "identity preview cancellation and stale revision cannot publish mathematical state",
+        "identity history preparation failure leaves source unchanged and consumes proposal"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/import-export.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 2,
+      "lines": 25,
+      "phaseNamed": false,
+      "tests": [
+        "workspace file controls use compact export and validated hydration",
+        "compact and legacy import remain compatible without modifying input"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/regression-fixtures.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 2,
+      "lines": 30,
+      "phaseNamed": false,
+      "tests": [
+        "historical v1 fixture migrates without changing AST IDs or history events",
+        "multi-object fixture preserves both branches, cursor, and identities on round trip"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/drag/reorder-preview.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 23,
+      "lines": 544,
+      "phaseNamed": false,
+      "tests": [
+        "geometry snapshots retain the original source operand without changing the DOM",
+        "yellow plus signs have higher priority than compatible green hitboxes",
+        "ineligible sibling centres refuse drops while their thin edges offer insertion",
+        "cached rectangles cannot be displaced by painting or later DOM measurements",
+        "hysteresis exists as a future option but is disabled by default",
+        "dragFeedback changes only classes and fixed overlay, never equation children",
+        "wrapped equations use the nearest visual row when finding insertion positions",
+        "proposedRearrangementOrder uses indices with the source omitted",
+        "visual Add preview displays b + a + c without changing real hitboxes",
+        "visual Multiply preview retains operator elements and reuses one overlay",
+        "invalid and numeric hover dismiss preview without changing the real tree DOM",
+        "no-op insertion does not create history or alter ordered mathematical IDs",
+        "visual hit testing uses the settled moving destination and visible sibling order",
+        "rapid reorder requests queue newest outcome without cancelling ongoing animation",
+        "leaving during a transition waits, then returns before restoring the real DOM",
+        "drag feedback refuses an unseen queued insertion and hard-stop cancels it safely",
+        "visible preview still offers green combination and amber distribution targets",
+        "a settled preview retains its destination over the middle of another displayed term",
+        "a transition owns its destination until settled, without hiding explicit operations",
+        "negation compression supersedes an unsettled rearrangement preview",
+        "4E: hard stop during an in-flight rearrangement suppresses late settled callbacks",
+        "4E: queued destination cannot reappear after cancellation and a new session remains usable",
+        "4E: repeated hard stops are idempotent and do not alter mathematical hitbox children"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/identity-element/architecture.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 4,
+      "lines": 57,
+      "phaseNamed": false,
+      "tests": [
+        "identity gesture produces a DOM-free, immutable rule request",
+        "identity hit testing resolves operator first, then left/right operand halves",
+        "coordinator delegates mathematical eligibility to the engine and produces candidate metadata",
+        "preview lifecycle does not commit, rejects stale revisions, and permits cancellation"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/mathematical-clipboard.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 60,
+      "phaseNamed": false,
+      "tests": [
+        "clipboard captures an exact subexpression independently of later source edits",
+        "every paste generates unique occurrence IDs while retaining mathematical structure",
+        "pasted object has an independent, replayable initial history and compact round trip",
+        "invalid or missing node selections fail rather than silently copying something else"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/engine/mathematical-properties.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 2,
+      "lines": 71,
+      "phaseNamed": false,
+      "tests": [
+        "seeded scalar distribution preserves independently calculated values",
+        "seeded scalar factorisation preserves independently calculated values"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/negation/compression.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 76,
+      "phaseNamed": false,
+      "tests": [
+        "compression preserves the chosen Group and marks the new operator for preview",
+        "compression retains a longer product and unrelated factor IDs",
+        "numeric leaf stays numeric; explicit group creates structural negation",
+        "DOM targeting selects the actual bracket Group, never promotes its inner number"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/negation/contract-round-trip.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 79,
+      "phaseNamed": false,
+      "tests": [
+        "negation/subtraction parser round trips preserve deliberate AST structure",
+        "compact numeric literals and structural negation remain distinct",
+        "semantic preview descriptions distinguish expansion from compression"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/negation/subtraction.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 3,
+      "lines": 64,
+      "phaseNamed": false,
+      "tests": [
+        "subtraction, negative literals, grouped negation and explicit addition parse distinctly",
+        "expansion constructs a detached candidate, preserving operand identities",
+        "compression targets an explicit group but not a bare numeric leaf"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/nested-hitbox-contract.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 67,
+      "phaseNamed": false,
+      "tests": [
+        "each nested Group and literal has its own stable occurrence hitbox",
+        "semantic feedback is owner-scoped and never edits mathematical nodes"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/numeric-combination/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 4,
+      "lines": 98,
+      "phaseNamed": false,
+      "tests": [
+        "${name} numeric combination is detached, stale-safe and single-use",
+        "zero multiplication collapses whole product; literal identities preserve surviving IDs",
+        "invalid or cancelled numeric combination never changes the source",
+        "history preparation failure cannot mutate original root or history"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/drag/intent-arbitration.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 15,
+      "lines": 112,
+      "phaseNamed": true,
+      "tests": [
+        "empty or mathematically ineligible proposals never select a transformation",
+        "ordinary geometric precedence is explicit and independent of input ordering",
+        "eligible minus-one compression specifically overrides ordinary geometry",
+        "unsettled insertion and rearrangement cannot be selected",
+        "cancelled, stale, or modal-blocked sessions cannot choose",
+        "mismatched view, object, or token blocks the whole decision",
+        "mixed-owner intents and unknown kinds fail closed",
+        "ambiguous same-kind targets are blocked rather than array-order selected",
+        "decisions do not mutate input proposals or session",
+        "missing positive source validation is never silently accepted",
+        "specific owners cannot claim unrelated non-drag intents",
+        "identical recognizer reports coalesce, but distinct mathematical actions block",
+        "unsettled proposals are advisory none, not cancellation or permission to commit",
+        "invalid mutable metadata fails closed and returned proposals cannot retain extra objects",
+        "eligibility evidence is not authenticated by the arbiter"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/drag/drop-arbitration.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 11,
+      "lines": 86,
+      "phaseNamed": true,
+      "tests": [
+        "settled numeric combination maps to the same mathematical target",
+        "distribution and negation compression retain their own intent kinds",
+        "settled insertion maps its index without synthesizing a target node",
+        "invalid or missing targets never call mathematical validation",
+        "ineligible mathematical rules cannot be selected",
+        "stale source and modal ownership block before validation",
+        "view, object, and gesture session identities are preserved",
+        "malformed drag sessions fail closed without calling validation",
+        "malformed target identities and insertion indices fail closed",
+        "throwing eligibility adapter cannot authorize a transformation",
+        "mathematical eligibility must be explicitly true"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/factorisation/drop-arbitration.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 6,
+      "lines": 57,
+      "phaseNamed": true,
+      "tests": [
+        "eligible extraction zone selects only factorisation in the correct session",
+        "outside-zone and unmoved factor releases never invoke mathematical validation",
+        "stale and modal-blocked factor releases fail closed before rule checks",
+        "malformed sessions do not invoke mathematical rules",
+        "only explicit true eligibility permits a factorisation proposal",
+        "view, object, and session mismatches cannot authorize extraction"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/grouping/intent-arbitration.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 9,
+      "lines": 83,
+      "phaseNamed": true,
+      "tests": [
+        "deliberate grouping preview is selected with existing validated candidate",
+        "selection alone or absent candidate cannot propose grouping",
+        "stale and modal-blocked grouping sessions fail closed",
+        "mismatched or malformed grouping plan cannot be selected",
+        "missing view, object, or token fails closed",
+        "multiply range grouping uses the same narrow contract",
+        "invalid candidate or malformed session cannot throw or authorize preview",
+        "candidate parent type must agree with the selected grouping plan",
+        "real grouping coordinator candidate is accepted without changing the AST"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/identity-element/drop-arbitration.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 7,
+      "lines": 47,
+      "phaseNamed": true,
+      "tests": [
+        "eligible identity release selects the identity intent in its own view",
+        "both additive and multiplicative identity gestures are recognized",
+        "outside-target release does not authorize preview",
+        "stale and modal-blocked sessions fail closed",
+        "invalid or cancelled gesture cannot select identity",
+        "missing view, object or session identity fails closed",
+        "identity arbiter does not mutate its inputs"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/negation/operator-arbitration.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 49,
+      "phaseNamed": true,
+      "tests": [
+        "operator command selects exactly one validated negation expansion",
+        "invalid or inconsistent mathematical candidates cannot activate preview",
+        "stale, modal-blocked, and invalid sessions fail closed",
+        "real negation rule produces a candidate without mutating its source"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/selection-command-routing.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 5,
+      "lines": 38,
+      "phaseNamed": true,
+      "tests": [
+        "touch tap is a selection only after a matching, stationary pointer completes",
+        "touch selection never consumes an active transformation or preview",
+        "keyboard modifier selection remains distinct from plain selection",
+        "keyboard mathematical commands are recognized but not authorized",
+        "unknown keys and malformed input are inert"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/interaction-contract.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 5,
+      "lines": 70,
+      "phaseNamed": true,
+      "tests": [
+        "each transforming gesture owner rejects intents owned by another family",
+        "a different view, object, or session never borrows another gesture authority",
+        "cancelled, stale and modal-blocked sessions cannot choose otherwise eligible intents",
+        "distinct same-kind targets remain ambiguous independent of recognizer order",
+        "selection cannot be transformed by the shared arbiter"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/preview-lifecycle.test.js",
+      "suite": "Node",
+      "category": "presentation",
+      "declaredTests": 6,
+      "lines": 79,
+      "phaseNamed": true,
+      "tests": [
+        "4A: confirmation consumes a modal proposal before invoking the commit callback",
+        "4A: cancellation is idempotent and prevents later confirmation",
+        "4A: every source stamp field protects a preview from stale confirmation",
+        "4A: failed confirmation cannot be retried or silently publish",
+        "4A: individual lifecycle instances do not enforce cross-family exclusivity",
+        "4A: opening a second proposal never overwrites the existing one"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/modal-preview-ownership.test.js",
+      "suite": "Node",
+      "category": "presentation",
+      "declaredTests": 6,
+      "lines": 71,
+      "phaseNamed": true,
+      "tests": [
+        "4B: one view grants only one incompatible modal preview lease",
+        "4B: stale and forged leases cannot release another owner",
+        "4B: independent views do not share modal ownership",
+        "4B: malformed request fails closed without displacing an owner",
+        "4B: cancellation and invalidation are idempotent; disposal is terminal",
+        "4B: returned identity cannot be mutated by callers"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/negation/description-import.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 1,
+      "lines": 16,
+      "phaseNamed": true,
+      "tests": [
+        "live negation preview imports its status descriptor"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/cross-rule-lifecycle.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 6,
+      "lines": 116,
+      "phaseNamed": true,
+      "tests": [
+        "4F: each of six families excludes all other modal families without replacing the incumbent",
+        "4F: cancellation and reacquisition across distinct families never publishes mathematics",
+        "4F: a reentrant or repeated confirmation cannot publish twice; next owner may acquire",
+        "4F: stale mathematical state consumes proposal without publication and releases for next owner",
+        "4F: thrown publication cannot be retried, and stale lease cannot release the next preview",
+        "4F: separate view registries permit independent owners, and invalidation rejects late releases"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/architecture/dependency-boundaries.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 11,
+      "lines": 102,
+      "phaseNamed": true,
+      "tests": [
+        "current production ESM graph has no missing relative imports, cycles or forbidden layer edges",
+        "static import extraction covers multiline imports, re-exports and side-effect imports",
+        "guardrails reject mathematical-to-UI imports and unresolved imports",
+        "guardrails reject importing app.js from another module",
+        "guardrails reject advisory adapter publication imports",
+        "guardrails detect cycles without requiring production imports to execute",
+        "comments, strings, templates and regex literals do not invent imports",
+        "multiline import and export declarations preserve source order",
+        "dynamic imports require review rather than escaping the guardrails silently",
+        "import.meta is not mistaken for a dynamic module dependency",
+        "escaped module specifiers fail closed for manual review"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/app/workspace-save-coordinator.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 9,
+      "lines": 163,
+      "phaseNamed": true,
+      "tests": [
+        "5C scheduled autosave captures the document before switching",
+        "5C invalidated asynchronous statuses cannot overwrite import feedback",
+        "5C only the current document snapshot clears the dirty marker",
+        "5C cancellation discards pending timer without cancelling queued writes",
+        "5C failed writes do not poison subsequent queued saves",
+        "5C queued writes wait for earlier writes to settle",
+        "5C failed save never clears the dirty marker",
+        "5C pending autosave after import invalidation cannot overwrite import error",
+        "5C pending failed autosave after import invalidation cannot replace error status"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/view-integration-contract.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 3,
+      "lines": 64,
+      "phaseNamed": true,
+      "tests": [
+        "5D-4 independent view adapters never stamp or refresh another view",
+        "5D-4 resolver failure prevents dependent semantic consumers from using stale index",
+        "5D-4 layout transitions capture and animate only within their injected roots"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/presentation-characterization.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 3,
+      "lines": 71,
+      "phaseNamed": true,
+      "tests": [
+        "phase 0: natural-root AST navigation retains nested Group and Number ancestry",
+        "phase 0: content-only operations remain addressable without invented hitboxes",
+        "phase 0: one feedback owner can show, replace and clear semantic eligibility without changing geometry"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/feedback.test.js",
+      "suite": "Node",
+      "category": "presentation",
+      "declaredTests": 5,
+      "lines": 85,
+      "phaseNamed": true,
+      "tests": [
+        "same role survives clearing either owner, including across controller handles",
+        "replacing one owner preserves other roles, navigation focus, and hints",
+        "overlapping hints restore the surviving owner then original annotation",
+        "invalid updates are atomic and detached nodes are cleaned on reconciliation",
+        "independent mathematical views never share ownership"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/semantic-targets.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 7,
+      "lines": 162,
+      "phaseNamed": true,
+      "tests": [
+        "Phase 2: root and nested Number/Symbol/Group have honest occurrence targets",
+        "Phase 2: Multiply/Negate/Equal and indexed plus operators do not invent hitboxes",
+        "Phase 2: rerenders invalidate stale elements; two views cannot cross-resolve",
+        "Phase 2: feedback accepts a semantic address without removing DOM compatibility",
+        "Phase 2 hardening: mixed DOM/semantic feedback rejects mismatched targets atomically",
+        "Phase 2 hardening: object switches, empty views and detached targets cannot leak",
+        "Phase 2: multiple semantic representations retain occurrence precedence and attached targets"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/equation-layout-transition.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 59,
+      "phaseNamed": true,
+      "tests": [
+        "5D surviving occurrences animate from old to new view coordinates",
+        "5D reduced motion and disabled animation do not schedule frames",
+        "5D newly created occurrences and subpixel shifts do not animate",
+        "5D old geometry cannot animate a different occurrence identity"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/equation-semantic-refresh.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 47,
+      "phaseNamed": true,
+      "tests": [
+        "semantic refresh stamps the view then updates resolver before dependent consumers",
+        "empty-object transition clears previous identity and refreshes all consumers",
+        "missing enclosing window is allowed for embedded views",
+        "malformed composition fails early instead of silently skipping a consumer"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/identity-element/proposed-insertion-role.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 3,
+      "lines": 27,
+      "phaseNamed": false,
+      "tests": [
+        "identity preview requests the shared feedback role",
+        "the identity behaviour class carries no paint",
+        "the identity drop target has no private paint rule"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/grouping/range-grouping.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 10,
+      "lines": 204,
+      "phaseNamed": false,
+      "tests": [
+        "selection is general-purpose: nonadjacent siblings can be selected without grouping",
+        "Ctrl+click order does not affect grouping order; proper range keeps all operand IDs",
+        "mixed parents, nested non-siblings and invalid styles cannot group or mutate",
+        "selection removes ancestor/descendant conflicts but keeps unrelated selections",
+        "non-associative addition and multiplication refuse range grouping",
+        "whole-product grouping wraps existing product and preserves its ID",
+        "grouping the full structural root range preserves the root Add ID",
+        "selected range can be grouped inside an existing explicit Group",
+        "selection envelope measures existing hitboxes without modifying their geometry",
+        "wrapped visual rows use separate envelopes rather than one giant rectangle"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/rearrangement/architecture.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 3,
+      "lines": 54,
+      "phaseNamed": false,
+      "tests": [
+        "${type} rearrangement: immutable gesture, pure preview, and ID-preserving commit",
+        "rearrangement rejects invalid slots and stale/incorrect parent IDs",
+        "rearrangement does not create a second post-drop animation"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/rearrangement/commit.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 1,
+      "lines": 18,
+      "phaseNamed": false,
+      "tests": [
+        "pointer reorder commits without a second FLIP animation"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/rules/rearrangement/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 47,
+      "phaseNamed": false,
+      "tests": [
+        "${type} rearrangement uses a detached, single-use, atomic commit",
+        "cancel, invalid and no-op rearrangement do not commit"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/node-ids-and-fixtures.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 4,
+      "lines": 41,
+      "phaseNamed": false,
+      "tests": [
+        "restored function-call argument IDs are reserved before future node allocation",
+        "document reservation covers every historical branch and future function arguments",
+        "empty document and uncommitted empty object survive compact round trip",
+        "historical fixtures still deserialize and reserialize after release changes"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/rendering/semantic-container-map.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 4,
+      "lines": 47,
+      "phaseNamed": false,
+      "tests": [
+        "semantic map preserves full AST ancestry without an artificial Add root",
+        "semantic map of a selected Group subtree starts at that Group",
+        "semantic map exposes n-ary addition root even without a direct hitbox",
+        "semantic map rejects repeated IDs instead of inventing identities"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/serialization-audit.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 4,
+      "lines": 38,
+      "phaseNamed": false,
+      "tests": [
+        "AST audit rejects deeply nested but otherwise structurally valid groups",
+        "JSON boundary rejects getters and symbol-keyed properties without executing getters",
+        "patch audit refuses excessive array indexes",
+        "hydration rejects array expansion and sparse-array deletion"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/serialization-hardening.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 5,
+      "lines": 51,
+      "phaseNamed": false,
+      "tests": [
+        "compact envelopes reject unrecognised fields without changing input",
+        "JSON inspection rejects deep data, sparse arrays and cycles",
+        "patch schemas reject unknown fields, unsafe paths and oversized batches",
+        "linear hydration reconstructs long branches without mutating event-only input",
+        "empty mathematical objects remain serializable"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/engine/signed-factor-notation.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 7,
+      "lines": 79,
+      "phaseNamed": false,
+      "tests": [
+        "a signed factor after the first shows a multiplication sign",
+        "a signed first factor and explicit brackets need no added sign",
+        "a chosen multiplication style is kept for signed factors",
+        "printing does not change the stored display style",
+        "the parser reads a signed factor after a multiplication sign",
+        "whitespace without a sign is still subtraction",
+        "editable text rebuilds to the same value on every route to a signed factor"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/document-history.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 9,
+      "lines": 143,
+      "phaseNamed": false,
+      "tests": [
+        "event history keeps snapshots and can independently replay the initial state",
+        "events record rule metadata and generated node IDs without altering originals",
+        "branch replay follows each parent independently, without losing siblings",
+        "context edits are replayable and are not labelled as mathematical proofs",
+        "replay preserves explicit node IDs, presentation metadata and new IDs",
+        "patch supports removed properties and rejects unsafe paths",
+        "replay detects corrupted events and does not trust cached snapshots",
+        "event payloads remain JSON serializable for future offline storage",
+        "compact event-only export can hydrate all branches and keep current cursor"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/document-serialization.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 5,
+      "lines": 76,
+      "phaseNamed": false,
+      "tests": [
+        "compact document round-trips two independent histories including branches and cursor",
+        "compact serializer preserves valid empty documents and empty objects",
+        "legacy full snapshot documents remain readable without rewriting the input",
+        "unknown formats and corrupt compact events fail without mutating inputs",
+        "reject inconsistent live documents and non-JSON data at adapter boundary"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/structure-navigation.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 3,
+      "lines": 32,
+      "phaseNamed": false,
+      "tests": [
+        "navigate nested mathematical groups by AST ancestry, not DOM nesting",
+        "siblings navigate in operand order, with no wraparound",
+        "navigation accepts natural multiplication and negation roots"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/touch-selection-wiring.test.js",
+      "suite": "Node",
+      "category": "interaction",
+      "declaredTests": 2,
+      "lines": 19,
+      "phaseNamed": false,
+      "tests": [
+        "touch multi-selection uses the existing selection model and preserves drag completion",
+        "selection toolbar exposes a pressed state and a touch-accessible control"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/commit-lifecycle.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 4,
+      "lines": 56,
+      "phaseNamed": false,
+      "tests": [
+        "a valid proposal commits once and cannot be replayed by a second confirmation",
+        "stale document, object, revision, root or AST fingerprint rejects without commit",
+        "cancellation, invalid proposals, source mutation and thrown commits are safe",
+        "reentrant confirmation is refused while first commit callback is running"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/feature-contract.test.js",
+      "suite": "Node",
+      "category": "architecture",
+      "declaredTests": 2,
+      "lines": 51,
+      "phaseNamed": false,
+      "tests": [
+        "contract accepts multiple gesture entry points and freezes registry metadata",
+        "equality application is proposed through the same registry and coordinator as other rules"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/feature-registry.test.js",
+      "suite": "Node",
+      "category": "cross-cutting",
+      "declaredTests": 4,
+      "lines": 44,
+      "phaseNamed": false,
+      "tests": [
+        "registry discovers capabilities without invoking their Engine rules",
+        "registry rejects duplicate or invalid definitions",
+        "coordinator dispatches registry rules and uses registered visual semantics",
+        "registry definitions are defensive copies and do not mutate input"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/steps/transformation-infrastructure.test.js",
+      "suite": "Node",
+      "category": "mathematics",
+      "declaredTests": 4,
+      "lines": 59,
+      "phaseNamed": false,
+      "tests": [
+        "v3 publishes root, history and document together, without changing source objects",
+        "v3 invalid document preparation leaves every authoritative reference unchanged",
+        "numeric combination is discoverable through the registered transformation coordinator",
+        "candidate contract distinguishes eligibility-only plans from materialized results"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/view/preview/transformation-preview.test.js",
+      "suite": "Node",
+      "category": "presentation",
+      "declaredTests": 8,
+      "lines": 205,
+      "phaseNamed": false,
+      "tests": [
+        "preview displays the full proposed expression and provides a clickable result",
+        "cancellation restores exact old DOM elements and permits a new preview",
+        "confirm finalizes the candidate, without restoring the original DOM",
+        "missing result ID refuses to replace the original expression",
+        "Enter on extracted factor confirms the proposal",
+        "inline extraction retains faded source factors and inserts amber factor in normal sequence",
+        "left extraction inserts amber factor before the scoped sum",
+        "an explicit grouped addend gets a decorative product wrapper, not an extra addend"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/app/workspace-status-gate.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 2,
+      "lines": 20,
+      "phaseNamed": false,
+      "tests": [
+        "a save completion cannot announce itself after import begins",
+        "switching active documents suppresses background save messages"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    },
+    {
+      "file": "tests/documents/workspace-documents.test.js",
+      "suite": "Node",
+      "category": "history-state",
+      "declaredTests": 7,
+      "lines": 71,
+      "phaseNamed": false,
+      "tests": [
+        "new documents may be empty and have independent object collections",
+        "object controller captures committed trees and independent histories",
+        "duplicate receives new document and object IDs without losing branch histories",
+        "v2 documents round trip and reject invalid object collections",
+        "v1 documents migrate without altering mathematical history or node IDs",
+        "removing last object leaves a valid empty document",
+        "restored history node IDs are reserved for future parsing"
+      ],
+      "hasFixedWait": false,
+      "hasFocused": false,
+      "hasSkip": false
+    }
+  ]
+}

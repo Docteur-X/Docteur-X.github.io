@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presentation mock-up</title>
+<!--
+  Presentation mock-up (13 November 2026). Not part of the app: a page to try
+  the proposed look before the app changes. Each <style> block is labelled with
+  the stylesheet it would become, so the separation of responsibilities shows.
+  Decisions: Developer Documentation/00_Current/Decisions.md ("Presentation").
+
+  Two independent switches, as the app would have them:
+    the maths font   KaTeX, Latin Modern, MLModern, Monospace  (class font-<name>)
+    the boxes        tiles, light tiles, printed, printed with faint outlines (class boxes-<name>)
+  Fonts are bundled in assets/fonts/ (offline; licences beside each font).
+-->
+
+<style>
+/* ===== css/fonts.css: the bundled maths fonts. Only this file names font files. */
+@font-face { font-family: "KaTeX_Main"; src: url("../../../assets/fonts/katex/KaTeX_Main-Regular.woff2") format("woff2"); font-style: normal; font-weight: 400; }
+@font-face { font-family: "KaTeX_Main"; src: url("../../../assets/fonts/katex/KaTeX_Main-Italic.woff2") format("woff2"); font-style: italic; font-weight: 400; }
+@font-face { font-family: "KaTeX_Math"; src: url("../../../assets/fonts/katex/KaTeX_Math-Italic.woff2") format("woff2"); font-style: italic; font-weight: 400; }
+@font-face { font-family: "Latin Modern Math"; src: url("../../../assets/fonts/latin-modern/latinmodern-math.otf") format("opentype"); }
+@font-face { font-family: "MLModern Math"; src: url("../../../assets/fonts/mlmodern/mlmodern-math.otf") format("opentype"); }
+</style>
+
+<style>
+/* ===== css/tokens.css: font sets, the size scale, spacing values, colours.
+   A font set names one family per role: letters, upright text (numbers,
+   function names, brackets) and operators. Every size and space is in em,
+   so one variable (--math-size) scales it all. */
+:root {
+  --ui-font: Inter, ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --space-thin: 0.1667em; --space-medium: 0.2222em; --space-thick: 0.2778em;   /* TeX */
+  --hit-reach-x: 0.09em; --hit-reach-y: 0.16em;
+  --ink: #1d2433; --muted: #6b7489; --page: #f4f6fb; --panel: #ffffff; --line: #d9dee8;
+  --tile-border: #c9d2e3; --tile-fill: #ffffff; --tile-light-border: #e1e6ef;
+  --box-faint: rgba(76, 104, 170, .28); --box-hover: #4c68aa; --box-selected: #2f6fdb;
+  --select-soft: rgba(47, 111, 219, .10); --hover-soft: rgba(76, 104, 170, .07);
+}
+.font-katex { --font-letter: "KaTeX_Math"; --letter-style: italic; --font-upright: "KaTeX_Main"; --font-op: "KaTeX_Main"; }
+.font-lm    { --font-letter: "Latin Modern Math"; --letter-style: normal; --font-upright: "Latin Modern Math"; --font-op: "Latin Modern Math"; }
+.font-mlm   { --font-letter: "MLModern Math"; --letter-style: normal; --font-upright: "MLModern Math"; --font-op: "MLModern Math"; }
+.font-mono  { --font-letter: ui-monospace, Consolas, monospace; --letter-style: normal; --font-upright: ui-monospace, Consolas, monospace; --font-op: ui-monospace, Consolas, monospace;
+              /* Monospace reads best a little smaller and with wider operators. */
+              --mono-scale: .82; --space-medium: .45em; --space-thick: .55em; }
+</style>
+
+<style>
+/* ===== css/math/base.css: shared typesetting (no hover, no feedback here). */
+.math {
+  font-size: calc(var(--math-size, 32px) * var(--mono-scale, 1));
+  font-family: var(--font-upright);
+  line-height: 1.6;
+  white-space: nowrap;
+  color: var(--ink);
+  padding: .6em .8em;
+}
+.term { position: relative; display: inline; }
+.mi { font-family: var(--font-letter); font-style: var(--letter-style); }
+.font-katex .mi:last-child, .font-lm .mi:last-child, .font-mlm .mi:last-child { margin-inline-end: 0.05em; } /* italic correction */
+.mn, .fn, .br { font-family: var(--font-upright); font-style: normal; }
+.op-bin, .op-rel, .op-prefix { font-family: var(--font-op); }
+.op-bin { margin-inline: var(--space-medium); }
+.op-prefix { margin-inline-end: 0.04em; }
+/* ===== css/math/relation.css */
+.op-rel { margin-inline: var(--space-thick); }
+/* ===== css/math/function.css */
+.term + .term.apply, .mn + .term.apply, .mi + .term.apply, .term.apply + .term { margin-inline-start: var(--space-thin); }
+</style>
+
+<style>
+/* ===== css/boxes.css: how terms look at rest. These MAY take space (a tile has
+   padding), but they never change on hover or selection, so nothing moves. */
+.boxes-tiles .term, .boxes-light .term { display: inline-block; vertical-align: baseline; border-radius: .3em; }
+.boxes-tiles .term { padding: .14em .32em; margin: .05em .06em; border: 1.5px solid var(--tile-border); background: var(--tile-fill); }
+.boxes-light .term { padding: .06em .16em; margin: 0 .02em; border: 1px solid var(--tile-light-border); }
+/* Tiles already separate terms, so operators need less space around them. */
+.boxes-tiles, .boxes-light { --space-medium: .18em; --space-thick: .25em; }
+</style>
+
+<style>
+/* ===== css/math/sum.css: a sum written with a binary minus (display setting
+   "a − b"). The tree still holds Add(a, Negate(b)): the minus stays INSIDE the
+   negated term, so it travels with the term when dragged, and the space that
+   a binary minus needs sits outside the term's box. */
+.math .term.signed { margin-inline-start: var(--space-medium); }
+.math .term.signed > .op-prefix:first-child { margin-inline-end: var(--space-medium); }
+
+/* ===== css/math/lines.css: long lines. A line may break only BEFORE a
+   top-level + − or relation, never inside a term; the continuation is
+   indented (a hanging indent, as in printed mathematics). */
+.wrap-lines .line { white-space: normal; padding-inline-start: 1.2em; text-indent: -1.2em; }
+.chunk { white-space: nowrap; text-indent: 0; }
+
+/* ===== css/hitboxes.css: pointer targets and their outline. RULE: nothing
+   here may set padding, margin, width, height, border-width or font size,
+   so showing or hiding a box can never move the mathematics. */
+.term::before {
+  content: ""; position: absolute;
+  inset: calc(-1 * var(--hit-reach-y)) calc(-1 * var(--hit-reach-x));
+  border-radius: 0.22em; pointer-events: auto; z-index: 0;
+}
+.boxes-tiles .term::before, .boxes-light .term::before { inset: -1.5px; border-radius: .3em; }
+.term > * { position: relative; z-index: 1; }
+.boxes-faint .term::before { box-shadow: inset 0 0 0 1px var(--box-faint); }
+/* The term that holds the hovered one is tinted very lightly, so the
+   structure shows without permanent boxes. Background only: no layout. */
+.term.is-hover-parent::before { background: rgba(76, 104, 170, .045); box-shadow: inset 0 0 0 1px rgba(76, 104, 170, .16); }
+.term.is-hover::before { box-shadow: inset 0 0 0 1.5px var(--box-hover); background: var(--hover-soft); }
+</style>
+
+<style>
+/* ===== css/feedback.css: colours that mean something (selection here). */
+.term.is-selected::before { box-shadow: inset 0 0 0 2px var(--box-selected); background: var(--select-soft); }
+</style>
+
+<style>
+/* ===== Page chrome for the mock-up (would be css/interface.css). */
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--ui-font); }
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { font-size: 1.4rem; margin: 0 0 4px; } h2 { font-size: 1.05rem; margin: 26px 0 8px; }
+p.lead { color: var(--muted); margin: 0 0 18px; max-width: 72ch; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.toolbar .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.toolbar button { font: inherit; font-size: .88rem; padding: 5px 10px; border: 1px solid var(--line); border-radius: 7px; background: #fff; cursor: pointer; }
+.toolbar button[aria-pressed="true"] { background: #e8eefc; border-color: #9fb3e3; }
+.toolbar .label { font-size: .85rem; color: var(--muted); }
+.meter { font-size: .85rem; padding: 4px 8px; border-radius: 6px; background: #eaf6ee; color: #1f6b3a; }
+.meter.bad { background: #fbeaea; color: #8a1f1f; }
+.window { margin-top: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: auto; resize: both; min-width: 260px; min-height: 120px; width: 960px; max-width: 100%; }
+.window:focus-visible { outline: 2px solid #9fb3e3; outline-offset: 2px; }
+.window-title { position: sticky; left: 0; font-size: .78rem; color: var(--muted); padding: 8px 12px 0; }
+.grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); }
+.cell { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+.cell h3 { margin: 0; padding: 8px 12px 0; font-size: .82rem; font-weight: 600; color: var(--muted); }
+.cell .math { --math-size: 24px; padding: .3em .6em .5em; }
+.note { font-size: .82rem; color: var(--muted); margin-top: 6px; }
+code { font-size: .9em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Presentation mock-up: fonts and boxes</h1>
+  <p class="lead">Choose a maths font and a box style; they are independent, so every pairing can be tried. Hover or click any part. Resize the window by its corner or with a preset; change the size with A−/A+, or Ctrl+wheel and Ctrl+plus/minus while the window has focus. The meter checks that nothing moves when a box is hovered or selected.</p>
+
+  <div class="toolbar" role="toolbar" aria-label="Window settings">
+    <div class="group" role="group" aria-label="Maths font">
+      <span class="label">Font</span>
+      <button type="button" data-font="katex">KaTeX</button>
+      <button type="button" data-font="lm">Latin Modern</button>
+      <button type="button" data-font="mlm">MLModern</button>
+      <button type="button" data-font="mono">Monospace</button>
+    </div>
+    <div class="group" role="group" aria-label="Boxes">
+      <span class="label">Boxes</span>
+      <button type="button" data-boxes="tiles">Tiles</button>
+      <button type="button" data-boxes="light">Light tiles</button>
+      <button type="button" data-boxes="printed">Printed</button>
+      <button type="button" data-boxes="faint">Printed, faint outlines</button>
+    </div>
+    <div class="group" role="group" aria-label="Subtraction">
+      <span class="label">Write</span>
+      <button type="button" data-minus="binary">a − b</button>
+      <button type="button" data-minus="tree">a + −b</button>
+    </div>
+    <div class="group" role="group" aria-label="Long lines">
+      <span class="label">Long lines</span>
+      <button type="button" data-wrap="wrap">Break</button>
+      <button type="button" data-wrap="scroll">Scroll</button>
+    </div>
+    <div class="group" role="group" aria-label="Font size">
+      <span class="label">Size</span>
+      <button type="button" id="smaller" aria-label="Smaller">A−</button>
+      <span id="sizeLabel" class="note" style="margin:0;min-width:3.2em;text-align:center">32 px</span>
+      <button type="button" id="larger" aria-label="Larger">A+</button>
+    </div>
+    <div class="group" role="group" aria-label="Window size">
+      <span class="label">Window</span>
+      <button type="button" data-width="480">Small</button>
+      <button type="button" data-width="720">Medium</button>
+      <button type="button" data-width="960">Large</button>
+      <button type="button" data-width="fit">Fit</button>
+    </div>
+    <span id="meter" class="meter" aria-live="polite">Layout shift: 0.0 px</span>
+    <span id="fontUsed" class="note" style="margin:0"></span>
+  </div>
+
+  <div class="window" id="window" tabindex="0" aria-label="Mathematical window (resizable)">
+    <div class="window-title">Object 1</div>
+    <div class="math" id="math"></div>
+  </div>
+  <p class="note">The trees are the app's own. "Write a − b" changes only the display: the tree still adds a negated term, and the minus stays part of that term, so it travels with it when dragged. "Break" lets a long line wrap before a top-level + − or relation, never inside a term.</p>
+
+  <h2>All four fonts side by side (with the box style chosen above)</h2>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script>
+// A compact description of each expression: the same structure the renderer
+// would produce (terms with roles).
+// ['t', ...children] a term; 'x' a letter; '2' a number; ['bin','+'] ['rel','='] ['pre','−'];
+// ['fn','sin', arg] a function; ['grp', ...children] brackets.
+const EXPRESSIONS = [
+  [['t','2','x'], ['bin','+'], ['t',['pre','−'],'3'], ['rel','='], ['t','y']],
+  [['t','c'], ['bin','+'], ['t',['t','d'],['fn','sin',['t','a']],['fn','cos',['t','b']]], ['bin','+'],
+   ['t',['t','d'],['fn','cos',['t','a']],['fn','sin',['t','b']]], ['rel','='],
+   ['t',['t','d'],['fn','sin',['t',['t','a'],['bin','+'],['t','b']]]]],
+  [['t','2',['grp',['t','x'],['bin','+'],['t',['pre','−'],'y']]], ['rel','='],
+   ['t','1',['t',['pre','÷'],'b'],['bin','·'],['t','a'],['bin','·'],['t','c']]],
+  [['t','x'], ['bin','+'], ['t','2'], ['bin','+'], ['t',['pre','−'],'2'], ['rel','<'], ['t','5'], ['bin','+'], ['t',['pre','−'],'2']],
+  [['t','g'], ['bin','·'], ['t','h'], ['rel','='], ['t','k']],
+  [['t','3','x'], ['bin','+'], ['t',['pre','−'],'2','y'], ['bin','+'], ['t','4',['fn','sin',['t','x']]], ['bin','+'],
+   ['t',['pre','−'],'5','z'], ['bin','+'], ['t','7'], ['rel','='], ['t','2',['grp',['t','x'],['bin','+'],['t',['pre','−'],'y'],['bin','+'],['t','z']]],
+   ['bin','+'], ['t',['pre','−'],'1']],
+];
+
+// Which character draws a letter. OpenType maths fonts keep their maths italic
+// in the Unicode mathematical italic block (as TeX does); KaTeX and monospace
+// use the plain letter. (In the app this belongs to the renderer's font set,
+// and the accessible name stays the plain letter.)
+const MATH_ITALIC = { font: new Set(['lm', 'mlm']) };
+function letterText(letter, font) {
+  if (!MATH_ITALIC.font.has(font)) return letter;
+  if (letter === 'h') return 'ℎ';
+  const code = letter.charCodeAt(0);
+  if (code >= 97 && code <= 122) return String.fromCodePoint(0x1D44E + code - 97);
+  if (code >= 65 && code <= 90) return String.fromCodePoint(0x1D434 + code - 65);
+  return letter;
+}
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function draw(node, font, signed = false) {
+  if (typeof node === 'string') {
+    if (/^[0-9]/.test(node)) return el('span', 'mn', node);
+    const span = el('span', 'mi', letterText(node, font)); span.setAttribute('aria-label', node); return span;
+  }
+  const [kind, ...rest] = node;
+  if (kind === 'bin') return el('span', 'op-bin', rest[0]);
+  if (kind === 'rel') return el('span', 'op-rel', rest[0]);
+  if (kind === 'pre') return el('span', 'op-prefix', rest[0]);
+  if (kind === 'fn') {
+    const t = el('span', 'term apply');
+    t.append(el('span', 'fn', rest[0]), el('span', 'br', '('), draw(rest[1], font), el('span', 'br', ')'));
+    return t;
+  }
+  const t = el('span', signed ? 'term signed' : 'term');
+  if (kind === 'grp') t.append(el('span', 'br', '('), ...drawList(rest, font), el('span', 'br', ')'));
+  else t.append(...drawList(rest, font));
+  return t;
+}
+// A negated term after '+': with the "a − b" setting the '+' is not drawn and
+// the term's own minus is spaced as a binary minus. Nested sums too.
+const isNegated = node => Array.isArray(node) && node[0] === 't' && Array.isArray(node[1]) && node[1][0] === 'pre' && node[1][1] === '−';
+const isPlus = node => Array.isArray(node) && node[0] === 'bin' && node[1] === '+';
+function drawList(nodes, font) {
+  const out = [];
+  nodes.forEach((node, i) => {
+    if (state.minus === 'binary' && isPlus(node) && isNegated(nodes[i + 1])) return;
+    out.push(draw(node, font, state.minus === 'binary' && isNegated(node) && isPlus(nodes[i - 1])));
+  });
+  return out;
+}
+// One line: the top-level pieces in chunks that begin at a top-level operator
+// or a signed term, so a line can break only between chunks.
+function fill(container, font, expressions = EXPRESSIONS) {
+  container.replaceChildren(...expressions.map(expression => {
+    const line = el('div', 'line'); let chunk = null;
+    for (const piece of drawList(expression, font)) {
+      const opensChunk = piece.matches('.op-bin, .op-rel, .term.signed');
+      const afterOperator = chunk?.lastChild?.matches('.op-bin, .op-rel');
+      if (!chunk || (opensChunk && !afterOperator)) {
+        if (chunk) line.append(document.createElement('wbr'));
+        chunk = el('span', 'chunk'); line.append(chunk);
+      }
+      chunk.append(piece);
+    }
+    return line;
+  }));
+}
+
+const FONTS = { katex: 'KaTeX', lm: 'Latin Modern', mlm: 'MLModern', mono: 'Monospace' };
+const FACES = { katex: 'KaTeX_Math', lm: 'Latin Modern Math', mlm: 'MLModern Math' };
+// Default font (owner, 13 November 2026): MLModern on mobiles, Latin Modern on
+// larger screens; a font the user picks always wins.
+const MOBILE = window.matchMedia('(max-width: 767px)').matches;
+const state = { font: MOBILE ? 'mlm' : 'lm', boxes: 'printed', size: 32, minus: 'binary', wrap: 'wrap' };
+const params = new URLSearchParams(location.search);   // ?font=mlm&boxes=tiles, for screenshots
+if (FONTS[params.get('font')]) state.font = params.get('font');
+if (['tiles','light','printed','faint'].includes(params.get('boxes'))) state.boxes = params.get('boxes');
+if (['binary','tree'].includes(params.get('minus'))) state.minus = params.get('minus');
+if (['wrap','scroll'].includes(params.get('wrap'))) state.wrap = params.get('wrap');
+
+const math = document.getElementById('math');
+const grid = document.getElementById('grid');
+const win = document.getElementById('window');
+
+function setClasses(element, font) {
+  element.className = `math font-${font} boxes-${state.boxes}` + (state.wrap === 'wrap' ? ' wrap-lines' : '');
+}
+function render() {
+  setClasses(math, state.font); fill(math, state.font);
+  grid.replaceChildren(...Object.entries(FONTS).map(([font, name]) => {
+    const cell = el('div', 'cell'); const m = el('div');
+    setClasses(m, font); fill(m, font, EXPRESSIONS.slice(1, 3));
+    cell.append(el('h3', null, name), m); return cell;
+  }));
+  document.querySelectorAll('[data-font]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.font === state.font)));
+  document.querySelectorAll('[data-boxes]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.boxes === state.boxes)));
+  document.querySelectorAll('[data-minus]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.minus === state.minus)));
+  document.querySelectorAll('[data-wrap]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.wrap === state.wrap)));
+  hovered = null;
+  reportFont(); checkShift();
+}
+
+// --- Hover and selection: one owner, the innermost term under the pointer.
+let hovered = null;
+function setHover(term) {
+  document.querySelectorAll('.is-hover, .is-hover-parent').forEach(t => t.classList.remove('is-hover', 'is-hover-parent'));
+  hovered = term;
+  term?.classList.add('is-hover');
+  term?.parentElement.closest('.term')?.classList.add('is-hover-parent');
+}
+for (const root of [math, grid]) {
+  root.addEventListener('pointermove', event => {
+    const term = event.target.closest('.term');
+    if (term === hovered) return;
+    setHover(term); checkShift();
+  });
+  root.addEventListener('pointerleave', () => { setHover(null); checkShift(); });
+  root.addEventListener('click', event => {
+    const term = event.target.closest('.term'); if (!term) return;
+    if (!event.ctrlKey && !event.metaKey) document.querySelectorAll('.is-selected').forEach(t => t !== term && t.classList.remove('is-selected'));
+    term.classList.toggle('is-selected'); checkShift();
+  });
+}
+
+// --- The no-shift meter. Each check lays the page out twice, without and with
+// the current hover and selection, and compares every glyph's position. (A
+// stored baseline goes stale when fonts finish loading, so none is kept.)
+const glyphs = () => [...document.querySelectorAll('.mi,.mn,.fn,.br,.op-bin,.op-rel,.op-prefix')];
+// Positions are measured from each glyph's own .math box, so scrolling the
+// page or the window is not counted as a shift.
+function snapshot() {
+  return glyphs().map(g => {
+    const r = g.getBoundingClientRect(), o = g.closest('.math').getBoundingClientRect();
+    return [r.left - o.left, r.top - o.top, r.width, r.height];
+  });
+}
+function checkShift() {
+  const marked = [...document.querySelectorAll('.is-hover,.is-hover-parent,.is-selected')].map(t => [t, t.className]);
+  marked.forEach(([t]) => t.classList.remove('is-hover', 'is-hover-parent', 'is-selected'));
+  const resting = snapshot();
+  marked.forEach(([t, c]) => { t.className = c; });
+  const now = snapshot();
+  let worst = 0;
+  now.forEach((r, i) => r.forEach((v, j) => { worst = Math.max(worst, Math.abs(v - resting[i][j])); }));
+  const meter = document.getElementById('meter');
+  meter.textContent = `Layout shift: ${worst.toFixed(1)} px`;
+  meter.classList.toggle('bad', worst > 0.05);
+}
+
+// --- Switches.
+document.querySelectorAll('[data-font]').forEach(b => b.onclick = () => { state.font = b.dataset.font; render(); });
+document.querySelectorAll('[data-boxes]').forEach(b => b.onclick = () => { state.boxes = b.dataset.boxes; render(); });
+document.querySelectorAll('[data-minus]').forEach(b => b.onclick = () => { state.minus = b.dataset.minus; render(); });
+document.querySelectorAll('[data-wrap]').forEach(b => b.onclick = () => { state.wrap = b.dataset.wrap; render(); });
+
+// --- Font size: one variable on the window.
+function setSize(next) {
+  state.size = Math.max(14, Math.min(72, next));
+  win.style.setProperty('--math-size', state.size + 'px');
+  document.getElementById('sizeLabel').textContent = state.size + ' px';
+  checkShift();
+}
+document.getElementById('smaller').onclick = () => setSize(state.size - 4);
+document.getElementById('larger').onclick = () => setSize(state.size + 4);
+win.addEventListener('wheel', event => { if (!event.ctrlKey) return; event.preventDefault(); setSize(state.size + (event.deltaY < 0 ? 2 : -2)); }, { passive: false });
+win.addEventListener('keydown', event => {
+  if (!(event.ctrlKey || event.metaKey)) return;
+  if (event.key === '+' || event.key === '=') { event.preventDefault(); setSize(state.size + 4); }
+  if (event.key === '-') { event.preventDefault(); setSize(state.size - 4); }
+  if (event.key === '0') { event.preventDefault(); setSize(32); }
+});
+
+// --- Window size: presets, as well as the drag corner (CSS resize).
+document.querySelectorAll('[data-width]').forEach(button => button.onclick = () => {
+  const w = button.dataset.width;
+  win.style.width = w === 'fit' ? (math.scrollWidth + 4) + 'px' : w + 'px';
+  win.style.height = '';
+  checkShift();
+});
+new ResizeObserver(() => { checkShift(); }).observe(win);
+
+// --- Whether the chosen font file actually loaded (a loaded FontFace, not a guess).
+async function reportFont() {
+  const label = document.getElementById('fontUsed');
+  const family = FACES[state.font];
+  if (!family) { label.textContent = 'Font: the system monospace'; return; }
+  const faces = await document.fonts.load(`italic 32px "${family}"`, 'x').catch(() => []);
+  const loaded = faces.length > 0 || (await document.fonts.load(`32px "${family}"`, 'x').catch(() => [])).length > 0;
+  label.textContent = loaded ? `Font loaded: ${family}` : `Font NOT loaded: ${family} (check assets/fonts)`;
+  checkShift();
+}
+
+document.fonts.ready.then(() => { checkShift(); });
+render(); setSize(32);
+</script>
+</body>
+</html>

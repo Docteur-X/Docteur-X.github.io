@@ -1,0 +1,39 @@
+# Known issues, limitations and evidence gaps — 8 November 2026
+
+**Status and authority:** This is the maintained risk register, not a historical release note. [Current_Status.md](Current_Status.md) is the authoritative verified baseline; the source and tests are authoritative for implementation. The Phase 0 inventory remains in [its historical baseline](../02_Architecture/Presentation_Interaction_Phase0_Baseline.md), but its early consolidation risks must **not** be treated as open defects without fresh evidence. Last accepted baseline: Phase 5F, 416/416 Node tests independently passed and 77/77 browser tests owner-confirmed. Phase 6 intentionally deferred.
+
+## Confirmed current defects
+
+**None established by the latest Phase 5F acceptance evidence.** This does not mean that the application is defect-free. If a problem is reproduced, record the steps, affected build, test evidence, severity, workaround and resolution here.
+
+## Observed behaviour requiring characterization
+
+| Concern | Evidence / current interpretation | Next verification |
+| --- | --- | --- |
+| Second distribution drag sometimes fails to become eligible after rebuilding | Earlier Phase 5D-2 browser runs failed with “Move cancelled”; a diagnostic build subsequently passed 77/77. A transient or interaction-state cause was **not conclusively established**. | Reproduce with pointer geometry and gesture-session diagnostics before changing engine or lease logic. |
+| Crowded factorisation extraction zone | Earlier owner report described an inaccessible drag target while toolbar “Preview extraction” remained usable; no recent reproduction is recorded. | Characterize whether deliberate crowded-layout suppression or a geometry defect. |
+| Equality insertion preview border consistency; optional grouping around atomic factors | Historical owner visual reports, not independently reverified in Phase 5F. | Reproduce in current build and classify design preference versus defect. |
+
+## Accepted technical limitations and architectural risks
+
+| Area | Current boundary | Trigger for action |
+| --- | --- | --- |
+| FLIP animation callback lifetime | Delayed callbacks are not generation-invalidated. Full rerender usually detaches old nodes; no current interference defect demonstrated. | DOM reuse, multi-view changes, or browser reproduction of callback interference. |
+| Exceptional presentation recovery | Lease release is attempted across modal families, but a failed DOM/renderer cleanup does not guarantee full visual restoration. | Controlled fault-injection or a reproducible stranded-view defect; design cross-family recovery policy. |
+| Modal preview integration coverage | Registry contract covers all 30 directed family conflicts; real-browser cross-family conflict coverage is representative, not exhaustive. | Add targeted interactions when changing preview entry paths or shared ownership. |
+| Multi-view assumptions | View-local components have isolation contract tests, but the application still composes one active mathematical view. | Phase 6 design approval and source-level multi-view characterization. |
+| Dependency checker | Static import guardrails are deliberately narrower than a full JavaScript parser. | New syntax, dynamic-import policy changes, or new directory/layer ownership. |
+| Mathematical domains and assumptions | General domain/type/assumption reasoning and broad calculus/algebra operations are not yet implemented. | A specific mathematically scoped feature proposal with validity and teaching-policy requirements. |
+| Performance | No low-end-device performance guarantees; large expressions and histories may need measurement. | Profile actual bottlenecks before optimization. |
+
+## Deferred enhancements (not defects)
+
+Phase 6 Window Manager design; structural differentials and complete substitution; adjustable reasoning depth; floating clipboard and discoverable equation-wide operations; teaching-policy transposition; Word/LaTeX derivation export; vectors/matrices and broader mathematical capabilities. See [creative exploration](Creative_Exploration_and_Deferred_Phase6.md) and [future features](Future_Features.md). None is approved for immediate implementation merely by being recorded.
+
+## Historical dispositions
+
+Phase 0 highlighted shared visual-feedback ownership, duplicated semantic targeting and scattered interaction/preview responsibilities. Phases 1–4 introduced dedicated feedback ownership, semantic target resolution, arbitration and modal-preview leases, with retrospective verification. **The original concerns motivated completed work; their exact historical wording is not an open issue list.** Likewise, the old “negation v1.2.3 browser verification pending” note is superseded by later accepted releases.
+
+## Maintenance rules
+
+Classify each new report as **confirmed defect**, **observed/unreproduced behaviour**, **accepted limitation**, or **deferred enhancement**. Do not silently upgrade speculation to fact, or mark an issue resolved without evidence. Update this file when relevant source, tests or decisions change; preserve older chronology in historical records rather than appending stale “current” headings.

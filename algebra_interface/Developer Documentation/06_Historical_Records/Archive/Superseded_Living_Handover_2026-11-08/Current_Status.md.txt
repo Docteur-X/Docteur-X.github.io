@@ -1,0 +1,63 @@
+> **CURRENT CHECKPOINT — T3-7 (8 November 2026; awaiting owner acceptance).** Owner independently accepted T3-6. T3-7 retains all nine existing negation tests, strengthens expansion `insertedNodeIds` provenance and adds one longer-product compression branch test. Targeted Node **10/10**, full Node **417/417** pass; two isolated mutations were detected and production source remains unchanged. No merges/removals; Playwright not rerun. See `Developer Documentation/04_Testing/T3_7_Negation_Test_Quality_Review.md`. **Stop for owner verification.** Earlier current-checkpoint statements below are historical.
+
+> **CURRENT CHECKPOINT — T3-6 (8 November 2026; awaiting owner acceptance).** Owner accepted T3-5. T3-6 strengthens three existing identity-insertion tests with four ID-correspondence assertion sites, covering additive before/after, multiplicative edge/gap, and explicit wrapping. Targeted Node **6/6**, full Node **416/416** passed; fabricated-ID mutation rejected (**3 failures of 6**), restored production code unchanged. No tests added/removed/merged; Playwright not rerun. See `Developer Documentation/04_Testing/T3_6_Identity_Insertion_Review.md`. **Stop for independent owner testing.** Earlier next-action instructions below are historical and superseded.
+
+# Current Status — Manipulator
+
+**As of 8 November 2026: T2 test-organization pilot implemented; awaiting browser verification.**
+
+## Verified baseline
+
+- Phases 0–5 completed and accepted. Phase 6 is intentionally deferred for creative design exploration.
+- **T2 Node suite:** 416/416 passed independently (Node v22.16.0).
+- **Browser suite:** 77/77 passed on the previous T1/Phase 5F baseline, as reported by the project owner. **T2 browser run is pending.**
+- T2 moved four Node test files and two Playwright specs; no tests were removed, merged, or rewritten, and no production code changed.
+- Discovery inventory: 75 Node test files, 39 Playwright specs; both totals unchanged.
+
+## Current task
+
+Run all 77 Playwright tests against T2. If they pass, accept T2 and proceed to T3 assertion-level coverage review. If they fail, diagnose relocated imports/fixtures or test discovery before any additional moves.
+
+## Architecture and open work
+
+Mathematical rules, source-stamped commit, branching history, view-local feedback/semantic targeting and modal leases remain unchanged. See the authoritative `../03_Developer_Guides/AI_Handover.md`. Phase 6, the guided tour, and creative ideas remain deferred/exploratory, not approved implementation.
+
+Known technical limitations remain documented in the project's known-issues register. Do not interpret the test reorganization as a change in runtime behaviour.
+
+**Test maintenance note (8 November 2026):** T3-1 reviewed ten distribution contract/lifecycle tests; all retained, no production or test changes. Targeted Node 24/24 passed. T2 remains last full verified baseline (416 Node, 77 browser). Next T3-2. See `../04_Testing/T3_1_Distribution_Review.md`.
+
+## Latest increment — T3-2A (8 November 2026)
+
+The T3-2 mathematical distribution test review retained all existing cases. **T3-2A is implemented:** strengthened the compound-factor provenance test in `tests/distribution.test.js` to check reported copy IDs against actual generated subtree occurrences, while preserving original assertions. Targeted distribution **17/17** and full Node **416/416** passed. No production changes, test removals, or browser rerun. **T3-2B is approved but not implemented; stop for owner review of A first.** See `../04_Testing/T3_2_Mathematical_Distribution_Review.md`. The older T2 status statements above are historical/stale; the T3–T5 plan records owner-reported T2 browser acceptance, not independently reverified here.
+
+## Latest increment — T3-2B (8 November 2026)
+
+After the owner confirmed all tests passed for T3-2A, T3-2B added two invalid-ID assertions to the existing forged-plan distribution test: nonexistent `productId` and incorrect `sumId` must both return null without changing the AST. All original assertions and tests are retained. Targeted Node **17/17**, full Node **416/416**, documentation links **336 valid**. No production JavaScript changed; Playwright was not rerun in this increment. **Stop for owner review** before the next T3–T5 increment. See `../04_Testing/T3_2_Mathematical_Distribution_Review.md`. Earlier pending-B instructions above are superseded.
+
+## Latest increment — T3-3A (8 November 2026)
+
+The factorisation test-quality review retained all ten reviewed mathematical tests. T3-3A strengthened one existing test to require exact, ordered origin IDs for the extracted common factor and to verify that the reported new factor exists as the expected `Symbol(a)` occurrence in the result AST. Original assertions remain. Targeted factorisation **16/16**, full Node **416/416** passed. No production code changes, removals, or browser rerun. Owner verification pending; **do not start T3-3B** until confirmed. T3-3B and T3-3C are approved in principle only. See `../04_Testing/T3_3_Mathematical_Factorisation_Review.md`. Older next-step sections above are superseded.
+
+## Latest checkpoint (8 November 2026) — T3-3B/C combined implementation
+
+T3-3A was independently accepted by the owner. The approved T3-3B/C test-strengthening changes were implemented together in `tests/factorisation.test.js` only: compound extracted-factor subtree provenance (fresh IDs, actual-node correspondence, root versus descendant origin semantics), and forged `sumId`, `productIds`, and direction rejection with nonmutation after each case. All 16 factorisation tests and 416 full Node tests pass; 336 documentation links valid. No production changes, test merges, or removals. Browser tests were not rerun; **await owner independent acceptance** before proceeding. See `Developer Documentation/04_Testing/T3_3_Mathematical_Factorisation_Review.md`. Earlier next-action statements are superseded.
+
+## Latest checkpoint — T3-4 grouping provenance (8 November 2026)
+
+Owner accepted T3-3 (all tests passed). T3-4 reviewed eight range-grouping mathematical/selection tests, retained all eight, and replaced one length-only `createdNodeIds` assertion with exact `[result.inner.id, result.group.id]` correspondence in `tests/range-grouping.test.js`. A temporary fabricated-ID mutation was detected by the strengthened test and reverted. Targeted range grouping **10/10**, full Node **416/416**, documentation links **336 valid**. No production changes, merges, removals or browser rerun. **Await independent owner acceptance; do not start the next family automatically.** See `../04_Testing/T3_4_Range_Grouping_Quality_Review.md`. Earlier next-action statements are superseded.
+
+## Latest checkpoint — T3-5 equality function application (8 November 2026)
+
+Owner independently accepted T3-4. T3-5 retained all eight reviewed equality-function tests and strengthened two existing cases in `tests/equality-function-application.test.js`: fresh clipboard-operand IDs on both equality sides and correct multiplication order on both sides (plus symmetric non-reversibility metadata). Each targeted deliberately incorrect mutation now fails the strengthened test (7/8 pass, 1 fail); the unmutated targeted suite passes **8/8** and full Node suite **416/416**. No production changes, merges or removals. Browser suite not rerun. **Await owner independent acceptance.** See `../04_Testing/T3_5_Equality_Function_Application_Review.md`. Earlier pending-next-action statements are historical.
+
+## Latest checkpoint — T3-8 history generated IDs (8 November 2026)
+
+Owner accepted T3-7. T3-8 retained all nine document-history tests and strengthened one existing test in `tests/state/document-history.test.js` to compare recorded generated IDs against the exact before/after AST occurrence-set difference, rejecting duplicate IDs. A fabricated-ID mutation in an isolated copy now fails the strengthened test. Targeted **9/9**, full Node **417/417**; no production changes, merges, removals or browser rerun. **Await owner independent acceptance.** See `../04_Testing/T3_8_History_Generated_ID_Quality_Review.md`. All earlier next-action sections above are historical and superseded.
+
+## Latest checkpoint — T3-9B autosave reliability (8 November 2026)
+
+Owner independently accepted T3-8. T3-9A reviewed serialization tests and retained them unchanged after assessing the low-value empty-object overlap. T3-9B retained all seven existing save-coordinator tests and added two deterministic cases for strictly sequential queued writes and failed writes never clearing dirty state. Both controlled production mutations are now detected. Targeted **9/9**, full Node **419/419**; production source unchanged. Browser suite not rerun. **Await owner independent acceptance; stop before the next batch.** See [`T3-9B review`](../04_Testing/T3_9B_Autosave_Reliability_Review.md). All earlier next-action sections are historical.
+
+## Latest checkpoint — T3-10 semantic targeting (8 November 2026)
+
+Owner independently accepted T3-9B. T3-10 retained all fourteen reviewed semantic resolver/container/refresh tests and added one focused multi-representation resolver regression test. It checks occurrence precedence, all attached targets, explicit roles, operator filtering, and descriptor counts. Two controlled mutations are detected. Targeted **7/7**, full Node **420/420**; production unchanged. Browser tests not rerun. **Await owner independent acceptance.** See [`T3-10 review`](../04_Testing/T3_10_Semantic_Target_Quality_Review.md). Previous next-step notes are historical.

@@ -1,0 +1,472 @@
+/*
+ * Previews: temporary marks a gesture or proposal puts on screen.
+ * Ghosts, overlays and candidate expressions. None of these is written to the
+ * expression tree, and the original hitboxes remain the hit-testing reference.
+ * Rules here set position, size and neutral appearance. What a colour means is
+ * painted in feedback.css; a test keeps amber and green out of this file.
+ */
+
+/* --- Drag ghost, source and drop marks --- */
+/* The floating visual clone follows the pointer; the source term is removed from the row. */
+/* It contains a clone of the whole hitbox instead of plain text, so explicit
+   brackets, inner operators and nested factor boxes travel with it. It is a
+   measured copy of the source, not a fresh flex layout context: never allow a
+   compound child to expand the fixed ghost. */
+.drag-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  display: inline-flex;
+  box-sizing: border-box;
+  flex: none;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 13px;
+  color: var(--text);
+  background: transparent;
+  box-shadow: 0 14px 32px var(--ghost-shadow), 0 0 0 4px color-mix(in srgb, var(--accent) 13%, transparent);
+  white-space: nowrap;
+  font-family: var(--math-font-upright);
+  font-size: calc(1.5rem * var(--math-font-scale));
+  font-weight: var(--math-font-weight);
+  pointer-events: none;
+  will-change: transform;
+}
+body.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+@media (max-width: 600px) {
+  .term__label,
+  .term__sign,
+  .drag-ghost {
+    font-size: 1.3rem;
+  }
+}
+.drag-ghost .term {
+  pointer-events: none;
+}
+.drag-insertion-marker {
+  position: fixed;
+  width: 4px;
+  z-index: 9998;
+  border-radius: 4px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+  pointer-events: none;
+}
+/* !important beats an inline transform that cloning may copy from a source term
+   caught during a layout transition. Only !important can beat an inline style. */
+.drag-ghost > .term {
+  box-sizing: border-box;
+  flex: none;
+  transform: none !important;
+}
+
+/* --- Rearrangement preview --- */
+/* ========================================================================== *
+ * EXPRESSIVE REARRANGEMENT PREVIEW (2026)
+ * ========================================================================== *
+ * During insertion, the actual mathematical DOM remains the immutable hit-
+ * testing reference. A decorative clone of the selected Add/Multiply sequence
+ * sits above it, showing the FINAL proposed ordering of operands/operators.
+ *
+ * opacity:0 retains all original dimensions (visibility and display:none
+ * would also be possible without changing layout in some cases, but opacity
+ * is intentionally paint-only and does not invalidate the original DOM).
+ * The preview is pointer-events:none / aria-hidden / inert, and can never
+ * block green combining, amber distribution, or keyboard controls.
+ * ========================================================================== */
+.drag-container.is-preview-covered {
+  opacity: 0;
+}
+.drag-rearrangement-preview {
+  position: fixed;
+  z-index: 9997;
+  box-sizing: border-box;
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+  /* Never occupy normal equation layout or participate in pointer targets. */
+}
+.drag-rearrangement-preview *,
+.drag-rearrangement-preview *::before,
+.drag-rearrangement-preview *::after {
+  pointer-events: none;
+}
+/* Override mouse-hover transitions on the decorative clones. Moving the
+ * original mouse pointer should never change preview dimensions or targets. */
+.drag-rearrangement-preview .term {
+  cursor: grabbing;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drag-rearrangement-preview .term { animation: none !important; }
+}
+/* The Web Animations API controls the time of each transition. CSS itself
+   does not animate positioning, preventing independent competing transitions. */
+.drag-rearrangement-preview .add-operand,
+.drag-rearrangement-preview .factor-slot {
+  transition: none !important;
+}
+
+/* --- Distribution preview --- */
+/* ========================================================================== *
+ * DISTRIBUTION: distinct warm-amber RULE preview (green is evaluation).
+ * ========================================================================== *
+ * These styles never carry mathematical state. The preview is rebuilt from
+ * its original Add operands whenever the renderer runs; cancelling simply
+ * removes it. A CSS variable avoids using warning/hazard orange and works in
+ * both themes. The explanatory arrows are an SVG overlay (not clickable);
+ * temporary amber factor copies are accessible HTML buttons.
+ * ========================================================================== */
+/* Reserve overhead breathing room for connecting curves. Parent position is
+   relative so the SVG can be absolutely aligned to the actual expression. */
+.equation:has(.distribution-preview) {
+  position: relative;
+  padding-top: 86px;
+  padding-bottom: 10px;
+}
+.distribution-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 3;
+}
+/*
+ * Keep EVERY temporary product in the same horizontal row as the original
+ * expression. The previous version stacked a circular arrow button above
+ * each product, which increased its height and pushed the entire sum down.
+ * Overhead arrows are drawn in an absolutely positioned SVG instead.
+ */
+.distribution-preview__item {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.distribution-preview__product {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--math-font-upright);
+  font-size: calc(1.25rem * var(--math-font-scale));
+  font-weight: var(--math-font-weight);
+  white-space: nowrap;
+}
+/*
+ * The amber copy IS the confirmation button, not a label sitting below one.
+ * Keep its box compact enough not to shift the expression's baseline, but
+ * large enough for mouse, touch and keyboard users. Inherit the surrounding
+ * mathematics font rather than the browser's default button appearance.
+ */
+.distribution-preview__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color .12s ease, box-shadow .12s ease;
+}
+/* The original addend is never a new mathematical node. Unlike the copies,
+   it keeps the usual mathematical colour to show that it already existed. */
+.distribution-preview__original {
+  color: var(--text);
+}
+.distribution-preview__multiplication {
+  color: var(--text-muted);
+}
+.distribution-connections {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+@media (max-width: 680px) {
+  .equation:has(.distribution-preview) { padding-top: 64px; }
+  .distribution-preview { gap: 3px; }
+  .distribution-preview__copy { padding: 4px 5px; }
+  .distribution-preview__product { font-size: 1rem; }
+}
+
+/* --- Grouping preview --- */
+/* ========================================================================== *
+ * Range selection and explicit grouping preview (non-layout-changing)
+ * ========================================================================== *
+ * Selection is deliberately quieter than the bright green/amber operation
+ * feedback. Outlines and inset shadows do not change the element's box size.
+ * The preview overlay lives outside #equation and cannot shift mathematics.
+ * ========================================================================== */
+.grouping-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  overflow: visible;
+}
+.grouping-envelope {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px dashed color-mix(in srgb, var(--accent) 76%, transparent);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+  pointer-events: none;
+}
+.grouping-envelope__edge {
+  position: absolute;
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.grouping-envelope__edge:hover,
+.grouping-envelope__edge:focus-visible {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  outline: 1px solid var(--accent);
+}
+.grouping-envelope__edge--top,
+.grouping-envelope__edge--bottom { left: 0; right: 0; height: 10px; }
+.grouping-envelope__edge--top { top: -5px; }
+.grouping-envelope__edge--bottom { bottom: -5px; }
+.grouping-envelope__edge--left,
+.grouping-envelope__edge--right { top: 5px; bottom: 5px; width: 10px; }
+.grouping-envelope__edge--left { left: -5px; }
+.grouping-envelope__edge--right { right: -5px; }
+.grouping-envelope--preview {
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent);
+  pointer-events: auto;
+  cursor: pointer;
+  animation: grouping-preview-appear 160ms ease-out both;
+}
+.grouping-envelope--preview:hover,
+.grouping-envelope--preview:focus-visible {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 19%, transparent);
+  outline: none;
+}
+.grouping-envelope__bracket {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-weight: 650;
+  font-size: 1.5rem;
+  pointer-events: none;
+}
+.grouping-envelope__bracket--open { left: -15px; }
+.grouping-envelope__bracket--close { right: -15px; }
+@media (prefers-reduced-motion: reduce) {
+  .grouping-envelope, .term.is-multi-selected { transition: none !important; }
+}
+@keyframes grouping-preview-appear {
+  from { opacity: .4; box-shadow: 0 0 0 0 transparent; }
+  to { opacity: 1; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 10%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grouping-envelope--preview { animation: none; }
+}
+
+/* --- Factorisation preview --- */
+/* ========================================================================== *
+ * FACTORISATION: small pre-drop extraction affordance ONLY
+ * ========================================================================== *
+ * The extracted factor itself is NOT drawn here: the generic modal result
+ * preview (see 'Transformation result preview') renders it inside the full expression using normal layout.
+ * The fixed overlay never changes the original expression's hitbox geometry.
+ * ========================================================================== */
+.factorisation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+  pointer-events: none;
+  overflow: visible;
+}
+.factorisation-zone {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 9px;
+  padding: 3px;
+  font: 600 .79rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 130ms ease, box-shadow 130ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .factorisation-zone { transition: none; }
+}
+
+/* --- Transformation result preview --- */
+/* ========================================================================== *
+ * GENERIC TRANSFORMATION RESULT PREVIEW (initially used by factorisation)
+ * ========================================================================== *
+ * The proposed expression uses the NORMAL renderer inside #equation. Browser
+ * layout therefore makes space for its new factors and (later) 2-D notation.
+ * Only the short provenance transition is positioned over the page. Its
+ * geometry NEVER participates in drag hit-testing or mathematical rules.
+ * ========================================================================== */
+.transformation-preview__transition {
+  position: fixed;
+  inset: 0;
+  z-index: 52;
+  pointer-events: none;
+  overflow: visible;
+}
+.transformation-preview__arrows {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  animation: factorisation-arrows-recede 760ms ease-out both;
+}
+@keyframes factorisation-arrows-recede {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .transformation-preview__arrows { animation: none; opacity: 0; }
+}
+/* ========================================================================== *
+ * PERSISTENT ONE-LINE FACTORISATION EXPLANATION
+ * ========================================================================== *
+ * The original common factors remain visible (but faded) in the explanatory
+ * preview. A NEW amber factor occupies ordinary flex-layout space next to
+ * the scope. Arrows explain their many-to-one provenance until confirmation.
+ * None of these visual-only nodes is written to the expression tree.
+ *
+ * We deliberately do NOT fade the arrows after a fixed duration: students
+ * should be able to study the transformation at their own pace. SVG arrows
+ * remain pointer-transparent and never participate in hit-testing.
+ * ========================================================================== */
+.transformation-preview__introduced-factor {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.transformation-preview__introduced-operator { flex-shrink: 0; }
+.transformation-preview__visual-product { cursor: default; }
+.transformation-preview__persistent .transformation-preview__arrows {
+  animation: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+/* Explanatory arrows must remain visible even with animations disabled. */
+  .transformation-preview__persistent .transformation-preview__arrows {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --- Identity preview --- */
+/* Identity introduction: preview is an overlay, never a hit-test/layout source.
+   The original hitboxes remain in place and keep their original rectangles. */
+.identity-preview-source-hidden { opacity:0; }
+/* Invisible, but still hit-testable. */
+.identity-preview-overlay {
+  position:absolute; inset:0; display:flex; justify-content:center;
+  align-items:center; padding:25px 18px; pointer-events:none;
+  z-index:5; overflow:visible;
+}
+.identity-preview-overlay > * { max-width:100%; }
+/* Behaviour only. The amber look comes from the shared proposed-insertion role. */
+.identity-preview-new { pointer-events:none; }
+.identity-preview-modal .identity-preview-new { pointer-events:auto; }
+/* Identity tool drag: a floating amber copy confirms pickup without affecting
+   hit testing. All styling below is paint-only: no hitbox geometry changes. */
+.identity-drag-ghost {
+  position:fixed; z-index:10000; pointer-events:none; user-select:none;
+  padding:5px 10px; border-radius:7px; font-weight:700;
+  box-shadow:0 3px 12px var(--floating-mark-shadow); opacity:.94;
+  transform:translateZ(0);
+}
+
+/* --- Equality inline preview --- */
+/* Equality v1.3.1: renderer-assigned semantic insertion roles use the SAME
+ * glowing, dashed amber surface as distribution's proposed factor copies.
+ * The shared declarations in 'Distribution preview' are the single visual authority for both.
+ * Do not add amber to structural Add/Multiply wrappers: those wrappers also
+ * contain PRE-EXISTING mathematical nodes, and highlighting them would falsely
+ * imply that the entire expression was inserted. The compound hitbox remains
+ * geometrically present for the renderer, but its ordinary surface is quiet.
+ *
+ * This preview-specific selector must never affect the committed equation.
+ * It also must not alter the source AST or the preview's confirmation logic.
+ */
+.equality-preview-math { cursor: default; flex-wrap: nowrap; max-width: none; width: max-content; }
+.equality-preview-math > .expression-root { flex-wrap: nowrap; flex: 0 0 auto; }
+.equality-preview-math .add-content,
+.equality-preview-math .multiply-content { flex-wrap: nowrap; }
+/* A wide mathematical statement remains one coherent line. The viewport may
+ * scroll horizontally until the future resizable-window system is available;
+ * wrapping the equality into unrelated rows is not mathematically helpful. */
+.equation:has(.equality-preview-math) { flex-wrap: wrap; justify-content: flex-start; overflow-x: auto; }
+/* No motion is required to understand the resulting equality. Respect the
+   operating-system accessibility preference for reduced animation. */
+@media (prefers-reduced-motion: reduce) {
+  .distribution-preview__copy { transition: none; }
+}
+
+/* --- Clipboard drag ghost --- */
+.clipboard-drag-ghost {
+  position: fixed; pointer-events: none; z-index: 2100;
+  max-width: min(280px, 65vw); padding: 8px 12px;
+  border: 2px dashed var(--clipboard-ghost-border); border-radius: 9px;
+  background: var(--clipboard-ghost-fill); color: var(--clipboard-ghost-text); box-shadow: 0 5px 16px var(--clipboard-ghost-shadow);
+  font-weight: 600; opacity: .94;
+}
+
+/* --- Candidate preview (js/view/preview/candidatePreview.js) ---
+   Every rule whose preview is "the result, with the new parts in amber"
+   (equality, both sides, negation, identity rules) shows it in place of the
+   committed expression. The candidate is read-only except for the amber new
+   parts (data-preview-confirm), which confirm; the controls sit in their own
+   row below the mathematics.
+   Its amber look (the equality preview's gold halo, for all) is painted in
+   css/feedback.css, which owns what a colour means. */
+.equation .candidate-preview-math { pointer-events: none; cursor: default; }
+.equation .candidate-preview-math [data-preview-confirm="true"] {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.equation .candidate-preview-actions {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: .6rem; width: 100%; padding: .55rem;
+  color: var(--preview-actions-text); font-size: .85rem;
+}
+
+
+/* --- The sign question (rule bundle js/rules/equality, stage E4d) ---
+   Asked when multiplying an inequality by something whose sign is unknown. */
+.relation-sign-question {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 8px; margin-top: 10px;
+  font-size: .88rem; color: var(--text-muted);
+}

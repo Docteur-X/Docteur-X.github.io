@@ -15,17 +15,17 @@ const root = resolve(import.meta.dirname, '..');
 const cases = [
   {
     name: 'factorisation reverses extracted-factor position',
-    file: 'js/operations/factorisation.js',
+    file: 'js/engine/operations/factorisation.js',
     before: '? [extractedFactor, scope] : [scope, extractedFactor]',
     after: '? [scope, extractedFactor] : [scope, extractedFactor]',
-    suite: 'tests/factorisation.test.js'
+    suite: 'tests/rules/factorisation/factorisation.test.js'
   },
   {
     name: 'distribution accepts nonadjacent factors',
-    file: 'js/operations/distribution.js',
+    file: 'js/engine/operations/distribution.js',
     before: 'if (Math.abs(sourceIndex - targetIndex) !== 1) return null;',
     after: 'if (Math.abs(sourceIndex - targetIndex) < 1) return null;',
-    suite: 'tests/distribution.test.js'
+    suite: 'tests/rules/distribution/distribution.test.js'
   }
 ];
 

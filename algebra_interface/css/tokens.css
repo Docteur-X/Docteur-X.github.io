@@ -1,0 +1,204 @@
+/*
+ * Design tokens: named values and nothing else that draws.
+ * Every other file refers to these names, so a colour changes in one place. The
+ * two themes redefine the same names; JavaScript only sets data-theme on <html>.
+ *
+ * A token that is defined only once below looks the same in both themes.
+ * Some names hold nearly equal values, or fixed colours that ignore the theme.
+ * They were kept exact so that tidying changed nothing on screen; merging them
+ * is a design decision.
+ */
+
+:root {
+  /* R2 option B (owner, 12 November 2026): the smallest click/tap area of a
+     part on a touch screen. Applied in hitboxes.css with (pointer: coarse). */
+  --hit-min: 44px;
+  color-scheme: light;
+
+  /* --- Page and surfaces --- */
+  --page-bg: #f3f6fb;
+  --page-glow: rgba(255, 255, 255, .92);
+  --surface: #ffffff;
+  --surface-soft: #f8faff;
+  --surface-raised: #ffffff;
+  --surface-equation: #f8faff;
+  --text: #1e293b;
+  --text-muted: #68758a;
+  --text-faint: #8b96a8;
+  --border: #e1e7f0;
+  --border-strong: #cbd5e4;
+  --shadow: 0 18px 55px rgba(34, 52, 84, .08);
+  --dialog-backdrop: rgba(17, 25, 40, .48);
+
+  /* --- Accent (selection, focus, ordinary hover) --- */
+  --accent: #496fd0;
+  --accent-strong: #365bb8;
+  --accent-soft: #edf2ff;
+  --accent-line: #8aa4ec;
+
+  /* --- Controls and brand --- */
+  --primary-fill: #496fd0;
+  --primary-fill-hover: #365bb8;
+  --on-primary: #fff;
+  --brand-start: #6888e8;
+  --brand-end: #4364c1;
+  --on-brand: #fff;
+  --brand-glow: rgba(73, 111, 208, .24);
+
+  /* --- Hitboxes --- */
+  --term-bg: rgba(255, 255, 255, .9);
+  --term-hover: #eff3ff;
+  --term-shadow: rgba(20, 35, 60, .035);
+  --term-hover-shadow: rgba(40, 60, 100, .1);
+  --negate-outline: #8895a5;
+  --negate-hover: #4e8ee6;
+  --negate-hover-glow: rgba(78, 142, 230, .14);
+
+  /* --- Drag marks --- */
+  --ghost-shadow: rgba(20, 35, 70, .2);
+  --ghost-term-shadow: rgba(20, 35, 70, .22);
+  --floating-label-shadow: rgba(0, 0, 0, .14);
+  --floating-mark-shadow: rgba(0, 0, 0, .18);
+
+  /* --- Success and eligibility (green) --- */
+  --success-soft: #e9f7ef;
+  --success: #29865a;
+  --on-success: #fff;
+  --success-glow: rgba(28, 130, 80, .18);
+  --eligible-glow-near: rgba(72, 190, 133, .20);
+  --eligible-glow-far: rgba(72, 190, 133, .30);
+  --eligible-hint-fill: #60c99a;
+  --on-eligible-hint: #102b22;
+
+  /* --- Warnings and rejection --- */
+  --warning-soft: #fff4e6;
+  --warning: #a65b0c;
+  --rejected: #bb665a;
+
+  /* --- A proposed change (amber): "this is new", "you can drop here" --- */
+  --proposal-ink: #967000;
+  --proposal-halo: #f7df82;
+  --proposal-soft: #fff7d6;
+
+  /* --- Truth of an equality --- */
+  --truth-true: #21885c;
+  --truth-true-fill: rgba(38, 160, 99, .12);
+  --truth-true-ring: rgba(38, 160, 99, .13);
+  --truth-false: #c4454b;
+  --truth-false-fill: rgba(205, 66, 72, .11);
+  --truth-false-ring: rgba(205, 66, 72, .12);
+
+  /* --- Structure navigator --- */
+  --navigation-marker: #a38cf0;
+  --navigation-glow: rgba(163, 140, 240, .14);
+  --navigator-border: #43516a;
+
+  /* --- Panels --- */
+  --panel-outline: #8885;
+  --document-border: #8887;
+  --document-current: #4388c8;
+
+  /* --- Equality operation menu (dark in both themes) --- */
+  --menu-fill: #263c53;
+  --menu-text: #eef5ff;
+  --menu-border: #6483a7;
+  --menu-shadow: #0008;
+  --menu-choice-fill: #344b64;
+  --menu-choice-border: #6985a5;
+  --menu-choice-hover: rgba(54, 118, 217, .16);
+  --menu-choice-on-fill: #805e2e;
+  --menu-choice-on-border: #efbd60;
+  --preview-actions-text: #e9bd74; /* the candidate preview's wording (the equality preview's gold) */
+
+  /* --- Clipboard drag ghost (dark in both themes) --- */
+  --clipboard-ghost-fill: #3a3022;
+  --clipboard-ghost-text: #ffe4ad;
+  --clipboard-ghost-border: #e8ae51;
+  --clipboard-ghost-shadow: #0007;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #111722;
+  --page-glow: rgba(34, 45, 64, .55);
+  --surface: #1a2433;
+  --surface-soft: #202c3e;
+  --surface-raised: #253246;
+  --surface-equation: #182335;
+  --text: #e8edf6;
+  --text-muted: #aab6c8;
+  --text-faint: #8290a5;
+  --border: #344156;
+  --border-strong: #485873;
+  --shadow: 0 18px 55px rgba(0, 0, 0, .28);
+  --dialog-backdrop: rgba(0, 0, 0, .68);
+  --accent: #91aaff;
+  --accent-strong: #b1c1ff;
+  --accent-soft: #29385b;
+  --accent-line: #92a9ff;
+  --primary-fill: #a9baff;
+  --primary-fill-hover: #c0ccff;
+  --on-primary: #152039;
+  --term-bg: rgba(36, 49, 69, .94);
+  --term-hover: #2c3b58;
+  --success-soft: #203c33;
+  --success: #7bd5a5;
+  --warning-soft: #453423;
+  --warning: #ffc17b;
+  --proposal-ink: #f4ce67;
+  --proposal-halo: #735d2c;
+  --proposal-soft: #4a3e28;
+}
+
+/* --- Maths font sets (owner, 13 November 2026) ---
+   A set names a family for letters, one for everything upright (numbers,
+   operators, brackets), the letter style, the weight, and a scale (the TeX
+   fonts have a smaller x-height than monospace, so they are drawn larger).
+   Default: Latin Modern; MLModern on small screens (under 768 px wide). A
+   choice in Advanced settings sets data-math-font on <html> and always wins. */
+:root {
+  --math-font-upright: "Latin Modern Math", "STIX Two Math", "Cambria Math", serif;
+  --math-font-letter: "LM Roman 10", "Latin Modern Math", serif;
+  --math-letter-style: italic;
+  --math-font-weight: 400;
+  --math-font-scale: 1.18;
+  --math-label-nested: 1.5rem;
+}
+@media (max-width: 767px) {
+  :root:not([data-math-font]) {
+    --math-font-upright: "MLModern Math", "Latin Modern Math", serif;
+    --math-font-letter: "MLM Roman 10", "MLModern Math", serif;
+  }
+}
+:root[data-math-font="latin-modern"] {
+  --math-font-upright: "Latin Modern Math", "STIX Two Math", "Cambria Math", serif;
+  --math-font-letter: "LM Roman 10", "Latin Modern Math", serif;
+  --math-letter-style: italic;
+  --math-font-weight: 400;
+  --math-font-scale: 1.18;
+  --math-label-nested: 1.5rem;
+}
+:root[data-math-font="mlmodern"] {
+  --math-font-upright: "MLModern Math", "Latin Modern Math", serif;
+  --math-font-letter: "MLM Roman 10", "MLModern Math", serif;
+  --math-letter-style: italic;
+  --math-font-weight: 400;
+  --math-font-scale: 1.18;
+  --math-label-nested: 1.5rem;
+}
+:root[data-math-font="katex"] {
+  --math-font-upright: "KaTeX_Main", "Latin Modern Math", serif;
+  --math-font-letter: "KaTeX_Math", "KaTeX_Main", serif;
+  --math-letter-style: italic;
+  --math-font-weight: 400;
+  --math-font-scale: 1.12;
+  --math-label-nested: 1.5rem;
+}
+:root[data-math-font="monospace"] {
+  --math-font-upright: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --math-font-letter: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --math-letter-style: normal;
+  --math-font-weight: 680;
+  --math-font-scale: 1;
+  --math-label-nested: 1.25rem;
+}

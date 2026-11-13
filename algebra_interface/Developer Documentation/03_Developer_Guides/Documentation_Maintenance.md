@@ -15,13 +15,15 @@ When these disagree, investigate the discrepancy and document the resolution. Ne
 
 | Change | Update in place |
 |---|---|
-| Any released code change | `05_Roadmap/Current_Status.md`: exact version, scope and verification provenance |
-| New or changed architectural boundary | Relevant `02_Architecture/` document |
+| Any released code change | `00_Current/Status.md`: the table, updated in place (test counts, done, next) |
+| An owner decision | `00_Current/Decisions.md`, with its date |
+| A change to a pipeline or the folder map | `00_Current/Pipelines.md` or `00_Current/Overview.md` (the files they name are checked to exist) |
+| A change to the owner's target or a future design | Relevant `02_Architecture/` document |
 | Mathematical data, API or serialization contract | Relevant `04_Reference/` document |
 | Developer workflow or test commands | Relevant `03_Developer_Guides/` document |
 | New limitation or unresolved defect | `05_Roadmap/Known_Issues.md` |
 | Proposed capability or deferred work | `05_Roadmap/Future_Features.md` (clearly label *proposed*) |
-| Important continuation context | Update the single `03_Developer_Guides/AI_Handover.md` |
+| How to continue, the owner's way of working | The single `00_Current/Handover.md` |
 | Fundamental educational goal | `01_Founding_Vision/`, only after explicit product-level agreement |
 
 **Do not create a new milestone Markdown document by default.** Edit the living document in place. Create a new reference only when it has a distinct, enduring audience and responsibility.
@@ -39,6 +41,10 @@ When these disagree, investigate the discrepancy and document the resolution. Ne
 A documentation-only change should not alter source code, mathematical state or persistence formats. Test the application only as necessary and state what was actually run.
 
 ## 4. Keep documents short and navigable
+
+- When a phase or review batch finishes, move its record to `06_Historical_Records` and keep only lasting facts in living documents.
+- Current test counts and status belong only in `00_Current/Status.md`; other documents link to it.
+- Before adding a file, ask which existing document should hold this instead.
 
 - Start with a one-paragraph purpose and scope; use descriptive headings.
 - Put the big picture in architecture overviews, exact shapes in references, practical steps in guides, and executable examples in tests.
@@ -77,3 +83,7 @@ A change is documentation-complete when affected living references, current stat
 ## Design-first collaboration
 
 Follow the maintained [Design-first development workflow](Design_First_Development_Workflow.md) for substantial features; update that guide in place if the agreed collaboration process changes.
+
+## Link integrity check (documentation hardening, 8 November 2026)
+
+Run `npm run check:docs` (or `node scripts/check-documentation-links.mjs` when npm is unavailable) after changing Markdown paths or archiving files. The check validates local relative destinations across maintained and historical documentation; it does **not** verify the factual freshness of claims, headings, or anchor fragments. Keep `Current_Status.md`, `AI_Handover.md`, and `START_HERE_FOR_NEXT_CHAT.md` synchronized manually with verified evidence, and distinguish exploratory ideas from approved requirements. Historical snapshots remain historical even when their links are repaired.

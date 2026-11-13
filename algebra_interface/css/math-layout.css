@@ -1,0 +1,277 @@
+/*
+ * Math layout: how mathematical notation is arranged on screen.
+ * One section per kind of notation. New notation (fractions, matrices, simultaneous
+ * equations written over several lines) gets its own section here, sized in em so
+ * that it scales when nested. Decorating a hitbox or showing feedback is not done
+ * here, so those keep working whatever shape the mathematics takes.
+ *
+ * How a symbol looks should follow its kind in the expression tree: an italic
+ * imaginary i and a variable i are different kinds, as are theta and pi. The
+ * Mathematical Engine decides what a symbol means. CSS only draws the kind it is
+ * told; it must never decide meaning.
+ */
+
+/* --- The mathematical view --- */
+.equation {
+  display: flex;
+  width: 100%;
+  min-height: 76px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+/* --- Multiplication --- */
+.multiply-content {
+  touch-action: none;
+}
+
+/* --- Expression row --- */
+/* Expression-tree editor additions                                           */
+/*                                                                            */
+/* The outer addend hitbox represents a complete term in the sum. When that   */
+/* term is a product, its factor buttons sit inside the outer box and provide  */
+/* smaller, independent hitboxes. This makes it possible to drag either the  */
+/* whole product or one factor without confusing the mathematical structure.  */
+/* ========================================================================== */
+.expression-root {
+  display: flex;
+  width: 100%;
+  min-height: 76px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+/* An Add inside a Group or any nested product is a genuine drag container.
+   Direct children are hitboxes for that Add, not for a higher-level Add. */
+.add-content,
+.multiply-content,
+.group-content,
+.negate-content,
+.invert-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 43px;
+  vertical-align: middle;
+}
+.add-content { gap: 4px; }
+.group-content { gap: 2px; }
+/* A function call, \sin(x) (stage E4): the name upright, as functions are written. */
+.apply-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  min-height: 43px;
+  vertical-align: middle;
+}
+/* The minus of a Negate is a sign of the mathematics: drawn in the maths font. */
+.negate-operator-hitbox {
+  font-family: var(--math-font-upright);
+  font-size: calc(1.5rem * var(--math-font-scale));
+  font-weight: var(--math-font-weight);
+}
+.apply-name {
+  font-family: var(--math-font-upright);
+  font-size: calc(1.5rem * var(--math-font-scale));
+  font-style: normal;
+  font-weight: var(--math-font-weight);
+  padding-right: 1px;
+}
+
+/* --- Symbols and numbers --- */
+.term__label,
+.term__sign {
+  font-family: var(--math-font-upright);
+  font-size: calc(1.5rem * var(--math-font-scale));
+  font-weight: var(--math-font-weight);
+}
+/* A letter (a Symbol) is drawn with the set's letter face: italic in the TeX fonts. */
+.term__label--symbol {
+  font-family: var(--math-font-letter);
+  font-style: var(--math-letter-style);
+}
+/* A small annotation communicates a variable's current numerical substitution. */
+.term__substitution {
+  align-self: flex-end;
+  margin-bottom: 4px;
+  color: var(--success);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .67rem;
+  font-weight: 700;
+}
+/* A factor's label: smaller in monospace tiles, full size in the TeX fonts,
+   where printed mathematics keeps one size (D13). */
+.factor-slot .term__label,
+.factor-slot .term__sign {
+  font-size: calc(var(--math-label-nested) * var(--math-font-scale));
+}
+.term__content {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+/* --- Operators --- */
+.plus {
+  display: inline-grid;
+  min-width: 18px;
+  place-items: center;
+  color: var(--text-muted);
+  font-family: var(--math-font-upright);
+  font-size: calc(1.55rem * var(--math-font-scale));
+  user-select: none;
+}
+.multiply-operator {
+  display: inline-grid;
+  min-width: 14px;
+  place-items: center;
+  color: var(--text-muted);
+  font-family: var(--math-font-upright);
+  font-size: calc(1.18rem * var(--math-font-scale));
+  user-select: none;
+  pointer-events: none;
+}
+.multiply-operator--implicit {
+  width: .28em;
+  min-width: .28em;
+}
+/* Division: the ÷ is drawn inside its Invert factor's own box (nodeSpecs). */
+.invert-sign {
+  display: inline-grid;
+  min-width: 14px;
+  place-items: center;
+  color: var(--text-muted);
+  font-family: var(--math-font-upright);
+  font-size: calc(1.18rem * var(--math-font-scale));
+  user-select: none;
+}
+
+/* --- Brackets --- */
+/* Brackets are part of the SAME draggable hitbox as the Group they enclose.
+   Automatic brackets have no node: they're inserted by the renderer only
+   when precedence requires them. Explicit brackets have a separate Group. */
+.expression-bracket {
+  display: inline-block;
+  align-self: stretch;
+  align-content: center;
+  padding: 0 1px;
+  font-family: var(--math-font-upright);
+  font-size: calc(1.65rem * var(--math-font-scale));
+  font-weight: var(--math-font-weight);
+  line-height: 1;
+  color: var(--text);
+  pointer-events: none;
+  user-select: none;
+}
+.expression-bracket--automatic { color: var(--text-muted); }
+
+/* --- Relations --- */
+/* Equality v1: the two sides are separate expression drag containers. Menus float
+   without changing the mathematical hitbox geometry; the actual equation remains
+   the only authoritative AST. */
+.relation-root { position: relative; display: inline-flex; align-items: center; gap: 0.65rem; max-width: 100%; flex-wrap: wrap; justify-content: center; }
+/* Positioned because the relation indicator is an OVERLAY anchored to the equals
+   sign itself, not another flex child of the equation. It therefore cannot drift
+   to the end of a long equality or affect expression layout. */
+.relation-sign { position: relative; display: inline-flex; align-items: center; justify-content: center; padding: 0.25rem 0.5rem; border: 1px solid currentColor; border-radius: 0.4rem; font-family: var(--math-font-upright); font-weight: var(--math-font-weight); font-size: calc(1.35em * var(--math-font-scale)); cursor: pointer; user-select: none; }
+/* An equality's two Add-root containers must size to their content rather
+ * than each claiming 100% width (the standalone expression default). */
+.relation-root > .expression-root { width: auto; min-width: 0; flex: 0 1 auto; }
+/* R1 for an equation side: the side's own (invisible) box holds the row of
+   terms, which keeps the root row's layout. */
+.math-scope .equation-side { display: inline-flex; max-width: 100%; }
+.math-scope .equation-side > .drag-container {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 7px; min-height: 76px; max-width: 100%;
+}
+@media (max-width: 620px) { .math-scope .equation-side > .drag-container { gap: 4px; } }
+
+/* --- Narrow screens --- */
+@media (max-width: 600px) {
+  .equation {
+    gap: 4px;
+  }
+  .plus {
+    min-width: 13px;
+  }
+}
+@media (max-width: 620px) {
+  .expression-root {
+    gap: 4px;
+  }
+  .factor-slot .term__label,
+  .factor-slot .term__sign {
+    font-size: 1.08rem;
+  }
+  .multiply-operator {
+    min-width: 11px;
+    font-size: 1rem;
+  }
+}
+@media (max-width: 680px) {
+  .expression-bracket { font-size: 1.3rem; }
+  .add-content, .multiply-content, .group-content { gap: 2px; }
+}
+
+/* --- Subtraction written a − b (owner, 13 November 2026) ---
+   The + before a negative term is drawn transparent: it keeps its place, so
+   it still gives the space before the minus and stays the sum's target
+   (hovering it lights the sum; distribution can still drop on it). The
+   term's own minus is spaced as a binary minus. The tree, the history and the
+   minus's place inside its term (it travels with the term when dragged) are
+   unchanged. Never display:none: that would remove the sum's target. */
+/* a − b (owner, 14 November 2026, revised): the + before a negative term is
+   drawn as a boxed − in the operator position, and the term's own leading sign
+   is hidden, so [a] [−] [b]. The + stays the sum's target (hover, drops); a
+   click on it acts as the term's minus did (data-negate-id). The DOM text
+   stays "+" (the tree is a + (−b)); the − is drawn by ::before. */
+:root[data-subtraction="binary"] .plus[data-before-negative] {
+  font-size: 0;
+  min-width: 1.6rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  color: var(--text);
+  cursor: pointer;
+}
+:root[data-subtraction="binary"] .plus[data-before-negative]::before {
+  content: "−";
+  font-size: calc(1.55rem * var(--math-font-scale));
+  line-height: 1;
+}
+:root[data-subtraction="binary"] [data-leading-sign] { display: none; }
+
+/* Printed spacing (D13): the implicit product's gap is a thin space, as in
+   print (2x, 3(4·5)), and the rows lose their tile gaps; the operators' own
+   widths give a sum its spacing. Still real elements, so drag geometry is
+   measured as before. */
+:root[data-box-style="printed"] .multiply-operator--implicit {
+  width: .1em;
+  min-width: .1em;
+}
+:root[data-box-style="printed"] .math-scope .multiply-content,
+:root[data-box-style="printed"] .math-scope .equation-side > .multiply-content { gap: 0; }
+:root[data-box-style="printed"] .math-scope .add-content,
+:root[data-box-style="printed"] .math-scope .equation-side > .drag-container { gap: 1px; }
+/* A binary operator keeps print's medium space on each side, now that the
+   row gaps are gone. */
+:root[data-box-style="printed"] .math-scope .plus,
+:root[data-box-style="printed"] .math-scope .multiply-operator--dot,
+:root[data-box-style="printed"] .math-scope .multiply-operator--times { padding-inline: .14em; }
+
+/* Row chunks (D14, js/view/rendering/rowChunks.js): an operator and the term
+   after it never part at a line break. A chunk lays out like the row it is
+   in (same gap), so an unbroken row looks exactly as before. */
+.row-chunk {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: inherit;
+}
+/* In Printed, the boxed − of a − b takes print spacing like any operator. */
+:root[data-box-style="printed"][data-subtraction="binary"] .math-scope .plus[data-before-negative] { min-width: 0; padding: 1px .14em; }

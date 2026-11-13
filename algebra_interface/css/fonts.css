@@ -1,0 +1,45 @@
+/*
+ * Fonts: the bundled font files, and nothing else. The app works offline, so
+ * every maths font is a file in assets/fonts/ (licences beside each font).
+ * Which font draws what is chosen in tokens.css (the font sets); this file
+ * only names the files.
+ *
+ * Latin Modern and MLModern draw letters with their text italic (LM Roman 10
+ * Italic), so a letter's text in the page stays the plain letter (for
+ * copying, tests and screen readers). KaTeX keeps its maths italic at the
+ * plain letters, in KaTeX_Math.
+ */
+@font-face {
+  font-family: "Latin Modern Math";
+  src: url("../assets/fonts/latin-modern/latinmodern-math.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "LM Roman 10";
+  src: url("../assets/fonts/latin-modern/lmroman10-italic.otf") format("opentype");
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "MLModern Math";
+  src: url("../assets/fonts/mlmodern/mlmodern-math.otf") format("opentype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "MLM Roman 10";
+  src: url("../assets/fonts/mlmodern/mlmroman10-italic.otf") format("opentype");
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "KaTeX_Main";
+  src: url("../assets/fonts/katex/KaTeX_Main-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "KaTeX_Math";
+  src: url("../assets/fonts/katex/KaTeX_Math-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-display: swap;
+}

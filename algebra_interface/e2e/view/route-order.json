@@ -1,0 +1,235 @@
+[
+ {
+  "name": "suppress-click-after-outside-cancel",
+  "on": "click",
+  "at": "document-capture",
+  "modes": "any"
+ },
+ {
+  "name": "outside-and-selection-pointerdown",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": [
+   "idle",
+   "dragging:ordinary",
+   "dragging:factor",
+   "preview"
+  ]
+ },
+ {
+  "name": "equality-menu-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "any"
+ },
+ {
+  "name": "equality-preview-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "preview:equality"
+ },
+ {
+  "name": "identity-preview-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "preview:identity"
+ },
+ {
+  "name": "grouping-preview-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "preview:grouping"
+ },
+ {
+  "name": "factorisation-preview-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "preview:factorisation"
+ },
+ {
+  "name": "both-sides-preview-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "preview:both-sides"
+ },
+ {
+  "name": "identity-rule-preview-outside",
+  "on": "pointerdown",
+  "at": "document-capture",
+  "modes": "preview:identity-rules"
+ },
+ {
+  "name": "negate-operator-shield",
+  "on": "pointerdown",
+  "at": "view",
+  "modes": "any"
+ },
+ {
+  "name": "identity-rule-operator-shield",
+  "on": "pointerdown",
+  "at": "view",
+  "modes": "any"
+ },
+ {
+  "name": "occurrence-pickup",
+  "on": "pointerdown",
+  "at": "view",
+  "modes": "idle"
+ },
+ {
+  "name": "negation-activate-click",
+  "on": "click",
+  "at": "view",
+  "modes": "idle"
+ },
+ {
+  "name": "distribution-confirm-click",
+  "on": "click",
+  "at": "view",
+  "modes": "preview:distribution"
+ },
+ {
+  "name": "identity-rule-activate-click",
+  "on": "click",
+  "at": "view",
+  "modes": "idle"
+ },
+ {
+  "name": "nested-occurrence-select",
+  "on": "click",
+  "at": "view",
+  "modes": "idle"
+ },
+ {
+  "name": "negation-activate-key",
+  "on": "keydown",
+  "at": "view",
+  "modes": "idle"
+ },
+ {
+  "name": "identity-rule-activate-key",
+  "on": "keydown",
+  "at": "view",
+  "modes": "idle"
+ },
+ {
+  "name": "occurrence-keyboard",
+  "on": "keydown",
+  "at": "view",
+  "modes": "any"
+ },
+ {
+  "name": "negation-preview-escape",
+  "on": "keydown",
+  "at": "document",
+  "modes": "preview:negation"
+ },
+ {
+  "name": "both-sides-preview-escape",
+  "on": "keydown",
+  "at": "document",
+  "modes": "preview:both-sides"
+ },
+ {
+  "name": "identity-rule-preview-escape",
+  "on": "keydown",
+  "at": "document",
+  "modes": "preview:identity-rules"
+ },
+ {
+  "name": "equality-preview-escape",
+  "on": "keydown",
+  "at": "document-capture",
+  "modes": "preview:equality"
+ },
+ {
+  "name": "identity-tool-move",
+  "on": "pointermove",
+  "at": "window",
+  "modes": "dragging:identity-tool"
+ },
+ {
+  "name": "factor-drag-move",
+  "on": "pointermove",
+  "at": "window",
+  "modes": "dragging:factor"
+ },
+ {
+  "name": "drag-move",
+  "on": "pointermove",
+  "at": "window",
+  "modes": "any"
+ },
+ {
+  "name": "identity-tool-release",
+  "on": "pointerup",
+  "at": "window",
+  "modes": "dragging:identity-tool"
+ },
+ {
+  "name": "factor-drag-release",
+  "on": "pointerup",
+  "at": "window",
+  "modes": "dragging:factor"
+ },
+ {
+  "name": "drag-release",
+  "on": "pointerup",
+  "at": "window",
+  "modes": "any"
+ },
+ {
+  "name": "identity-tool-cancel",
+  "on": "pointercancel",
+  "at": "window",
+  "modes": "dragging:identity-tool"
+ },
+ {
+  "name": "factor-drag-cancel",
+  "on": "pointercancel",
+  "at": "window",
+  "modes": "dragging:factor"
+ },
+ {
+  "name": "drag-cancel",
+  "on": "pointercancel",
+  "at": "window",
+  "modes": "any"
+ },
+ {
+  "name": "identity-confirm-click",
+  "on": "click",
+  "at": "view-parent",
+  "modes": "preview:identity"
+ },
+ {
+  "name": "distribution-outside-cancel",
+  "on": "pointerdown",
+  "at": "document",
+  "modes": "preview:distribution"
+ },
+ {
+  "name": "hover-outline-move",
+  "on": "pointermove",
+  "at": "view",
+  "modes": "any"
+ },
+ {
+  "name": "hover-outline-over",
+  "on": "pointerover",
+  "at": "view",
+  "modes": "any"
+ },
+ {
+  "name": "hover-outline-leave",
+  "on": "pointerleave",
+  "at": "view",
+  "modes": "any"
+ },
+ {
+  "name": "escape-fallback",
+  "on": "keydown",
+  "at": "window",
+  "modes": "any"
+ }
+]

@@ -15,19 +15,19 @@ On Windows, `py -m http.server 8000` or `start-local-server.bat` may be availabl
 Run automated tests with Node.js:
 
 ```sh
-node --test tests/*.test.js
+npm test
 ```
 
-No application package installation is required. `npm test` is an alternative if npm is installed.
+The application itself needs no package installation. `npm test` needs only Node.js and npm, and finds tests in subfolders too.
 
-## What works (v3 baseline)
+## What works
 
-- Scalar expression trees, numerical combination, rearrangement, distribution, factorisation, explicit grouping and identity insertion, with direct gestures and feedback.
+- Scalar expression trees, numerical combination, rearrangement, distribution, factorisation, explicit grouping, identity insertion and negation/subtraction, with direct gestures and feedback.
 - Binary equality, symmetry and limited clipboard-driven addition/ordered multiplication on both sides.
 - Multiple Mathematical Objects per document, branching histories, session mathematical clipboard, IndexedDB saves and validated compact/legacy JSON import/export.
-- Registered transformation proposals and shared confirmation/history preparation for seven principal transformation families.
+- Registered transformation proposals and shared confirmation/history preparation for eight principal transformation families.
 
-See [current status](Developer%20Documentation/05_Roadmap/Current_Status.md) for precise scope and limitations.
+See [Status](Developer%20Documentation/00_Current/Status.md) for precise scope and limitations.
 
 ## Saved work
 
@@ -35,7 +35,7 @@ Documents are saved in the browser's IndexedDB for the current site origin and b
 
 ## Documentation for developers
 
-Start at the [authoritative documentation index](Developer%20Documentation/README.md), then read the [founding student-agency vision](Developer%20Documentation/01_Founding_Vision/Student_Agency.md), [current status](Developer%20Documentation/05_Roadmap/Current_Status.md) and [architecture map](Developer%20Documentation/02_Architecture/System_Overview.md). Older milestone notes are preserved under [historical records](Developer%20Documentation/06_Historical_Records/README.md) but are not current specifications.
+Start at the [authoritative documentation index](Developer%20Documentation/README.md), then read the [founding student-agency vision](Developer%20Documentation/01_Founding_Vision/Student_Agency.md), [Handover](Developer%20Documentation/00_Current/Handover.md), [Status](Developer%20Documentation/00_Current/Status.md) and [Overview](Developer%20Documentation/00_Current/Overview.md). Older milestone notes are preserved under [historical records](Developer%20Documentation/06_Historical_Records/README.md) but are not current specifications.
 
 ## Known limits
 
@@ -44,3 +44,7 @@ Advanced function/domain reasoning, general substitution, inequalities, matrices
 ## Automated browser tests
 
 The optional Playwright suite tests actual mouse interactions in Chromium. Install Node.js/npm, then run `npm install`, `npx playwright install chromium`, and `npm run test:e2e`. See [Testing and verification](Developer%20Documentation/03_Developer_Guides/Testing_and_Verification.md) for scope and limitations. The existing mathematical tests still run with `npm test`.
+
+## Navigate mathematical structure
+
+Use the **Mathematical structure** toolbar to move to the parent, first child, or neighbouring sibling of an AST occurrence. While the equation or toolbar is focused, `Alt+Arrow` provides keyboard navigation. **Select occurrence** selects the focused mathematical node without creating a history event. The navigator does not modify mathematical expressions.

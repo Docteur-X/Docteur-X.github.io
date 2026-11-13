@@ -1,0 +1,635 @@
+/*
+ * Interface: the page around the mathematics (panels, toolbars, menus, dialogs).
+ * None of this may enter the equation's measured drag geometry. Windows and
+ * Documents work will mostly land here.
+ */
+
+/* --- Page frame and header --- */
+.app-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+.app-header,
+.brand-block,
+.section-heading,
+.history-toolbar,
+.history-toolbar-actions,
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-header {
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.brand-block {
+  justify-content: flex-start;
+  gap: 14px;
+}
+.brand-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 15px;
+  color: var(--on-brand);
+  background: linear-gradient(145deg, var(--brand-start), var(--brand-end));
+  box-shadow: 0 8px 20px var(--brand-glow);
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+}
+.header-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: .91rem;
+}
+
+/* --- Workspace columns and panels --- */
+/* 4. Main two-column workspace                                                */
+/* ========================================================================== */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 20px;
+  align-items: start;
+}
+.workbench,
+.variables-panel,
+.history-drawer {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.workbench {
+  min-width: 0;
+  padding: 26px;
+}
+.variables-panel {
+  min-width: 0;
+  padding: 22px;
+}
+.section-heading {
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.section-heading--compact {
+  margin-bottom: 10px;
+}
+.eyebrow {
+  margin: 0 0 5px;
+  color: var(--accent);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.keyboard-hint {
+  color: var(--text-faint);
+  font-size: .76rem;
+  text-align: right;
+}
+
+/* --- Expression entry --- */
+/* 5. Expression input and interactive equation area                           */
+/* ========================================================================== */
+.expression-form {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.expression-form input {
+  flex: 1 1 180px;
+  width: 100%;
+  min-width: 0;
+  height: 43px;
+  padding: 0 13px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--surface-soft);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .98rem;
+}
+.field-help,
+.panel-description,
+.panel-note,
+.history-help,
+.dialog-description {
+  color: var(--text-muted);
+  font-size: .82rem;
+  line-height: 1.55;
+}
+.field-help {
+  margin: 9px 0 0;
+}
+.field-help code {
+  color: var(--accent-strong);
+  font-size: .9em;
+}
+/* Multiplication style is selected separately from the mathematical tree. */
+.expression-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+.expression-options select {
+  min-height: 34px;
+  padding: 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font: inherit;
+}
+
+/* --- Equation panel --- */
+.equation-panel {
+  display: grid;
+  min-height: 174px;
+  place-items: center;
+  margin-top: 24px;
+  padding: 25px 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: var(--surface-equation);
+}
+.equation-panel { position:relative; }
+
+/* --- Status and legend --- */
+.status-message {
+  min-height: 24px;
+  margin: 14px 0 0;
+  color: var(--text-muted);
+  font-size: .88rem;
+  text-align: center;
+}
+.interaction-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 16px;
+  color: var(--text-faint);
+  font-size: .74rem;
+}
+.interaction-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--accent-line);
+  border-radius: 3px;
+}
+.legend-swatch--add {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+/* The legend uses a soft warm rule colour, never the hazardous warning red. */
+.legend-swatch--distribution { background: var(--proposal-soft); border-color: var(--proposal-ink); }
+
+/* --- Variables panel --- */
+/* 6. Variables sidebar                                                        */
+/* ========================================================================== */
+.panel-description {
+  margin: 0 0 16px;
+}
+.variables-list {
+  display: grid;
+  gap: 9px;
+  min-height: 55px;
+}
+.variable-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px;
+  gap: 9px;
+  align-items: center;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface-soft);
+}
+.variable-name {
+  min-width: 0;
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+}
+.variable-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  text-align: right;
+}
+.variable-empty {
+  padding: 14px 10px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 11px;
+  color: var(--text-faint);
+  font-size: .82rem;
+  text-align: center;
+}
+.panel-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 15px;
+}
+.panel-note {
+  min-height: 50px;
+  margin: 13px 0 0;
+  font-size: .75rem;
+}
+
+/* --- History drawer --- */
+/* 7. History drawer and branch tree                                            */
+/* ========================================================================== */
+.history-drawer {
+  margin-top: 20px;
+  overflow: hidden;
+}
+.history-toolbar {
+  min-height: 64px;
+  gap: 15px;
+  padding: 10px 18px;
+}
+.history-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border: 0;
+  color: var(--text);
+  background: transparent;
+  font-weight: 750;
+  cursor: pointer;
+}
+.history-toggle-icon {
+  display: inline-block;
+  width: 13px;
+  color: var(--text-muted);
+  transition: transform .16s ease;
+}
+.history-toggle[aria-expanded="true"] .history-toggle-icon {
+  transform: rotate(90deg);
+}
+.history-toolbar-actions {
+  gap: 12px;
+}
+.current-history-label {
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: .76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-panel {
+  max-height: 390px;
+  padding: 0 18px 19px;
+  overflow: auto;
+  border-top: 1px solid var(--border);
+}
+.history-help {
+  margin: 13px 0;
+  font-size: .78rem;
+}
+.history-tree {
+  min-width: max-content;
+  padding: 4px 2px 8px;
+}
+.history-tree ul {
+  margin: 7px 0 0 13px;
+  padding: 0 0 0 16px;
+  border-left: 1px solid var(--border-strong);
+  list-style: none;
+}
+.history-tree li {
+  position: relative;
+  margin: 7px 0;
+}
+.history-tree li::before {
+  position: absolute;
+  top: 19px;
+  left: -16px;
+  width: 14px;
+  border-top: 1px solid var(--border-strong);
+  content: "";
+}
+.history-node-button {
+  display: inline-grid;
+  min-width: 220px;
+  max-width: min(390px, 78vw);
+  gap: 4px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--surface-soft);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.history-node-button:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.history-node-button.is-current {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.history-node-action {
+  overflow: hidden;
+  font-size: .78rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Conditions a step relies on (division stage D3), e.g. "assuming b ≠ 0". */
+.history-node-assumptions {
+  color: var(--text-muted);
+  font-size: .72rem;
+  font-style: italic;
+}
+.history-node-expression {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- History dialog --- */
+/* 8. History graph dialog                                                      */
+/* ========================================================================== */
+.history-dialog {
+  width: min(900px, calc(100vw - 28px));
+  max-width: none;
+  max-height: min(82vh, 760px);
+  padding: 22px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.history-dialog::backdrop {
+  background: var(--dialog-backdrop);
+  backdrop-filter: blur(4px);
+}
+.dialog-header {
+  gap: 15px;
+}
+.dialog-description {
+  margin: 13px 0 18px;
+}
+.icon-button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  background: var(--surface-soft);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.icon-button:hover {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+.history-graph-scroll {
+  max-height: calc(82vh - 160px);
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+.history-tree--graph {
+  padding: 10px;
+}
+.history-tree--graph > ul,
+.history-tree--graph > li > ul {
+  margin-top: 13px;
+}
+.history-tree--graph .history-node-button {
+  min-width: 245px;
+  max-width: 320px;
+  padding: 12px 14px;
+}
+
+/* --- Development inspector --- */
+/* A development inspector makes the tree-to-MathJSON conversion observable. */
+.mathjson-inspector {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+.mathjson-inspector summary {
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 650;
+}
+.mathjson-inspector pre {
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* --- Tool rows --- */
+.group-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 12px;
+  margin-bottom: 10px;
+}
+.group-toolbar__selection {
+  flex: 1 1 100%;
+  color: var(--text-muted);
+  font-size: .84rem;
+}
+.group-toolbar label { font-size: .83rem; color: var(--text-muted); }
+.group-toolbar select {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 7px 9px;
+}
+.group-toolbar button:disabled { opacity: .48; cursor: not-allowed; }
+.group-toolbar__preview-actions { display: inline-flex; gap: 7px; align-items: center; }
+.factorisation-toolbar { display: flex; align-items: center; gap: 8px; min-height: 40px; flex-wrap: nowrap; overflow-x: auto; }
+.equality-toolbar { display: flex; align-items: center; gap: 0.6rem; margin: 0.4rem 0; }
+.equality-status { font-size: 0.85rem; font-weight: 650; }
+.equality-status[data-truth="true"] { color: var(--truth-true); }
+.equality-status[data-truth="false"] { color: var(--truth-false); }
+.identity-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:9px; margin:12px 0; }
+.identity-toolbar--dragging .identity-tool { cursor:grabbing; }
+.identity-tool { cursor:grab; touch-action:none; }
+/* Selection-mode feedback is outside the equation and never alters hitboxes. */
+#multiSelectButton.is-active {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* --- Workspace and clipboard panels --- */
+/* Workspace controls never enter the equation's measured drag geometry. */
+.workspace-manager { margin: 1rem auto; max-width: 1200px; padding: 1rem; border: 1px solid var(--panel-outline); border-radius: 12px; }
+.workspace-manager__heading, .workspace-manager__actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.workspace-manager__heading { justify-content: space-between; }
+.workspace-manager__list { display: flex; flex-wrap: wrap; gap: .5rem; margin: .75rem 0; }
+.workspace-document { border: 1px solid var(--document-border); border-radius: 7px; padding: .5rem .75rem; background: transparent; color: inherit; cursor: pointer; }
+.workspace-document[aria-current="true"] { border-color: var(--document-current); box-shadow: 0 0 0 1px var(--document-current); }
+.workspace-empty { text-align: center; padding: 3rem 1rem; opacity: .7; }
+/* Clipboard v2: utility panels are opt-in, preserving vertical space for the
+   mathematical view. The selected entry is marked without altering ASTs. */
+.clipboard-panel, .settings-panel, .interaction-help {
+  margin: .75rem 0; padding: .7rem 1rem;
+  border: 1px solid var(--panel-outline); border-radius: 10px;
+}
+.clipboard-panel { max-width: 1200px; margin: 1rem auto; }
+.clipboard-panel summary, .settings-panel summary, .interaction-help summary,
+.symbols-details summary, .workspace-manager > summary { cursor: pointer; font-weight: 600; }
+.clipboard-entries { display: flex; flex-direction: column; gap: .5rem; margin: .75rem 0; }
+.clipboard-entry { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.clipboard-entry [aria-pressed="true"] { outline: 2px solid var(--accent); }
+.symbols-details { width: 100%; }
+.workspace-manager > summary { margin-bottom: .35rem; }
+.clipboard-draggable { touch-action: none; }
+
+/* --- Equality operation menu --- */
+.equality-operation-choice:hover:not(:disabled) { background: var(--menu-choice-hover); }
+.equality-operation-choice:disabled { opacity: .4; cursor: not-allowed; }
+/* Equality application v1.1: a clearly non-mathematical floating palette.
+   A body-level portal avoids clipping by the equation viewport. The small
+   controls are intentionally visually unlike operand hitboxes. */
+.equality-operation-menu {
+  position: fixed; top: 0; left: 0; z-index: 2000;
+  display: flex; flex-direction: column;
+  min-width: 0; width: max-content; max-width: calc(100vw - 16px);
+  padding: 4px; gap: 3px; border: 1px solid var(--menu-border);
+  border-radius: 9px; background: var(--menu-fill); color: var(--menu-text);
+  box-shadow: 0 12px 28px var(--menu-shadow);
+}
+.equality-operation-choice {
+  cursor: pointer; font: inherit;
+  min-width: 36px; min-height: 34px; padding: 3px 6px;
+  border: 1px solid var(--menu-choice-border); border-radius: 6px;
+  background: var(--menu-choice-fill); color: var(--menu-text);
+}
+.equality-operation-choice[aria-pressed="true"] { background: var(--menu-choice-on-fill); border-color: var(--menu-choice-on-border); }
+.equality-use-clipboard { max-width: 145px; white-space: normal; font-size: .7rem; }
+
+/* --- Structure navigator --- */
+/* Mathematical Structure Navigation v1: a layout-independent navigation aid.
+ * Outline and shadow do not alter equation dimensions or pointer hitboxes. */
+.structure-navigator { display:flex; flex-wrap:wrap; align-items:center; gap:.55rem; padding:.7rem .8rem; margin:.65rem 0; border:1px solid var(--navigator-border); border-radius:12px; }
+.structure-navigator__heading { font-weight:700; }
+.structure-navigator__info { font-size:.85rem; opacity:.9; }
+.structure-navigator__controls { display:flex; flex-wrap:wrap; gap:.35rem; }
+.structure-navigator__help { font-size:.75rem; opacity:.7; flex-basis:100%; }
+
+/* --- Narrow screens --- */
+@media (max-width: 850px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .variables-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+  }
+  .variables-panel .section-heading,
+  .variables-panel .panel-description,
+  .variables-panel .variables-list,
+  .variables-panel .panel-actions,
+  .variables-panel .panel-note {
+    grid-column: 1 / -1;
+  }
+  .variables-panel .variables-list {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .app-header {
+    align-items: flex-start;
+  }
+  .brand-mark {
+    width: 42px;
+    height: 42px;
+  }
+  .header-subtitle {
+    max-width: 250px;
+    font-size: .8rem;
+  }
+  .app-header > .button {
+    min-height: 38px;
+    padding-inline: 10px;
+    font-size: .78rem;
+  }
+  .workbench,
+  .variables-panel {
+    padding: 18px 14px;
+  }
+  .section-heading {
+    align-items: flex-start;
+  }
+  .keyboard-hint {
+    max-width: 130px;
+    font-size: .69rem;
+  }
+  .expression-form {
+    flex-wrap: wrap;
+  }
+  .expression-form input {
+    flex-basis: 100%;
+  }
+  .expression-form .button {
+    flex: 1 1 auto;
+  }
+  .equation-panel {
+    min-height: 145px;
+    padding: 18px 8px;
+  }
+  .history-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .history-toolbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

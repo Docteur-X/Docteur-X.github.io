@@ -127,6 +127,45 @@
           </select>
         </div>
 
+        <!-- How the mathematics looks (13 November 2026); the expression never changes. -->
+        <div class="expression-options">
+          <label for="boxStyle">Boxes</label>
+          <select id="boxStyle" name="boxStyle">
+            <option value="tiles">Tiles</option>
+            <option value="light">Light tiles</option>
+            <option value="printed">Printed (boxes on hover)</option>
+          </select>
+        </div>
+        <div class="expression-options">
+          <label for="termSpacing">Single terms</label>
+          <select id="termSpacing" name="termSpacing">
+            <option value="roomy">Roomy</option>
+            <option value="compact">Compact</option>
+          </select>
+        </div>
+        <div class="expression-options">
+          <label for="subtraction">Subtraction</label>
+          <select id="subtraction" name="subtraction">
+            <option value="binary">a − b</option>
+            <option value="tree">a + −b (as stored)</option>
+          </select>
+        </div>
+
+        <!-- Advanced: presentation only; the expression and history never change. -->
+        <details class="advanced-settings">
+          <summary>Advanced</summary>
+          <div class="expression-options">
+            <label for="mathFont">Maths font</label>
+            <select id="mathFont" name="mathFont">
+              <option value="auto">Automatic (Latin Modern; MLModern on small screens)</option>
+              <option value="latin-modern">Latin Modern</option>
+              <option value="mlmodern">MLModern</option>
+              <option value="katex">KaTeX</option>
+              <option value="monospace">Monospace</option>
+            </select>
+          </div>
+        </details>
+
         </details>
         <!--
           Explicit grouping controls. Select a hitbox by clicking once, then
@@ -134,7 +173,7 @@
           Double-clicking a hitbox toggles round brackets. Alt+click selects
           its outer hitbox when several mathematical levels are nested.
         -->
-        <div class="group-toolbar" role="group" aria-label="Bracket selected expression">
+        <div class="group-toolbar" data-selection-control role="group" aria-label="Bracket selected expression">
           <span id="selectionLabel" class="group-toolbar__selection" aria-live="polite">Select a term or factor first.</span>
           <button class="button button--quiet button--small" id="copyMathButton" type="button" disabled>Copy mathematics</button>
           <button class="button button--quiet button--small" id="multiSelectButton" type="button" aria-pressed="false">Select multiple</button>
@@ -161,7 +200,7 @@
           keyboard-accessible alternative to dragging into the amber zone.
           They are shown only when a valid selection exists or during preview.
         -->
-        <div class="factorisation-toolbar" id="factorisationToolbar" hidden role="group" aria-label="Common-factor extraction">
+        <div class="factorisation-toolbar" id="factorisationToolbar" data-selection-control hidden role="group" aria-label="Common-factor extraction">
           <button class="button button--quiet button--small" id="previewFactorisationButton" type="button">Preview extraction</button>
           <span id="factorisationPreviewActions" class="group-toolbar__preview-actions" hidden>
             <button class="button button--small" id="confirmFactorisationButton" type="button">Confirm extraction</button>
@@ -188,8 +227,10 @@
         </div>
         <!-- The equation renderer replaces the contents of this panel as the model changes. -->
         <section class="equation-panel" data-testid="mathematical-window" aria-label="Interactive equation area">
-          <div class="equation" id="equation" data-testid="mathematical-view" aria-label="Expression terms"></div>
+          <div class="equation math-scope" id="equation" data-testid="mathematical-view" aria-label="Expression terms"></div>
         </section>
+        <!-- Structural navigation is outside the equation to preserve its geometry. -->
+        <div id="structureNavigatorMount"></div>
         <p class="status-message" id="statusMessage" role="status" aria-live="polite">
           Drag onto a term to evaluate (green), or drag a factor onto a neighbouring sum’s + sign to preview distribution (yellow).
         </p>

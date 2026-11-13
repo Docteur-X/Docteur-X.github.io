@@ -1,0 +1,131 @@
+> **CURRENT CHECKPOINT — T3-7 (8 November 2026; awaiting owner acceptance).** Owner independently accepted T3-6. T3-7 retains all nine existing negation tests, strengthens expansion `insertedNodeIds` provenance and adds one longer-product compression branch test. Targeted Node **10/10**, full Node **417/417** pass; two isolated mutations were detected and production source remains unchanged. No merges/removals; Playwright not rerun. See `Developer Documentation/04_Testing/T3_7_Negation_Test_Quality_Review.md`. **Stop for owner verification.** Earlier current-checkpoint statements below are historical.
+
+> **CURRENT CHECKPOINT — T3-6 (8 November 2026; awaiting owner acceptance).** Owner accepted T3-5. T3-6 strengthens three existing identity-insertion tests with four ID-correspondence assertion sites, covering additive before/after, multiplicative edge/gap, and explicit wrapping. Targeted Node **6/6**, full Node **416/416** passed; fabricated-ID mutation rejected (**3 failures of 6**), restored production code unchanged. No tests added/removed/merged; Playwright not rerun. See `Developer Documentation/04_Testing/T3_6_Identity_Insertion_Review.md`. **Stop for independent owner testing.** Earlier next-action instructions below are historical and superseded.
+
+# AI handover — authoritative current checkpoint
+
+**Date:** 8 November 2026. **Current:** Phase 5F final application-composition acceptance; documentation-only increment. **Last browser-verified baseline:** Phase 5F, 77/77 Playwright tests (owner-confirmed). **Phase 5F accepted.** See `../05_Roadmap/Current_Status.md` for fresh Node results and [Phase 5F acceptance](../02_Architecture/Phase5F_Final_Architecture_Acceptance.md) for scope and limits.
+
+## Purpose and enduring principles
+
+The Manipulator is an offline-first, student-directed algebra workspace. Students choose their strategies; AST rules and the mathematical engine determine correctness; the interface explains structure, provenance and consequences. Preserve stable IDs for unchanged AST occurrences, branching per-object history, source-stamped single-use commits, accessibility, classroom performance and future extensibility to vectors, matrices and independent views.
+
+Gesture recognition, mathematical validity and teaching policy are separate. Distribution targets the `+` operator by default; bracket targeting is only a possible future teaching-policy experiment. Visual feedback decorates; interactive affordances belong to the interaction layer if real examples justify them.
+
+## Permanent documentation and AI handover policy (authoritative)
+
+Documentation is part of the engineering work, not an optional final note. **Every meaningful implementation, audit, hardening patch, acceptance checkpoint, or consequential design decision must update the relevant living documentation without waiting for a user reminder.** The archive must remain sufficient for a competent developer or future AI assistant to resume safely without reconstructing decisions from chat history.
+
+Maintain the following, proportionately to the change:
+
+- **Vision and educational philosophy:** student agency, mathematical correctness and engine authority, explainable transformations, classroom accessibility and offline use, stable AST identities, and future vectors/matrices and independent views.
+- **Verified current status:** exact accepted baseline and test evidence, distinguishing independently executed Node tests, user-confirmed browser tests, pending checks, and unverified assumptions. Never present a proposed or Node-only change as browser-verified.
+- **Feature inventory:** implemented behaviour versus planned, experimental, deliberately deferred, or unsupported functionality; distinguish teaching-policy choices from mathematical validity.
+- **Architecture and ownership:** actual modules, interfaces, dependencies, state/lifecycle owners, invariants, and the reasoning behind ordering constraints. Cross-check descriptions against source code; code and tests take precedence over stale documentation.
+- **Decisions and alternatives:** record not only what was chosen, but why, what was rejected or deferred, and what new evidence would justify reconsideration. Avoid speculative universal managers or abstractions without concrete use cases.
+- **Known issues and evidence gaps:** confirmed defects versus plausible risks, reproduction conditions, cleanup and asynchronous limitations, test weaknesses, active investigations, and workarounds where applicable.
+- **Roadmap and handover:** current work, next steps, acceptance criteria, commands to verify, relevant files, and a concise orientation for a new developer or assistant.
+- **Maintainable implementation notes:** high-quality explanatory comments for non-obvious code, updated developer guides and tests that describe meaningful behavioural guarantees.
+
+**Single-source-of-truth discipline:** Keep `Current_Status.md` as the one authoritative status snapshot, this `AI_Handover.md` as the one authoritative technical handover, and `START_HERE_FOR_NEXT_CHAT.md` as the navigation entry point. Update these in place. Archive historical milestones clearly rather than appending competing headings labelled CURRENT. Preserve historical reasoning without treating archived checkpoints as live instructions.
+
+**Discussion rule:** When a material ambiguity concerns educational philosophy, student gesture expectations, teaching policy, mathematical semantics, architectural ownership, or a consequential trade-off, ask the project owner and document the agreed decision. Do not silently invent a policy just because an implementation is technically possible.
+
+**Release gate:** An increment is not fully handed over until its current source, tests, documentation, known limitations, and next action agree. If browser verification is pending, record that explicitly. If documentation cannot be updated or a claim cannot be verified, disclose the limitation instead of claiming completion.
+
+## Current ownership map
+
+| Layer | Owner / boundary |
+| --- | --- |
+| AST, parsing and mathematical rules | `js/core/`, `js/operations/`, `js/relations/`; no DOM authority |
+| Proposal, commit and history publication | Existing mathematical coordinators and `js/manipulator/` lifecycle; stale-safe and single-use |
+| Gesture intent | `js/interaction/intentArbitration.js` and feature adapters; advisory |
+| Semantic targeting | `js/rendering/semanticTargetResolver.js`; not physical hit testing |
+| Visual feedback | `js/interaction/visualFeedbackController.js`; decorative |
+| Modal exclusivity | `js/interaction/modalPreviewOwnership.js`; view-local leases, not commits |
+| Feature previews | Existing educational preview controllers, coordinated by `js/app.js` |
+| Workspace autosave | `js/workspace/workspaceSaveCoordinator.js`; callback-injected and stale-status-safe |
+| FLIP layout transitions | `js/ui/equationLayoutTransition.js`; view-local geometry |
+| Post-mount semantic refresh | `js/ui/equationSemanticRefresh.js`; identity → resolver → inspector → navigator |
+| Composition root | `js/app.js`; source invalidation, DOM replacement, event wiring, overlays |
+
+## Phase 5 outcome
+
+5A mapped responsibilities; 5B hardened static dependency guardrails; 5C extracted save coordination and fixed import/autosave status races; 5D extracted FLIP and semantic refresh while preserving rerender order; 5E explicitly rejected further forwarding-only extraction; 5F records acceptance and verification limitations. See Phase 5F acceptance for evidence. No universal rendering or gesture manager was introduced.
+
+## Verification and residual risks
+
+Phase 5F: 416/416 Node tests independently passed and 77/77 browser tests owner-confirmed. Phase 5 is accepted. View-local contract tests do not prove multi-view application support. Delayed FLIP callbacks, exceptional presentation recovery, incomplete pairwise browser modal conflicts, and occasional second distribution-drag eligibility failures remain known risks. Never infer browser success from Node tests.
+
+## Next actions
+
+1. Phase 5F browser acceptance completed (77/77 owner-confirmed); retain the verified package as the Phase 6 baseline.
+2. **Phase 6 intentionally deferred.** First explore natural mathematical windows and classroom scenarios; do not start Phase 6 implementation or settle ownership choices without owner discussion. See `../05_Roadmap/Creative_Exploration_and_Deferred_Phase6.md` for the complete unresolved design backlog.
+3. Preserve last browser-verified ZIP for rollback. Read source and tests, not just this handover. Update these living files instead of creating new competing handovers.
+4. For every future code change: explanatory comments, focused tests, full regression gates, accurate verification provenance and handover updates.
+
+## Current creative exploration (not approved implementation)
+
+See [`Creative_Exploration_and_Deferred_Phase6.md`](../05_Roadmap/Creative_Exploration_and_Deferred_Phase6.md) for structural differentials and full u-substitution, a floating mathematical clipboard, automatic in/out cycling of equation operations, teaching-policy-dependent transposition, **adjustable reasoning depth** with independent gesture/explanation/required-work dimensions, and AST/history-based verified derivation export for Word/LaTeX. The owner specifically favours automatic cycling on exiting the equation hitbox, a visible equality-arm hint, and uncluttered accessible alternatives. The owner reports ~7 hours for Phases 0–5. Phase 6 and the guided tour are deferred while ideas are explored. These are not implemented features or approved architecture.
+
+## Accessibility and semantic-target exploration checkpoint — 8 November 2026
+
+The owner additionally favours **independent visual enlargement, enlarged touch regions and semantic pick-up/drop assistance**, plus **Semantic Target Cycling for Overlapping Interaction Regions**. Initial proposal: cycle highlighted mathematical candidates at roughly two-second intervals while a drag hovers over overlapping regions; allow both eligible-only guidance and broader *meaningful-target* exploration with progressive, non-punitive hints. **Arrow-key input interrupts automatic cycling immediately**, transferring control to manual candidate navigation without the timer overriding the user's choice. Maintain accessible on-screen/switch alternatives and avoid conflict with existing structure-navigation shortcuts. See the detailed examples, component boundaries, caveats and unresolved decisions in the [creative exploration backlog](../05_Roadmap/Creative_Exploration_and_Deferred_Phase6.md). No implementation approved; Phase 6 and guided tour remain deferred.
+
+## Documentation quality checkpoint — 8 November 2026
+
+The documentation-only hardening pass updated the [maintained index](../README.md), [known-issues register](../05_Roadmap/Known_Issues.md), [historical master plan](../05_Roadmap/Presentation_Interaction_Consolidation_Master_Plan.md), and [creative idea decision tracker](../05_Roadmap/Creative_Exploration_and_Deferred_Phase6.md). Archived handover links were repaired without rewriting historical status claims. Run `npm run check:docs` to check local links. Phase 6 and the guided tour remain deferred; no feature has been approved by this documentation cleanup.
+
+## Latest creative checkpoint and next maintenance task — 8 November 2026
+
+The owner strongly endorses a deterministic AST-faithful renderer, including mandatory precedence brackets and preserved explicit grouping. The owner also clarifies that teaching policy may select **different Engine-validated AST strategies**, not merely show/hide hints. Exploratory history ideas include one gesture-level node with expandable validated mathematical substeps, manual pruning/keep-current reset, and resource-aware retention without disabling mathematical state authority. Full reasoning, examples, caveats and unresolved questions are in `../05_Roadmap/Creative_Exploration_and_Deferred_Phase6.md`; do not treat these as implemented or approved schemas.
+
+**Next active work:** T1 test inventory/classification, followed conditionally by test discovery/organization, evidence-based consolidation, stability/accessibility review and final verification (T2–T5). Do not delete tests by filename resemblance; preserve browser regression evidence and update discovery/CI if moving tests. Phase 6 and guided tour remain deferred. This is a documentation-only checkpoint: no new Node or browser run; last accepted 416/416 Node and 77/77 browser baseline.
+
+## T1 test-quality maintenance checkpoint (8 November 2026)
+
+T1 is an **inventory-only** increment. `Developer Documentation/04_Testing/T1_Test_Inventory.md` and `.json` classify all 114 top-level test files (75 Node, 39 Playwright), list statically discoverable test names, and flag review candidates. Regenerate with `node scripts/build-test-inventory.mjs`. No tests were moved, merged, removed or rewritten; no application code was modified. Static title counts are not runtime counts. Next is T2 discovery/organization planning: current `npm test` glob `tests/*.test.js` would miss nested tests if files were moved. Preserve verified 416/77 coverage and historical regression value; no deletion without assertion-level evidence. Phase 6 and architecture tour remain deferred.
+
+
+## T2 test-maintenance checkpoint (8 November 2026)
+
+T2 is a **limited organization pilot**, not a test reduction. The recursive Node test runner (`scripts/run-node-tests.mjs`) replaces the old root-only `tests/*.test.js` discovery. Four Node tests moved into `tests/state/` and `tests/presentation/`; two browser specs moved into `e2e/workspace/` and `e2e/accessibility/`. The T1 inventory generator now scans recursively. **416/416 Node tests passed** after the moves; 75 Node files and 39 browser specs remain. **Browser verification is pending** (77 tests expected). No production JS or test assertions changed. Read `../04_Testing/T2_Test_Discovery_and_Organization.md` before further changes. Next T3 is evidence-based assertion/overlap review; do not delete tests based on filenames alone. Phase 6 remains deferred.
+
+### Test-maintenance checkpoint — T3-1 (8 November 2026)
+Distribution family review completed: ten Node/browser contract and lifecycle cases examined, all retained with reasons. No production or test changes. Targeted Node distribution suite 24/24 passed; T2 remains last full verified baseline (416 Node, 77 browser). See `../04_Testing/T3_1_Distribution_Review.md`. Next: T3-2 rule-level distribution test review. Phase 6 remains deferred.
+
+## Latest handover checkpoint — T3-2A (8 November 2026)
+
+The latest implemented change is **T3-2A only**: the compound-source distribution provenance test now validates reported copy IDs against actual copied AST occurrences, preserving all original assertions. Targeted Node **17/17** and full Node **416/416** passed; browser tests were not rerun. No production JavaScript was modified. T3-2B (two invalid product/sum plan-ID assertions) has owner approval but **must wait for review of A**. See `../04_Testing/T3_2_Mathematical_Distribution_Review.md` for exact scope, verification and rollback. Earlier next-step statements in this append-only handover are historical; use this latest checkpoint together with `../05_Roadmap/Current_Status.md`.
+
+## Latest handover checkpoint — T3-2B (8 November 2026)
+
+The owner verified T3-2A and explicitly requested T3-2B. Both increments are now implemented: A checks provenance IDs against real copied AST occurrences; B checks that forged `productId` and `sumId` values are rejected without mutation. All original tests and assertions remain. Latest checks: targeted distribution **17/17**, full Node **416/416**, documentation links **336 valid**; browser tests were not rerun. No production JavaScript was modified. **Stop for owner review** and do not begin the next test batch automatically. The latest detailed decision record is `../04_Testing/T3_2_Mathematical_Distribution_Review.md`. Earlier pending-B instructions are historical.
+
+## Latest handover checkpoint — T3-3A (8 November 2026)
+
+T3-3A is the latest implemented increment. In `tests/factorisation.test.js`, the existing left-extraction test now checks exact source-factor IDs in canonical addend order, confirms the new factor is a real `Symbol(a)` occurrence in the candidate AST, and checks provenance/result ID agreement. All existing assertions and tests remain. Targeted factorisation **16/16**, full Node **416/416** passed; Playwright not rerun. No production code changed. T3-3B (compound nested provenance) and T3-3C (forged plans) are approved in principle but **not implemented**. Stop for owner verification of A. Detailed rationale and rollback: `../04_Testing/T3_3_Mathematical_Factorisation_Review.md`. Earlier next-action statements are historical.
+
+## Latest checkpoint (8 November 2026) — T3-3B/C combined implementation
+
+T3-3A was independently accepted by the owner. The approved T3-3B/C test-strengthening changes were implemented together in `tests/factorisation.test.js` only: compound extracted-factor subtree provenance (fresh IDs, actual-node correspondence, root versus descendant origin semantics), and forged `sumId`, `productIds`, and direction rejection with nonmutation after each case. All 16 factorisation tests and 416 full Node tests pass; 336 documentation links valid. No production changes, test merges, or removals. Browser tests were not rerun; **await owner independent acceptance** before proceeding. See `Developer Documentation/04_Testing/T3_3_Mathematical_Factorisation_Review.md`. Earlier next-action statements are superseded.
+
+## Latest checkpoint — T3-4 grouping provenance (8 November 2026)
+
+Owner accepted T3-3 (all tests passed). T3-4 reviewed eight range-grouping mathematical/selection tests, retained all eight, and replaced one length-only `createdNodeIds` assertion with exact `[result.inner.id, result.group.id]` correspondence in `tests/range-grouping.test.js`. A temporary fabricated-ID mutation was detected by the strengthened test and reverted. Targeted range grouping **10/10**, full Node **416/416**, documentation links **336 valid**. No production changes, merges, removals or browser rerun. **Await independent owner acceptance; do not start the next family automatically.** See `../04_Testing/T3_4_Range_Grouping_Quality_Review.md`. Earlier next-action statements are superseded.
+
+## Latest checkpoint — T3-5 equality function application (8 November 2026)
+
+Owner accepted T3-4. T3-5 retained eight equality-function tests, strengthening two in `tests/equality-function-application.test.js`: both inserted compound operand subtrees must use fresh IDs relative to the original clipboard operand, and both equality sides must preserve left/right multiplication order. Symmetric `not-established` equivalence metadata is checked. Two isolated deliberate mutations that previously survived now fail independently; production source was restored and remains unchanged. Targeted Node **8/8**, full Node **416/416**; Playwright not rerun. **Stop for owner verification**, then return to the T3–T5 plan. Exact rationale, test names and rollback: `../04_Testing/T3_5_Equality_Function_Application_Review.md`. Prior next-action statements are superseded.
+
+## Latest checkpoint — T3-8 history generated IDs (8 November 2026)
+
+Owner accepted T3-7. T3-8 retained all nine document-history tests and strengthened one existing test in `tests/state/document-history.test.js` to compare recorded generated IDs against the exact before/after AST occurrence-set difference, rejecting duplicate IDs. A fabricated-ID mutation in an isolated copy now fails the strengthened test. Targeted **9/9**, full Node **417/417**; no production changes, merges, removals or browser rerun. **Await owner independent acceptance.** See `../04_Testing/T3_8_History_Generated_ID_Quality_Review.md`. All earlier next-action sections above are historical and superseded.
+
+## Latest checkpoint — T3-9B autosave reliability (8 November 2026)
+
+T3-8 was owner-accepted. T3-9A serialization overlap review resulted in no edits. T3-9B added two deterministic Node tests for queued-write serialization and failed-save dirty-marker protection, retaining all seven original coordinator cases. Targeted **9/9**, full Node **419/419**; both isolated mutations detected. No production changes; Playwright not rerun. **Await owner independent acceptance.** See [T3-9B review](../04_Testing/T3_9B_Autosave_Reliability_Review.md). Earlier next-action text is historical.
+
+## Current handover checkpoint — T3-10 (8 November 2026)
+
+T3-9B was independently accepted. T3-10 adds one Node regression test in `tests/presentation-phase2-semantic-targets.test.js` for multiple occurrence targets, occurrence-over-content preference, explicit role selection, operator filtering and detached DOM targets. All prior tests retained; no production changes. Targeted **7/7**, full Node **420/420**, two temporary resolver mutations detected. Owner acceptance pending; Playwright not rerun. See [`T3-10 review`](../04_Testing/T3_10_Semantic_Target_Quality_Review.md). Do not automatically begin T4 until owner verification and a deliberate T3 closure review.

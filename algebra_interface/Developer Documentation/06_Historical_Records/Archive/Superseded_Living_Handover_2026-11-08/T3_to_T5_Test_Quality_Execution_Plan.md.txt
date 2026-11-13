@@ -1,0 +1,120 @@
+# T3–T5 — Test Quality and Maintenance Execution Plan
+
+**Status:** Planned; no T3–T5 test changes approved or implemented. 8 November 2026.
+**Authoritative starting point:** T2 test-organization pilot, accepted after the project owner's full browser run: **416/416 Node tests and 77/77 Playwright tests passed**. The T1 inventory contains 75 Node test files and 39 Playwright specs. Phase 6 and the architecture tour remain deferred.
+
+## Purpose and non-goals
+
+Improve the **diagnostic value, navigability, stability and maintainability** of the test suite without reducing meaningful mathematical, lifecycle, or browser-level coverage. Favor small, reversible, evidence-based batches over mass moves or arbitrary test-count reductions.
+
+Do **not** use this track to rewrite the mathematical engine, redesign gesture architecture, implement deferred creative features, complete Phase 6, or force all tests into a perfectly symmetrical folder tree. Do not merge/delete tests based solely on similar filenames, assertions or a desire for fewer tests. Do not mistake static test declarations for executed counts.
+
+## Non-negotiable protections
+
+- Mathematical correctness, AST occurrence identity, source-state validation, exactly-once publication, branching history, persistence, and preview cancellation/reacquisition retain coverage.
+- Node contracts and real-browser interaction tests are distinct evidence, even when they concern the same mathematical rule.
+- Tests introduced for actual regressions are retained unless a replacement proves the **same failure mode** would still be detected.
+- No production behavior changes as part of ordinary test cleanup. If a test exposes a production defect, stop, diagnose and agree a separate narrow fix.
+- Maintain the recursive Node runner (`npm test`), Playwright recursive discovery (`npm run test:e2e`), T1 inventory, documentation link checks and existing CI expectations.
+- Preserve original phase provenance in comments or the decision log when renaming/moving a test.
+- No sleeps, weakened assertions, broad retries or test skips as substitutes for diagnosing instability.
+
+## Work rhythm for each batch
+
+1. Select **one coherent behavior family**, normally 5–10 individual tests (not necessarily 5–10 files). Start with distribution; later batches are prioritized by regression history and maintenance cost.
+2. Read complete test bodies, shared fixtures/helpers, relevant production contracts and historical bug notes. Identify the exact invariant, failure mode and distinct level of evidence.
+3. Record a **proposed** disposition for each test: **retain / strengthen / merge / remove / defer**, with justification and any replacement coverage. Record uncertainty explicitly.
+4. Change only the smallest justified set. Prefer better assertions, setup, naming or comments before combining tests. Preserve a baseline copy and a move/rename map.
+5. Run targeted tests, then `npm test` and the full Playwright suite when the batch affects browser tests, discovery, helpers, fixtures, or shared behavior. Compare discovered file identities and test titles, not just totals.
+6. Independently audit the batch and update the decision log, T1 inventory, living status and AI handover. Wait for browser verification where needed before marking accepted.
+
+### Decision-log schema (one row per reviewed test)
+
+| Field | Meaning |
+|---|---|
+| Identity | Current path + exact test title; previous path if moved |
+| Family / level | Mathematical rule, Node contract, browser interaction, lifecycle, etc. |
+| Protected invariant | The behavior whose regression should fail this test |
+| Provenance | Historical defect/phase, if known; otherwise 'not established' |
+| Distinct evidence | What this test catches that neighboring tests do not |
+| Decision | Retain, strengthen, merge, remove or defer |
+| Reason | Specific evidence, not aesthetic preference |
+| Replacement | Exact replacement test(s) and why equivalent, if merged/removed |
+| Verification | Targeted and full-suite results, date, environment, reviewer |
+| Status | Proposed / implemented / browser-pending / accepted |
+
+Keep one append-only decision log for accepted changes; preserve prior decisions with dated amendments rather than silently overwriting them. A small table is sufficient; do not build a test-management application.
+
+## T3 — Assertion quality and overlap review
+
+**Objective:** establish that each reviewed test protects a clear, useful contract; selectively strengthen or consolidate genuinely redundant coverage.
+
+**Initial order:** (1) distribution engine + gesture + preview + lease/reacquisition; (2) grouping and factorisation; (3) equality/negation/identity; (4) history/persistence and semantic targeting. Reorder based on actual evidence, not phase chronology.
+
+**Questions per test:** Does it assert the outcome rather than implementation trivia? Does it distinguish no-op, cancellation and commit? Would the known historical bug make it fail? Are AST, history and lease checks needed together to establish one lifecycle contract? Is it testing the real handler or a mock? Is the fixture minimal and understandable? Is a neighboring test genuinely equivalent?
+
+**Deliverables:** T3 per-family coverage map, populated decision log, narrowly scoped test changes (possibly none), verified inventory and acceptance notes. No blanket target for number of removed tests.
+
+**Acceptance gate:** no loss of distinct invariants or regression protections; all changed tests pass; 416/77 starting baseline remains discoverable unless a documented, proven-equivalent merge intentionally changes counts; all count changes explained by exact test identities. Do not claim acceptance before required browser results.
+
+## T4 — Stability, input and diagnostics review
+
+**Objective:** remove avoidable flakiness and improve failure localization while preserving genuine asynchronous and accessibility behavior.
+
+**Priority investigations:** the `waitForTimeout(500)` in compact import/autosave coverage; pointer target geometry and second-drag eligibility assertions in distribution; asynchronous preview cancellation and lease reacquisition; touch selection versus touch/pen drag coverage; keyboard-only/assisted interaction gaps. These are audit candidates, not predeclared defects.
+
+**Method:** reproduce failures with trace, screenshot and status evidence; prefer event/state assertions and controlled clocks where appropriate; test the failure boundary *before* changing helpers. Compare focused, repeated and full-suite runs when diagnosing nondeterminism. Review page objects and shared pointer helpers for stable semantic locators and useful diagnostics. Document real-device limitations: Playwright touch emulation does not prove classroom display/stylus usability.
+
+**Deliverables:** stability findings and severity, targeted fixes only where justified, explicit input-method coverage/gap matrix, decision-log entries, verification evidence. Keep new touchscreen features out of scope; note them in the creative backlog.
+
+**Acceptance gate:** no test made green by weakening a protected assertion; known timing issues either fixed with evidence or honestly documented as unresolved; browser regression suite passes after any changes.
+
+## T5 — Suite-level verification and handover
+
+**Objective:** verify the final suite remains complete, discoverable, trustworthy and easy for future developers to maintain.
+
+**Checks:** compare current test-file inventory, exact test titles and invariant matrix with T1/T2; run `node scripts/run-node-tests.mjs --list-files`, `npm test`, `npm run test:e2e`, and `npm run check:docs`; inspect CI workflow/test discovery; confirm no `.only`/unjustified `.skip`, orphan fixtures, broken imports, accidental ignored specs, or contradictory 'current' documentation. Record exact counts rather than assuming 416/77 if intentional merges occurred. Sample historical regressions to verify their protection remains meaningful.
+
+**Deliverables:** T5 final acceptance report, retained/merged/removed coverage ledger, known gaps and deferred improvements, current-status update, authoritative AI handover, next-chat instructions and reproducible commands. Archive historical planning without competing current-status claims.
+
+**Acceptance gate:** full Node and Playwright verification; no unexplained discovery losses; all test removals have named equivalent coverage and rationale; documentation agrees with code and evidence. If any gate fails, T5 remains pending and the last accepted build remains the baseline.
+
+## Stop and escalation rules
+
+- **Stop** if a production bug, ambiguous mathematical invariant, unexpected count drop, flaky result, or unclear historical regression arises. Diagnose before cleanup.
+- **Ask the project owner** about consequential teaching-policy expectations or changes to student-facing behavior. Do not infer them from tests alone.
+- **Defer** cosmetic moves that require broad fixture rewrites or carry more risk than navigation benefit.
+- **Do not** claim browser verification from Node success or a static inventory.
+- Keep each increment reversible and document rollback steps; preserve the last accepted project ZIP.
+
+## Immediate next action
+
+**T3-1: distribution family, approximately 5–10 tests.** Inventory the exact cases and their protected invariants; compare engine-rule, gesture, preview, ownership and rebuild/reacquisition coverage. Produce the first decision-log entries *before* deleting, merging or moving anything. Report findings and obtain a verified baseline after any changes.
+
+## T3 progress (8 November 2026)
+
+T3-1 completed as a source-level review of ten distribution contract/lifecycle cases. All ten are **retained**; no source or test edits justified. See `T3_1_Distribution_Review.md` for the case-level decision log and evidence. Targeted Node distribution run: 24/24 passed. T3-2 should examine rule-level distribution assertions. T2 remains the last full browser-verified baseline.
+
+## T3-5 progress (8 November 2026)
+
+Following independent owner acceptance of T3-4, T3-5 reviewed eight equality-function tests and retained all eight. Two existing assertions were strengthened in one batch: copied clipboard operand identity freshness and right equality-side multiplication order. Both changes kill demonstrated previously surviving mutations. Targeted Node 8/8 and full Node 416/416 passed; no production changes or browser rerun. Await owner acceptance. See [T3-5 equality function application review](T3_5_Equality_Function_Application_Review.md). The earlier immediate-next-action section above is historical.
+
+## T3-6 progress (8 November 2026)
+
+After owner acceptance of T3-5, six identity-insertion tests were reviewed and retained. Three existing cases now verify `identityNodeId` against the actual inserted zero/one occurrence across additive sibling, multiplicative edge/gap and wrapping paths. A previously surviving fabricated-ID mutation now fails three targeted cases. Targeted Node **6/6**, full Node **416/416** passed. No production code changes, new/removed tests, or browser rerun. Await independent owner acceptance. See [T3-6 identity insertion review](T3_6_Identity_Insertion_Review.md). Earlier immediate-next-action text is historical.
+
+## T3-7 progress (8 November 2026)
+
+After owner acceptance of T3-6, the negation family retained all nine existing tests, strengthened one expansion-provenance assertion, and added one focused longer-product compression test. The original numeric-group overlap was retained for distinct diagnostic value. Targeted Node **10/10**, full Node **417/417** pass; isolated fabricated-ID and surviving-product-ID mutations were detected. No production edits or test removals; browser tests not rerun. Await independent owner acceptance. See [T3-7 negation review](T3_7_Negation_Test_Quality_Review.md). Earlier next-action instructions above are historical.
+
+## T3-8 progress (8 November 2026)
+
+After owner acceptance of T3-7, nine history tests were reviewed and retained. One existing test now compares event-generated IDs to the independently computed before/after AST ID difference, with duplicate-ID rejection. A fabricated-ID mutation that survived before is detected. Targeted **9/9**, full Node **417/417**. The corrupted-patch error-message change was deferred (no demonstrated additional regression detection); compact hydration tests were retained separately. No production changes or browser rerun. Await owner acceptance. See [T3-8 history review](T3_8_History_Generated_ID_Quality_Review.md). Older immediate-next-action text is historical.
+
+## T3-9 progress (8 November 2026)
+
+T3-9A: the five document-serialization tests and overlapping empty-object hardening case were retained unchanged after examining distinct coverage and maintenance savings. T3-9B: all seven existing save-coordinator tests retained, plus two deterministic regression tests for write ordering and failed-save dirty-state safety. Targeted **9/9**, full Node **419/419**, two isolated mutations detected. No production changes or browser rerun. Await owner acceptance. See [T3-9B autosave review](T3_9B_Autosave_Reliability_Review.md). Earlier next-action guidance is historical.
+
+## T3-10 checkpoint (8 November 2026)
+
+Owner accepted T3-9B. The semantic targeting family review retained fourteen existing tests and added one focused resolver collection/role-precedence test, verified by two controlled mutations. Node baseline **420/420**. See [`T3-10 review`](T3_10_Semantic_Target_Quality_Review.md). Pending owner acceptance. T3 closure assessment should precede T4; historical plan steps above are preserved for context.
